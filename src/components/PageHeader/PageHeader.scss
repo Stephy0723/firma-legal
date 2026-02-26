@@ -1,0 +1,296 @@
+@use "../../styles/base/variables" as *;
+@use "../../styles/base/mixins" as *;
+
+// ──────────────────────────────────────────────
+// Page Header — Shared structure
+// ──────────────────────────────────────────────
+
+.page-header {
+    position: relative;
+    padding-top: clamp(8rem, 14vh, 11rem);
+    padding-bottom: clamp(3.5rem, 6vh, 5rem);
+    overflow: hidden;
+    color: #fff;
+
+    // Background image
+    &__bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-size: cover;
+        background-position: center 35%;
+        background-repeat: no-repeat;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba($ink-950, 0.32);
+        }
+    }
+
+    // Overlay (sits above bg image)
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+
+    // Geometric pattern
+    &__pattern {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        opacity: 0.04;
+        background-image:
+            repeating-linear-gradient(45deg,
+                transparent,
+                transparent 60px,
+                rgba(255, 255, 255, 0.5) 60px,
+                rgba(255, 255, 255, 0.5) 61px);
+    }
+
+    // Content
+    &__content {
+        position: relative;
+        z-index: 2;
+        max-width: 750px;
+
+        >* {
+            animation: fadeInUp 700ms $ease-emphasis both;
+        }
+
+        >*:nth-child(1) {
+            animation-delay: 100ms;
+        }
+
+        >*:nth-child(2) {
+            animation-delay: 220ms;
+        }
+
+        >*:nth-child(3) {
+            animation-delay: 340ms;
+        }
+
+        >*:nth-child(4) {
+            animation-delay: 460ms;
+        }
+    }
+
+    // Eyebrow
+    &__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: $font-body;
+        font-size: $fs-eyebrow;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: $gold-300;
+        margin-bottom: 0.8rem;
+
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 28px;
+            height: 2px;
+            background: linear-gradient(90deg, $gold-300, $gold-500);
+            border-radius: 2px;
+        }
+    }
+
+    // Title
+    &__title {
+        font-family: $font-heading;
+        font-size: clamp(2rem, 1.4rem + 2.8vw, 3.2rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        color: #fff;
+        text-wrap: balance;
+        margin-bottom: 0.7rem;
+    }
+
+    // Subtitle
+    &__subtitle {
+        font-size: $fs-body;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.7;
+        max-width: 55ch;
+    }
+
+    // Gold accent line
+    &__accent {
+        margin-top: 1.5rem;
+        width: 60px;
+        height: 3px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, $gold-300, $gold-500);
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Default — deep green
+// ──────────────────────────────────────────────
+
+.page-header--default {
+    background: $ink-950;
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 80% 20%, rgba($gold-500, 0.10), transparent 45%),
+            linear-gradient(135deg, rgba($ink-950, 0.45) 0%, rgba($ink-900, 0.35) 100%);
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Gold — warm gold wash
+// ──────────────────────────────────────────────
+
+.page-header--gold {
+    background: $ink-900;
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 15% 50%, rgba($gold-500, 0.15), transparent 50%),
+            radial-gradient(ellipse at 90% 30%, rgba($gold-400, 0.08), transparent 40%),
+            linear-gradient(160deg, rgba($ink-950, 0.40) 0%, rgba($ink-800, 0.30) 100%);
+    }
+
+    .page-header__pattern {
+        opacity: 0.03;
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba($gold-500, 0.15) 1px, transparent 1px),
+            radial-gradient(circle at 80% 50%, rgba($gold-500, 0.10) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .page-header__accent {
+        width: 80px;
+        background: linear-gradient(90deg, $gold-200, $gold-400, $gold-200);
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Dark — cinematic deep
+// ──────────────────────────────────────────────
+
+.page-header--dark {
+    background: $ink-950;
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 50% 0%, rgba($ink-700, 0.15), transparent 50%),
+            linear-gradient(180deg, rgba($ink-950, 0.50) 0%, rgba($ink-900, 0.38) 100%);
+    }
+
+    .page-header__pattern {
+        opacity: 0.06;
+        background-image:
+            linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.5) 50%, transparent 51%),
+            linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.5) 50%, transparent 51%);
+        background-size: 80px 80px;
+    }
+
+    .page-header__eyebrow::before {
+        background: linear-gradient(90deg, $gold-400, rgba($gold-400, 0));
+        width: 40px;
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Gradient — diagonal sweep
+// ──────────────────────────────────────────────
+
+.page-header--gradient {
+    background: linear-gradient(135deg, $ink-950 0%, $ink-800 40%, $ink-700 100%);
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 70% 20%, rgba($gold-500, 0.10), transparent 40%),
+            linear-gradient(to right, rgba($ink-950, 0.35) 0%, transparent 100%);
+    }
+
+    .page-header__pattern {
+        opacity: 0.035;
+        background-image:
+            repeating-linear-gradient(-45deg,
+                transparent,
+                transparent 40px,
+                rgba(255, 255, 255, 0.4) 40px,
+                rgba(255, 255, 255, 0.4) 41px);
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Elegant — asymmetric gold accents
+// ──────────────────────────────────────────────
+
+.page-header--elegant {
+    background: $ink-950;
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 0% 100%, rgba($gold-500, 0.12), transparent 40%),
+            radial-gradient(ellipse at 100% 0%, rgba($gold-400, 0.06), transparent 35%),
+            linear-gradient(150deg, rgba($ink-950, 0.42) 0%, rgba($ink-900, 0.32) 100%);
+    }
+
+    .page-header__pattern {
+        opacity: 0.025;
+        background-image:
+            repeating-linear-gradient(60deg,
+                transparent,
+                transparent 80px,
+                rgba($gold-500, 0.3) 80px,
+                rgba($gold-500, 0.3) 81px);
+    }
+
+    .page-header__accent {
+        width: 4px;
+        height: 40px;
+        background: linear-gradient(180deg, $gold-300, transparent);
+    }
+}
+
+// ──────────────────────────────────────────────
+// VARIANT: Minimal — clean, restrained
+// ──────────────────────────────────────────────
+
+.page-header--minimal {
+    background: linear-gradient(180deg, $ink-950 0%, $ink-900 100%);
+
+    .page-header__overlay {
+        background:
+            radial-gradient(ellipse at 50% 30%, rgba($gold-500, 0.06), transparent 50%),
+            linear-gradient(180deg, rgba($ink-950, 0.30) 0%, rgba($ink-900, 0.20) 100%);
+    }
+
+    .page-header__pattern {
+        display: none;
+    }
+
+    .page-header__accent {
+        width: 40px;
+        height: 2px;
+        background: $gold-400;
+        opacity: 0.6;
+    }
+}
+
+// ──────────────────────────────────────────────
+// Bottom fade to cream
+// ──────────────────────────────────────────────
+
+.page-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to top, $surface-warm 0%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
+}

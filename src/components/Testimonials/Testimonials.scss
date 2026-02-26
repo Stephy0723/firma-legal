@@ -1,0 +1,119 @@
+@use "../../styles/base/variables" as *;
+@use "../../styles/base/mixins" as *;
+
+.testimonials {
+    position: relative;
+
+    &__intro {
+        color: $text-secondary;
+        max-width: 58ch;
+        margin-bottom: 2.5rem;
+        line-height: 1.75;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+}
+
+.testimonial-card {
+    @include card-premium;
+    @include elevated-hover;
+    border-radius: $radius-lg;
+    padding: 1.8rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+
+    // Subtle gold accent at top
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, $gold-300, $gold-500, $gold-300);
+        border-radius: 3px;
+        transition: width $duration-mid $ease-emphasis;
+    }
+
+    &:hover::before {
+        width: 70px;
+    }
+
+    // Quote icon
+    &__quote-icon {
+        font-size: 1.3rem;
+        color: $gold-200;
+        margin-bottom: 0.6rem;
+    }
+
+    // Stars
+    &__stars {
+        display: flex;
+        gap: 0.2rem;
+        margin-bottom: 0.9rem;
+
+        svg {
+            font-size: 0.85rem;
+            color: $gold-400;
+        }
+    }
+
+    // Quote text
+    &__text {
+        color: $text-secondary;
+        font-size: $fs-body;
+        line-height: 1.75;
+        font-style: italic;
+        margin-bottom: 1.4rem;
+    }
+
+    // Author
+    &__author {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+
+        img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid $gold-100;
+        }
+
+        strong {
+            display: block;
+            font-family: $font-heading;
+            font-size: 0.95rem;
+            color: $ink-900;
+            font-weight: 600;
+        }
+
+        span {
+            font-size: $fs-caption;
+            color: $muted;
+            letter-spacing: 0.02em;
+        }
+    }
+}
+
+// ──────────────────────────────────────────────
+// Responsive
+// ──────────────────────────────────────────────
+
+@include tablet {
+    .testimonials__grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@include desktop {
+    .testimonials__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

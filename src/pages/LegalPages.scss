@@ -1,0 +1,48 @@
+﻿@use "../styles/base/variables" as *;
+
+.legal-page {
+  padding-top: 4.5rem;
+  padding-bottom: 5rem;
+
+  &__card {
+    max-width: 900px;
+    margin-inline: auto;
+    padding: clamp(1.25rem, 2vw, 2rem);
+    border-radius: \$radius-lg;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(252, 249, 242, 0.96) 100%
+    );
+    border: 1px solid rgba($gold-400, 0.2);
+    box-shadow: $shadow-soft;
+  }
+
+  &__updated {
+    margin-bottom: 1.5rem;
+    color: rgba($ink-800, 0.78);
+    font-size: $fs-small;
+    font-weight: 600;
+  }
+
+  h2 {
+    margin-top: 1.4rem;
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+    color: $ink-900;
+  }
+
+  p {
+    color: rgba($ink-900, 0.86);
+  }
+
+  a {
+    color: $ink-900;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: $gold-600;
+    }
+  }
+}

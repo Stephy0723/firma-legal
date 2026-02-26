@@ -1,0 +1,173 @@
+@use "../../styles/base/variables" as *;
+@use "../../styles/base/mixins" as *;
+
+.contact {
+  position: relative;
+
+  // Warm background wash
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba($gold-500, 0.10), transparent 42%),
+      linear-gradient(180deg,
+        rgba($surface-warm, 0.70) 0%,
+        rgba($surface-3, 0.85) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .section {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__intro {
+    color: $text-secondary;
+    max-width: 56ch;
+    margin-bottom: 2rem;
+    line-height: 1.75;
+  }
+
+  // Two-column layout
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  // ── Form card ──
+  &__form {
+    @include glass(0.62);
+    padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.2rem);
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lux;
+    display: grid;
+    gap: 1rem;
+
+    input,
+    textarea,
+    select {
+      @include input-base;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath fill='%236b8a7d' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      justify-self: start;
+      padding: 0.85rem 2rem;
+      font-size: $fs-small;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  // Two inputs in a row
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  // ── Info card ──
+  &__info {
+    @include card-premium;
+    padding: 1.8rem 1.5rem;
+    border-radius: $radius-lg;
+
+    h3 {
+      font-family: $font-heading;
+      font-size: $fs-h3;
+      color: $ink-900;
+      margin-bottom: 1.3rem;
+      font-weight: 600;
+    }
+  }
+
+  &__info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.9rem 0;
+
+    &+& {
+      border-top: 1px solid $border;
+    }
+
+    strong {
+      display: block;
+      font-size: $fs-small;
+      font-weight: 600;
+      color: $ink-900;
+      margin-bottom: 0.15rem;
+    }
+
+    p {
+      font-size: $fs-small;
+      color: $muted;
+      line-height: 1.55;
+      margin: 0;
+    }
+  }
+
+  &__info-icon {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    font-size: 1rem;
+    color: $gold-500;
+  }
+
+  // ── Map (full-width, compact) ──
+  &__map {
+    margin-top: 1.5rem;
+    border-radius: $radius-md;
+    overflow: hidden;
+    box-shadow: $shadow-soft;
+    border: 1px solid $border;
+
+    iframe {
+      display: block;
+      width: 100%;
+    }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Responsive
+// ──────────────────────────────────────────────
+
+@include tablet {
+  .contact {
+    &__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+@include desktop {
+  .contact {
+    &__layout {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+  }
+}
+
+@include mobile-only {
+  .contact__form button {
+    justify-self: stretch;
+  }
+}
