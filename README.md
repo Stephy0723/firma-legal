@@ -1,5 +1,37 @@
 # React + TypeScript + Vite
 
+## Deploy en GitHub Pages
+
+Este proyecto ya quedó configurado para publicar en GitHub Pages con GitHub Actions.
+
+### 1) Verifica el nombre del repositorio
+
+En [vite.config.ts](c:\Users\salyl\firma-legal\vite.config.ts) está definido:
+
+`base: '/firma-legal/'`
+
+Si tu repositorio tiene otro nombre, cambia `firma-legal` por el nombre real.
+
+### 2) Sube los cambios a `main`
+
+Al hacer push a `main`, se ejecuta el workflow:
+
+[.github/workflows/deploy.yml](c:\Users\salyl\firma-legal\.github\workflows\deploy.yml)
+
+### 3) Activa GitHub Pages
+
+En GitHub:
+
+1. `Settings`
+2. `Pages`
+3. `Build and deployment -> Source`
+4. Selecciona `Deploy from a branch`
+5. Branch: `gh-pages` / folder: `/ (root)`
+
+La URL quedará similar a:
+
+`https://TU_USUARIO.github.io/firma-legal/`
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
