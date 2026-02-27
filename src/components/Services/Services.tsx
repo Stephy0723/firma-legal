@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {
   FaBalanceScale,
-  FaBuilding,
-  FaGavel,
+  FaPassport,
   FaUsers,
-  FaFileContract,
-  FaGlobe,
+  FaBuilding,
+  FaCar,
+  FaFileSignature,
   FaArrowLeft,
   FaCheckCircle,
 } from "react-icons/fa";
@@ -22,98 +22,80 @@ interface ServiceData {
 const services: ServiceData[] = [
   {
     icon: FaBalanceScale,
-    title: "Derecho Civil",
-    description:
-      "Contratos, obligaciones, responsabilidad civil y reclamaciones patrimoniales.",
+    title: "Asesoramiento en Litis Judiciales",
+    description: "Representacion y estrategia legal en procesos judiciales.",
     fullDescription:
-      "Nuestro departamento de Derecho Civil cuenta con especialistas en la protección de los derechos patrimoniales y personales. Brindamos asesoría integral en la redacción, negociación e interpretación de contratos, así como en la resolución de conflictos civiles tanto por vía judicial como extrajudicial.",
+      "Brindamos asesoria legal integral para litis judiciales, acompanando cada etapa del proceso con enfoque tecnico, estrategia procesal y defensa de sus derechos.",
     details: [
-      "Redacción y revisión de contratos civiles y mercantiles",
-      "Reclamaciones por daños y perjuicios",
-      "Cobro judicial y extrajudicial de deudas",
-      "Derecho inmobiliario y registral",
-      "Disputas sobre propiedad y posesión",
-      "Responsabilidad civil contractual y extracontractual",
+      "Evaluacion y estrategia del caso",
+      "Representacion en audiencias y tribunales",
+      "Preparacion de escritos judiciales",
+      "Seguimiento completo del proceso",
     ],
   },
   {
-    icon: FaGavel,
-    title: "Derecho Penal",
-    description:
-      "Defensa técnica integral en todas las etapas del proceso penal.",
+    icon: FaPassport,
+    title: "Procesos Migratorios",
+    description: "Visados, permisos para menor y tramites migratorios.",
     fullDescription:
-      "Contamos con un equipo de penalistas con amplia experiencia en la defensa y representación de personas físicas y jurídicas ante la jurisdicción penal. Intervenimos desde la fase de investigación hasta los recursos extraordinarios, garantizando una defensa técnica sólida y estratégica.",
+      "Gestionamos procesos migratorios con acompanamiento personalizado, asegurando cumplimiento legal y agilidad en tramites para personas y familias.",
     details: [
-      "Defensa en fase de investigación y juicio oral",
-      "Recursos de apelación y casación",
-      "Delitos económicos y financieros",
-      "Delitos contra la propiedad y patrimonio",
-      "Asistencia en detenciones y medidas cautelares",
-      "Querella y acusación particular",
-    ],
-  },
-  {
-    icon: FaBuilding,
-    title: "Derecho Corporativo",
-    description:
-      "Estructuras societarias, fusiones, adquisiciones y gobierno corporativo.",
-    fullDescription:
-      "Asesoramos a empresas nacionales e internacionales en todas las fases de su ciclo de vida empresarial. Desde la constitución societaria hasta operaciones complejas de fusión y adquisición, nuestro equipo garantiza el cumplimiento normativo y la optimización de estructuras corporativas.",
-    details: [
-      "Constitución y disolución de sociedades",
-      "Fusiones, adquisiciones y reestructuraciones",
-      "Gobierno corporativo y compliance",
-      "Contratos comerciales y joint ventures",
-      "Due diligence legal",
-      "Asesoría a juntas directivas y accionistas",
+      "Solicitud y renovacion de visados",
+      "Permisos de viaje para menor",
+      "Regularizacion y documentacion migratoria",
+      "Asesoria en requisitos y expedientes",
     ],
   },
   {
     icon: FaUsers,
-    title: "Derecho Familiar",
-    description:
-      "Divorcios, custodia, pensiones alimenticias y sucesiones.",
+    title: "Derecho de Familia",
+    description: "Divorcios, manutencion y custodia.",
     fullDescription:
-      "Tratamos cada caso familiar con la mayor sensibilidad y determinación. Nuestros especialistas en derecho de familia comprenden la delicadeza de estas situaciones y trabajan para alcanzar soluciones que protejan los intereses de todas las partes involucradas, especialmente de los menores.",
+      "Atendemos asuntos familiares con sensibilidad y firmeza juridica, buscando soluciones claras para proteger sus intereses y los de sus hijos.",
     details: [
-      "Divorcios contenciosos y de mutuo acuerdo",
-      "Custodia y régimen de visitas",
-      "Pensiones alimenticias y compensatorias",
-      "Liquidación de bienes gananciales",
-      "Adopciones y filiación",
-      "Testamentos, herencias y sucesiones",
+      "Divorcios de mutuo acuerdo y contenciosos",
+      "Manutencion y pension alimentaria",
+      "Custodia y regimen de visitas",
+      "Acuerdos familiares y ejecucion judicial",
     ],
   },
   {
-    icon: FaFileContract,
-    title: "Derecho Laboral",
-    description:
-      "Asesoría en relaciones laborales, contratos y litigios sociales.",
+    icon: FaBuilding,
+    title: "Servicios Inmobiliarios",
+    description: "Tasacion y transferencia de inmuebles.",
     fullDescription:
-      "Ofrecemos representación y asesoramiento integral en materia laboral tanto a empleadores como a trabajadores. Nuestro objetivo es prevenir conflictos laborales y, cuando estos surgen, resolverlos de la manera más eficiente y favorable para nuestros clientes.",
+      "Ofrecemos asesoria y gestion en operaciones inmobiliarias para garantizar transacciones seguras, documentadas y conforme a derecho.",
     details: [
-      "Despidos improcedentes y nulos",
-      "Negociación y redacción de contratos de trabajo",
-      "Acoso laboral y discriminación",
-      "Reclamaciones salariales y de prestaciones",
-      "Seguridad social y accidentes laborales",
-      "Mediación y conciliación laboral",
+      "Tasacion de inmuebles",
+      "Transferencia y registro de propiedad",
+      "Revision de titulos y cargas",
+      "Acompanamiento legal en compraventas",
     ],
   },
   {
-    icon: FaGlobe,
-    title: "Derecho Internacional",
-    description:
-      "Arbitraje comercial, contratos internacionales y disputas transfronterizas.",
+    icon: FaCar,
+    title: "Traspaso de Matricula de Vehiculo",
+    description: "Gestion legal para traspasos vehiculares.",
     fullDescription:
-      "Nuestra práctica internacional se especializa en la resolución de disputas comerciales transfronterizas y el asesoramiento en operaciones de comercio internacional. Contamos con experiencia ante tribunales arbitrales internacionales y una red de corresponsales en diversas jurisdicciones.",
+      "Realizamos el proceso de traspaso de matricula de vehiculo de forma segura y ordenada, verificando requisitos y documentacion para evitar contingencias.",
     details: [
-      "Arbitraje comercial internacional",
-      "Contratos de comercio exterior",
-      "Inversión extranjera y regulación",
-      "Tratados bilaterales de inversión",
-      "Resolución de disputas transfronterizas",
-      "Compliance y normativa internacional",
+      "Revision de documentacion del vehiculo",
+      "Preparacion de expediente de traspaso",
+      "Gestion de firmas y legalizaciones",
+      "Seguimiento del tramite hasta su cierre",
+    ],
+  },
+  {
+    icon: FaFileSignature,
+    title: "Actos Notariales y Contratos",
+    description: "Elaboracion de todo tipo de actos notariales y contratos.",
+    fullDescription:
+      "Redactamos y formalizamos actos notariales y contratos con precision juridica, adaptados a sus necesidades personales, familiares, comerciales e inmobiliarias.",
+    details: [
+      "Contratos civiles y comerciales",
+      "Poderes, declaraciones y autenticas",
+      "Actos notariales diversos",
+      "Revision legal y formalizacion documental",
     ],
   },
 ];
@@ -123,22 +105,61 @@ const Services = () => {
 
   const openDetail = (index: number) => {
     setActiveService(index);
-    // scroll to top of section
     document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" });
   };
+
   const closeDetail = () => setActiveService(null);
 
   return (
     <section id="servicios" className="services section reveal">
-      <p className="eyebrow">Áreas de Práctica</p>
+      <p className="eyebrow">Areas de Practica</p>
       <h2>Servicios legales integrales</h2>
       <p className="services__intro">
-        Ofrecemos cobertura completa en las principales ramas del derecho, con un
-        equipo de especialistas dedicados a cada área. Seleccione un servicio para
-        conocer más detalles.
+        Ofrecemos asesoria y representacion en las areas legales mas solicitadas,
+        con acompanamiento profesional y enfoque practico en cada gestion.
       </p>
+      <div className="services__offer">
+        <div className="services__offer-head">
+          <p className="services__offer-eyebrow">Servicios Legales e Integrales</p>
+          <h3>Que podemos ofrecer?</h3>
+        </div>
+        <div className="services__offer-layout">
+          <ul className="services__offer-list">
+            <li>
+              <FaCheckCircle />
+              Asesoramiento en litis judiciales
+            </li>
+            <li>
+              <FaCheckCircle />
+              Procesos migratorios, visados y permisos para menor
+            </li>
+            <li>
+              <FaCheckCircle />
+              Divorcios, manutencion y custodia
+            </li>
+            <li>
+              <FaCheckCircle />
+              Servicios inmobiliarios, tasacion y transferencia de inmuebles
+            </li>
+            <li>
+              <FaCheckCircle />
+              Traspaso de matricula de vehiculo
+            </li>
+            <li>
+              <FaCheckCircle />
+              Elaboracion de actos notariales y contratos
+            </li>
+          </ul>
+          <p className="services__offer-copy">
+            JR&L es una firma de abogados que proporciona asesoramiento legal
+            experto, representacion en procedimientos legales y gestion del
+            cumplimiento de las leyes en diversas areas. Nuestro trabajo
+            contribuye al funcionamiento efectivo del sistema legal en favor de
+            los intereses y valores de nuestros clientes.
+          </p>
+        </div>
+      </div>
 
-      {/* Detail View */}
       {activeService !== null && (
         <div className="service-detail">
           <button className="service-detail__back" onClick={closeDetail}>
@@ -161,7 +182,7 @@ const Services = () => {
           </div>
 
           <div className="service-detail__content">
-            <h4>Servicios que incluye esta área</h4>
+            <h4>Servicios que incluye esta area</h4>
             <ul className="service-detail__list">
               {services[activeService].details.map((detail, i) => (
                 <li key={i}>
@@ -172,7 +193,9 @@ const Services = () => {
             </ul>
 
             <div className="service-detail__cta-area">
-              <p>¿Necesita asesoría en {services[activeService].title.toLowerCase()}?</p>
+              <p>
+                Necesita asesoria en {services[activeService].title.toLowerCase()}?
+              </p>
               <button
                 onClick={() =>
                   document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" })
@@ -185,10 +208,9 @@ const Services = () => {
         </div>
       )}
 
-      {/* Grid — shows all when no detail, or "others" when viewing a detail */}
       <div className="services__grid-wrapper">
         {activeService !== null && (
-          <h4 className="services__other-title">Otras áreas de práctica</h4>
+          <h4 className="services__other-title">Otros servicios</h4>
         )}
         <div className="services__grid">
           {services
@@ -206,7 +228,7 @@ const Services = () => {
                 <service.icon className="icon" />
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>
-                <span className="service-card__more">Ver detalles →</span>
+                <span className="service-card__more">Ver detalles {"->"}</span>
               </article>
             ))}
         </div>

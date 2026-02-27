@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   FaLinkedinIn,
   FaEnvelope,
@@ -7,6 +7,12 @@ import {
   FaTrophy,
 } from "react-icons/fa";
 import "./Team.scss";
+import eleineKarysRosaGilPhoto from "../../assets/FTS-JRLinversiones/eleine_karys_rosa_gil.jpg";
+import juanFranciscoRosaCabralPhoto from "../../assets/FTS-JRLinversiones/lic._juan_francisco_rosa_cabral.jpg";
+import juanCarlosPerezPhoto from "../../assets/FTS-JRLinversiones/juan_carlos_pérez.jpg";
+import merlinFranciscaFamiliaPhoto from "../../assets/FTS-JRLinversiones/Merlín Francisca Familia.jpg";
+import luzMilagrosRamirezPhoto from "../../assets/FTS-JRLinversiones/Luz Milagros Ramírez.jpeg";
+import nelsonRafaelAcostaBritoPhoto from "../../assets/FTS-JRLinversiones/Nelson Rafael Acosta Brito.jpg";
 
 interface TeamMember {
   name: string;
@@ -22,79 +28,124 @@ interface TeamMember {
 
 const teamMembers: TeamMember[] = [
   {
-    name: "Dr. Carlos Méndez",
-    role: "Socio Fundador",
-    specialty: "Derecho Penal & Litigación",
+    name: "Eleine Karys Rosa Gil",
+    role: "Abogada",
+    specialty: "Derecho",
     image:
-      "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80",
-    bio: "Más de 25 años liderando casos de alto perfil en tribunales nacionales e internacionales. Reconocido por su capacidad estratégica y determinación en la defensa de sus clientes. Su enfoque combina rigor académico con una profunda comprensión práctica del sistema judicial.",
+      eleineKarysRosaGilPhoto,
+    bio: "A lo largo de su formacion y experiencia, ha complementado su perfil profesional como Abogada JR con diversos cursos y diplomados que fortalecen sus conocimientos y le permiten tener una vision integral en diferentes areas.",
     linkedin: "#",
-    email: "cmendez@jrlasociados.com",
+    email: "jrylinversiones@gmail.com",
     education: [
-      "Doctor en Derecho — Universidad Autónoma de Santo Domingo",
-      "Máster en Derecho Penal Internacional — Universidad de Salamanca",
+      "Negocios moviles",
+      "Regulacion de la interaccion digital",
+      "Dialogo",
+      "Fideicomiso de planificacion sucesoral en la Republica Dominicana",
+      "Alquileres inmobiliarios y administracion de propiedades",
+      "Diplomado en bienes raices",
+      "Asesor consular Estados Unidos",
     ],
     achievements: [
-      "Más de 200 casos penales ganados",
-      "Miembro del Colegio de Abogados de la RD",
-      "Conferencista internacional en derecho penal",
+      "Vision integral para diferentes areas juridicas",
+      "Competencias para el desarrollo de soluciones innovadoras",
+      "Aporte de valor en el ambito juridico y profesional",
     ],
   },
   {
-    name: "Dra. Laura Gómez",
-    role: "Socia Directora",
-    specialty: "Derecho Civil & Patrimonial",
+    name: "Lic. Juan Francisco Rosa Cabral",
+    role: "Especialista",
+    specialty: "Derecho Penal",
     image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&q=80",
-    bio: "Especialista en contratos complejos y protección patrimonial para personas de alto perfil. Su enfoque meticuloso y su capacidad negociadora la convierten en una aliada invaluable para nuestros clientes en disputas civiles de gran envergadura.",
+      juanFranciscoRosaCabralPhoto,
+    bio: "Nacido en Constanza, Republica Dominicana, el 29 de junio de 1974. Egresado de la Universidad Autonoma de Santo Domingo en el ano 2000. Se ha especializado en Derecho Penal, logrando un alto porcentaje de casos resueltos dentro del buffet juridico.",
     linkedin: "#",
-    email: "lgomez@jrlasociados.com",
+    email: "jrylinversiones@gmail.com",
     education: [
-      "Doctora en Derecho Civil — PUCMM",
-      "Especialización en Derecho Inmobiliario — UNIBE",
+      "Egresado de la Universidad Autonoma de Santo Domingo (2000)",
+      "Formacion especializada en Derecho Penal",
     ],
     achievements: [
-      "Referente en litigios patrimoniales de gran cuantía",
-      "Publicaciones en revistas jurídicas nacionales",
-      "Mediadora certificada por la Cámara de Comercio",
+      "Alto porcentaje de casos penales resueltos",
+      "Experiencia consolidada en litigacion penal",
+      "Trayectoria destacada en el buffet juridico",
     ],
   },
   {
-    name: "Dr. Andrés Castillo",
-    role: "Socio Senior",
-    specialty: "Derecho Corporativo & M&A",
+    name: "Juan Carlos Perez",
+    role: "Encargado",
+    specialty: "Departamento de Correspondencia",
     image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&q=80",
-    bio: "Experto en fusiones, adquisiciones y reestructuración empresarial con proyección internacional. Ha asesorado a más de 50 empresas en procesos de transformación corporativa, acumulando experiencia en transacciones multimillonarias.",
+      juanCarlosPerezPhoto,
+    bio: "Nacido en Santo Domingo el 22 de enero de 1982. Responsable de transportar, visitar, recibir y entregar documentos, paquetes y noticias en la institucion. Su compromiso con la puntualidad, la seguridad y la confidencialidad garantiza eficiencia en los procesos legales.",
     linkedin: "#",
-    email: "acastillo@jrlasociados.com",
+    email: "jrylinversiones@gmail.com",
     education: [
-      "Doctor en Derecho Empresarial — Universidad Iberoamericana",
-      "MBA — BARNA Business School",
+      "Gestion de diligencias documentales",
+      "Manejo de correspondencia institucional",
     ],
     achievements: [
-      "Asesor legal de más de 50 empresas en RD",
-      "Experiencia en transacciones superiores a USD 100M",
-      "Miembro de la Asociación de Derecho Corporativo",
+      "Puntualidad y eficiencia en diligencias",
+      "Seguridad y confidencialidad en entregas",
+      "Apoyo clave para la operacion legal",
     ],
   },
   {
-    name: "Dra. Valentina Herrera",
-    role: "Directora de Área",
-    specialty: "Derecho Internacional & Arbitraje",
+    name: "Merlin Francisca Familia",
+    role: "Abogada",
+    specialty: "Derecho Procesal Civil, Administrativo, Laboral y Ley 155-17",
     image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80",
-    bio: "Formada en La Haya, lidera nuestra práctica de arbitraje y resolución de controversias internacionales. Su experiencia multicultural y dominio de tres idiomas la hacen clave para disputas transfronterizas complejas.",
+      merlinFranciscaFamiliaPhoto,
+    bio: "Abogada dominicana, egresada de UAPA (2020). Experta en Derecho Civil, contratos, embargos, divorcios, reconocimiento de paternidad y cobros judiciales. Ha coordinado departamentos legales en instituciones privadas y destaca en liderazgo, negociacion y manejo de procesos juridicos.",
     linkedin: "#",
-    email: "vherrera@jrlasociados.com",
+    email: "jrylinversiones@gmail.com",
     education: [
-      "Máster en Derecho Internacional — Universidad de La Haya",
-      "Licenciada en Derecho — UASD",
+      "Egresada de UAPA (2020)",
+      "Formacion en Derecho Procesal Civil y Administrativo",
+      "Formacion en Derecho Laboral y Ley 155-17",
     ],
     achievements: [
-      "Participación en arbitrajes ante la CCI y CIADI",
-      "Especialista en tratados bilaterales de inversión",
-      "Bilingüe: Español, Inglés, Francés",
+      "Coordinacion de departamentos legales en instituciones privadas",
+      "Experiencia en cobros judiciales y procesos civiles",
+      "Fortalezas en liderazgo y negociacion",
+    ],
+  },
+  {
+    name: "Lic. Luz Milagros Ramirez",
+    role: "Abogada",
+    specialty: "Derecho Civil, Migratorio, Laboral y de Familia",
+    image:
+      luzMilagrosRamirezPhoto,
+    bio: "Abogada dominicana, egresada de UTESA (2018). Tambien es licenciada en Psicologia Laboral (UTESA, 2011) y cuenta con habilitacion docente (2018). Ha sido Gerente de Inversiones JR & L, S.R.L y laboro en una institucion financiera por mas de una decada, desarrollando experiencia en gestion humana, negociacion y procesos legales.",
+    linkedin: "#",
+    email: "jrylinversiones@gmail.com",
+    education: [
+      "Licenciatura en Derecho - UTESA (2018)",
+      "Licenciatura en Psicologia Laboral - UTESA (2011)",
+      "Habilitacion docente (2018)",
+    ],
+    achievements: [
+      "Alto porcentaje de exito en cobros compulsivos",
+      "Mas del 90% de casos migratorios resueltos",
+      "Experiencia en gestion humana y negociacion",
+    ],
+  },
+  {
+    name: "Dr. Nelson Rafael Acosta Brito",
+    role: "Abogado",
+    specialty: "Derecho de Familia, Inmobiliario y Demandas Judiciales",
+    image:
+      nelsonRafaelAcostaBritoPhoto,
+    bio: "Nacido el 1 de marzo de 1959 en Laguna Salada, Valverde. Inicio sus estudios en la Universidad Central del Este en 1979, obteniendo el titulo de Doctor en Derecho en 1986. Ha ejercido en derecho penal, transito, civil e inmobiliario y ha participado en casos de renombre con juristas como Carlos Balcacer. Logro sentencias favorables con empresas internacionales como Lloyds en Inglaterra entre 1996 y 2009.",
+    linkedin: "#",
+    email: "jrylinversiones@gmail.com",
+    education: [
+      "Doctor en Derecho - Universidad Central del Este (1986)",
+      "Estudios iniciados en la UCE en 1979",
+    ],
+    achievements: [
+      "Experiencia en derecho penal, transito, civil e inmobiliario",
+      "Participacion en casos de alto perfil juridico",
+      "Sentencias favorables en litigios internacionales (1996-2009)",
     ],
   },
 ];
@@ -113,12 +164,11 @@ const Team = () => {
       <p className="eyebrow">Nuestro Equipo</p>
       <h2>Profesionales de excelencia</h2>
       <p className="team__intro">
-        Cada miembro de nuestro equipo aporta una combinación única de experiencia
-        académica, trayectoria profesional y dedicación al cliente. Seleccione un
-        perfil para conocer más.
+        Cada miembro de nuestro equipo aporta una combinacion unica de experiencia
+        academica, trayectoria profesional y dedicacion al cliente. Seleccione un
+        perfil para conocer mas.
       </p>
 
-      {/* Profile Detail View */}
       {activeMember !== null && (
         <div className="member-detail">
           <button className="member-detail__back" onClick={closeProfile}>
@@ -163,7 +213,7 @@ const Team = () => {
               <div className="member-detail__section">
                 <h4>
                   <FaGraduationCap className="member-detail__section-icon" />
-                  Formación Académica
+                  Formacion Academica
                 </h4>
                 <ul>
                   {teamMembers[activeMember].education.map((edu, i) => (
@@ -199,7 +249,6 @@ const Team = () => {
         </div>
       )}
 
-      {/* Grid — all when no detail, others when viewing a profile */}
       <div className="team__grid-wrapper">
         {activeMember !== null && (
           <h4 className="team__other-title">Otros miembros del equipo</h4>
@@ -237,3 +286,4 @@ const Team = () => {
 };
 
 export default Team;
+
