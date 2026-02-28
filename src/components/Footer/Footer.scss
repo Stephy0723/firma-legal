@@ -62,6 +62,15 @@
     }
   }
 
+  &__ampersand {
+    margin-inline: 0.04rem;
+    font-family: $font-body;
+    font-size: 0.9em;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: #fff;
+  }
+
   &__tagline {
     font-size: $fs-small;
     color: rgba(255, 255, 255, 0.50);

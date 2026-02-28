@@ -1,0 +1,29 @@
+@media (min-width: 768px) {
+  .home-page__team-testimonials {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-page__team-testimonials > .testimonials {
+    order: 1;
+  }
+
+  .home-page__team-testimonials > .team {
+    order: 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page__team-testimonials {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-page__team-testimonials > .team {
+    order: 1;
+  }
+
+  .home-page__team-testimonials > .testimonials {
+    order: 2;
+  }
+}

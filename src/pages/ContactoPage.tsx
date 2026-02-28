@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import PageHeader from "../components/PageHeader/PageHeader";
 import Contact from "../components/Contact/Contact";
+import fachadaImage from "../assets/Fachada.png";
 
 const ContactoPage = () => {
     useEffect(() => {
@@ -28,7 +29,7 @@ const ContactoPage = () => {
                 eyebrow="Contacto"
                 title="Estamos para ayudarle"
                 subtitle="Agende una consulta gratuita y permítanos analizar su caso con la discreción y profesionalismo que usted merece."
-                backgroundImage="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80"
+                backgroundImage={fachadaImage}
             />
             <Contact />
         </>

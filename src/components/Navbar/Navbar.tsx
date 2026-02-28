@@ -22,7 +22,7 @@ const Navbar = () => {
     <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
       <div className="navbar__inner">
         <NavLink to="/" className="navbar__logo">
-          JR&L<span> Asuntos Jurídicos</span>
+          JR<span className="navbar__ampersand">&</span>L<span> Asuntos Jurídicos</span>
         </NavLink>
 
         <button

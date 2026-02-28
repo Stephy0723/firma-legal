@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="footer__main">
         <div className="footer__col">
           <Link to="/" className="footer__brand">
-            JR&L<span> Asuntos Juridicos</span>
+            JR<span className="footer__ampersand">&</span>L<span> Asuntos Juridicos</span>
           </Link>
           <p className="footer__tagline">
             Excelencia juridica estrategica al servicio de su patrimonio y sus
