@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FaBalanceScale,
   FaPassport,
@@ -6,6 +6,7 @@ import {
   FaBuilding,
   FaCar,
   FaFileSignature,
+  FaSearch,
   FaArrowLeft,
   FaCheckCircle,
 } from "react-icons/fa";
@@ -98,14 +99,35 @@ const services: ServiceData[] = [
       "Revision legal y formalizacion documental",
     ],
   },
+  {
+    icon: FaSearch,
+    title: "Perito Grafico",
+    description: "Analisis forense de documentos, firmas y escrituras.",
+    fullDescription:
+      "Ofrecemos servicios especializados de peritaje grafico y documentoscopio, con analisis forense riguroso de documentos, firmas y elementos indubitativos relacionados con procesos legales y judiciales.",
+    details: [
+      "Analisis e investigacion de documentos",
+      "Peritaje de firmas y escrituras",
+      "Deteccion de alteraciones documentales",
+      "Evaluacion de procesos de impresion y escritura manual",
+      "Reconocimiento de documentos fraudulentos",
+      "Autenticacion documental forense",
+    ],
+  },
 ];
 
 const Services = () => {
   const [activeService, setActiveService] = useState<number | null>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeService !== null && detailRef.current) {
+      detailRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeService]);
 
   const openDetail = (index: number) => {
     setActiveService(index);
-    document.getElementById("servicios")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const closeDetail = () => setActiveService(null);
@@ -149,6 +171,10 @@ const Services = () => {
               <FaCheckCircle />
               Elaboracion de actos notariales y contratos
             </li>
+            <li>
+              <FaCheckCircle />
+              Perito grafico y analisis forense documental
+            </li>
           </ul>
           <p className="services__offer-copy">
             JR&L es una firma de abogados que proporciona asesoramiento legal
@@ -161,7 +187,7 @@ const Services = () => {
       </div>
 
       {activeService !== null && (
-        <div className="service-detail">
+        <div className="service-detail" ref={detailRef}>
           <button className="service-detail__back" onClick={closeDetail}>
             <FaArrowLeft /> Volver a todos los servicios
           </button>

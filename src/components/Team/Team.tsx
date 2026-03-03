@@ -13,6 +13,7 @@ import juanCarlosPerezPhoto from "../../assets/FTS-JRLinversiones/juan_carlos_p�
 import merlinFranciscaFamiliaPhoto from "../../assets/FTS-JRLinversiones/Merlín Francisca Familia.jpg";
 import luzMilagrosRamirezPhoto from "../../assets/FTS-JRLinversiones/Luz Milagros Ramírez.jpeg";
 import nelsonRafaelAcostaBritoPhoto from "../../assets/FTS-JRLinversiones/Nelson Rafael Acosta Brito.jpg";
+import irisYeseniaTejadaPhoto from "../../assets/FTS-JRLinversiones/Iris Yesenia Tejada.jpg";
 
 interface TeamMember {
   name: string;
@@ -146,6 +147,28 @@ const teamMembers: TeamMember[] = [
       "Puntualidad y eficiencia en diligencias",
       "Seguridad y confidencialidad en entregas",
       "Apoyo clave para la operacion legal",
+    ],
+  },
+  {
+    name: "Iris Yesenia Tejada",
+    role: "Perito Grafico",
+    specialty: "Documentoscopia y Analisis Forense",
+    image: irisYeseniaTejadaPhoto,
+    bio: "La Perito en Documentoscopia Iris Yesenia Tejada es una especialista forense con mas de 15 anos de experiencia en el analisis e investigacion de documentos, firmas y elementos indubitativos relacionados con procesos legales y judiciales. Su trayectoria profesional se caracteriza por una solida formacion tecnica, altos estandares eticos y un enfoque riguroso que la posiciona como una referente en su campo. Inicio su carrera como Perito Forense en el Instituto Nacional de Ciencias Forenses (INACIF). Tras su retiro de la institucion publica, establecio su practica privada como perito asesor independiente, ofreciendo servicios especializados a despachos de abogados y consultorias legales, entre otros.",
+    linkedin: "#",
+    email: "jrylinversiones@gmail.com",
+    education: [
+      "Tecnico Profesional en Criminalistica - Bogota, Colombia (2006)",
+      "Analista Forense, mencion Documentoscopia - INACIF (2012)",
+      "Reconocimiento Documentos Fraudulentos & Examen de Documentos de Viaje Avanzado - Office of Antiterrorism Assistance, Diplomatic Security USA (2015)",
+      "Tecnicas de autenticacion documental y analisis de firmas",
+      "Deteccion de alteraciones y evaluacion de procesos de impresion",
+    ],
+    achievements: [
+      "Mas de 15 anos de experiencia en analisis forense documental",
+      "Perito Forense del Instituto Nacional de Ciencias Forenses (INACIF)",
+      "Practica privada como perito asesor independiente",
+      "Referente en documentoscopia y peritaje grafico",
     ],
   },
 ];

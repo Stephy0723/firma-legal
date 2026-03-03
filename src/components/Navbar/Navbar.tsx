@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { FaBars, FaTimes, FaPhoneAlt } from "react-icons/fa";
+import logo from "../../assets/logo.jpeg";
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -22,6 +23,7 @@ const Navbar = () => {
     <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
       <div className="navbar__inner">
         <NavLink to="/" className="navbar__logo">
+          <img src={logo} alt="JR&L Asuntos Jurídicos" className="navbar__logo-img" />
           JR<span className="navbar__ampersand">&</span>L<span> Asuntos Jurídicos</span>
         </NavLink>
 

@@ -53,13 +53,30 @@
     &::before {
       opacity: 0;
     }
+
+    .navbar__logo-img {
+      height: 2.2rem;
+    }
+  }
+
+  // ── Logo image ──
+  &__logo-img {
+    width: auto;
+    height: 2.8rem;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 0;
+    background: none;
+    padding: 0;
+    filter: brightness(1.1);
+    transition: height $duration-mid $ease-standard;
   }
 
   // ── Logo (NavLink) ──
   &__logo {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.05rem;
+    align-items: center;
+    gap: 0.5rem;
     font-family: $font-heading;
     font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
     letter-spacing: 0.05em;
