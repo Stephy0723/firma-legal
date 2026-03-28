@@ -1,0 +1,396 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-appointments-panel {
+  position: relative;
+  min-height: calc(100vh - 120px);
+
+  .appointments-layout {
+    display: flex;
+    gap: 1.5rem;
+    height: calc(100vh - 180px);
+    
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      height: auto;
+    }
+  }
+
+  .left-pane {
+    flex: 2;
+    background: #fff;
+    border-radius: 16px;
+    border: 2px solid #E5E7EB;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+  }
+
+  .patient-card {
+    &__header {
+      background: linear-gradient(135deg, #1E40AF, #1D4ED8);
+      padding: 2rem;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      border-radius: 16px 16px 0 0;
+
+      .patient-info {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+
+        .avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 16px;
+          border: 3px solid rgba(255,255,255,0.2);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .details {
+          h2 {
+            margin: 0 0 0.5rem 0;
+            font-family: $font-heading;
+            font-size: 1.8rem;
+          }
+
+          .client-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+
+            &.new {
+              background: rgba(181, 148, 77, 0.9);
+              color: $ink-950;
+            }
+          }
+        }
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        background: rgba(255,255,255,0.05);
+        padding: 1rem;
+        border-radius: 12px;
+
+        .contact-item {
+          display: flex;
+          &.pending { background: rgba(181, 148, 77, 0.1); color: $gold-700; border-color: $gold-400; }
+          &.confirmed { background: rgba(25, 135, 84, 0.1); color: #198754; border-color: #198754; }
+          &.cancelled { background: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: #dc3545; }
+        }
+      }
+
+      .time-block {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+
+        .time-card {
+          background: rgba(244, 246, 248, 0.6);
+          padding: 1rem;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          border: 1px solid $border;
+
+          .icon {
+            font-size: 1.5rem;
+            color: $gold-600;
+          }
+
+          div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            span {
+              font-size: 0.7rem;
+              text-transform: uppercase;
+              color: $muted;
+              font-weight: 600;
+            }
+
+            strong {
+              color: $ink-950;
+              font-size: 0.95rem;
+            }
+
+            .lawyer-select {
+              border: none;
+              background: transparent;
+              font-weight: 700;
+              color: $ink-950;
+              padding: 0;
+              cursor: pointer;
+              outline: none;
+              border-bottom: 1px dashed $border-medium;
+            }
+          }
+        }
+      }
+
+      .notes-section {
+        background: #fff;
+        border: 1px solid $border;
+        border-radius: 12px;
+        padding: 1.5rem;
+
+        h4 {
+          margin: 0 0 1rem 0;
+          color: $ink-900;
+          font-family: $font-heading;
+        }
+
+        textarea {
+          width: 100%;
+          border: none;
+          resize: vertical;
+          min-height: 150px;
+          font-family: $font-body;
+          font-size: 0.95rem;
+          color: $ink-900;
+          line-height: 1.6;
+          background: rgba(244, 246, 248, 0.3);
+          padding: 1rem;
+          border-radius: 8px;
+          outline: none;
+
+          &:focus {
+            background: rgba(181, 148, 77, 0.05);
+          }
+        }
+      }
+    }
+  }
+
+  .empty-patient-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: $muted;
+    text-align: center;
+    padding: 3rem;
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      color: $border-strong;
+      opacity: 0.5;
+    }
+
+    h3 { color: $ink-800; margin-bottom: 0.5rem; }
+  }
+
+  // RIGHT PANE (Agenda / Small Calendar)
+  .right-pane {
+    flex: 1;
+    min-width: 350px;
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+
+    .schedule-header {
+      padding: 2rem;
+      background: rgba(244, 246, 248, 0.6);
+      border-bottom: 1px solid $border;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .new-appointment-btn {
+        width: 100%;
+        padding: 0.8rem;
+        background: $ink-950;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: $ink-800;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+      }
+
+      .mini-calendar {
+        .month-name {
+          font-weight: 700;
+          color: $ink-950;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+
+        .days-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 0.3rem;
+
+          .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: $ink-800;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover { background: rgba(0,0,0,0.05); }
+
+            &.active {
+              background: $gold-600;
+              color: #fff;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    .agenda-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+
+      h4 {
+        margin: 0 0 1.5rem 0;
+        color: $ink-900;
+        font-family: $font-heading;
+      }
+
+      .empty-agenda {
+        text-align: center;
+        color: $muted;
+        font-style: italic;
+        padding: 2rem 0;
+      }
+
+      .agenda-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.2rem;
+        border-radius: 16px;
+        border: 1px solid transparent;
+        margin-bottom: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+          border-color: $gold-400;
+        }
+
+        &.selected {
+          background: rgba(181, 148, 77, 0.05);
+          border-color: $gold-600;
+          box-shadow: 0 10px 30px rgba(181, 148, 77, 0.15);
+        }
+
+        .time-badge {
+          background: $ink-950;
+          color: #fff;
+          padding: 0.4rem 0.6rem;
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
+        }
+
+        .agenda-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+
+          strong { color: $ink-950; font-size: 0.95rem; }
+          span { color: $muted; font-size: 0.8rem; }
+        }
+
+        .status-indicator {
+          font-size: 1.2rem;
+          .text-success { color: #198754; }
+          .text-danger { color: #dc3545; }
+          .text-warning { color: $gold-600; }
+        }
+      }
+    }
+  }
+}
+
+// Dark Mode Overrides
+[data-theme="dark"] .admin-appointments-panel {
+  .left-pane, .right-pane {
+    background: #09090B;
+    border-color: #27272A;
+  }
+
+  .patient-card__header {
+    background: linear-gradient(135deg, #18181B, #27272A);
+  }
+
+  .patient-card__body {
+    .timeline-header h3 { color: #FAFAFA; }
+    .time-block .time-card {
+      background: rgba(255,255,255,0.02);
+      border-color: #3F3F46;
+      strong { color: #FAFAFA; }
+      .lawyer-select { color: #FAFAFA; border-bottom-color: #52525B; option { color: #000; } }
+    }
+    .notes-section {
+      background: rgba(255,255,255,0.02);
+      border-color: #3F3F46;
+      h4 { color: #FAFAFA; }
+      textarea { background: rgba(0,0,0,0.2); color: #E4E4E7; }
+    }
+  }
+
+  .schedule-header {
+    background: rgba(255,255,255,0.02);
+    border-bottom-color: #27272A;
+    .new-appointment-btn { background: #FAFAFA; color: #09090B; }
+    .mini-calendar {
+      .month-name { color: #FAFAFA; }
+      .days-grid .day {
+        color: #A1A1AA;
+        &:hover { background: rgba(255,255,255,0.05); }
+        &.active { background: $gold-600; color: #fff; }
+      }
+    }
+  }
+
+  .agenda-list {
+    h4 { color: #FAFAFA; }
+    .agenda-item {
+      background: rgba(255,255,255,0.02);
+      border-color: #3F3F46;
+      .time-badge { background: #FAFAFA; color: #09090B; }
+      .agenda-info strong { color: #FAFAFA; }
+      
+      &.selected { background: rgba(181, 148, 77, 0.1); border-color: $gold-600; }
+    }
+  }
+}

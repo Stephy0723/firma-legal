@@ -1,7 +1,31 @@
+import { useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import "./Contact.scss";
+import { useData } from "../../context/DataContext";
 
 const Contact = () => {
+  const { addMessage } = useData();
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    area: "",
+    message: ""
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addMessage(formData);
+    setSubmitted(true);
+    setFormData({ name: "", phone: "", email: "", area: "", message: "" });
+    setTimeout(() => setSubmitted(false), 5000);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   return (
     <section id="contacto" className="contact reveal">
       <div className="section">
@@ -15,27 +39,32 @@ const Contact = () => {
 
         <div className="contact__layout">
           <div className="contact__left">
-            <form className="contact__form">
-              <div className="contact__row">
-                <input type="text" placeholder="Nombre completo" required />
-                <input type="tel" placeholder="Telefono" />
+            {submitted ? (
+              <div className="contact__success-message" style={{ background: 'rgba(74, 114, 96, 0.1)', padding: '2rem', borderRadius: '12px', textAlign: 'center' }}>
+                <h3 style={{ color: '#3a5e4e', marginBottom: '1rem' }}>Mensaje Enviado</h3>
+                <p>Gracias por contactarnos. Un miembro de nuestro equipo se pondrá en contacto pronto.</p>
               </div>
-              <input type="email" placeholder="Correo electronico" required />
-              <select defaultValue="" className="contact__select">
-                <option value="" disabled>
-                  Seleccione el area de interes
-                </option>
-                <option value="civil">Derecho Civil</option>
-                <option value="penal">Derecho Penal</option>
-                <option value="corporativo">Derecho Corporativo</option>
-                <option value="familiar">Derecho Familiar</option>
-                <option value="laboral">Derecho Laboral</option>
-                <option value="internacional">Derecho Internacional</option>
-                <option value="otro">Otro</option>
-              </select>
-              <textarea placeholder="Describa brevemente su situacion..." rows={5} />
-              <button type="submit">Solicitar Consulta Gratuita</button>
-            </form>
+            ) : (
+              <form className="contact__form" onSubmit={handleSubmit}>
+                <div className="contact__row">
+                  <input type="text" name="name" placeholder="Nombre completo" required value={formData.name} onChange={handleChange} />
+                  <input type="tel" name="phone" placeholder="Telefono" value={formData.phone} onChange={handleChange} />
+                </div>
+                <input type="email" name="email" placeholder="Correo electronico" required value={formData.email} onChange={handleChange} />
+                <select name="area" value={formData.area} onChange={handleChange} className="contact__select">
+                  <option value="" disabled>Seleccione el area de interes</option>
+                  <option value="civil">Derecho Civil</option>
+                  <option value="penal">Derecho Penal</option>
+                  <option value="corporativo">Derecho Corporativo</option>
+                  <option value="familiar">Derecho Familiar</option>
+                  <option value="laboral">Derecho Laboral</option>
+                  <option value="internacional">Derecho Internacional</option>
+                  <option value="otro">Otro</option>
+                </select>
+                <textarea name="message" placeholder="Describa brevemente su situacion..." rows={5} required value={formData.message} onChange={handleChange} />
+                <button type="submit">Solicitar Consulta Gratuita</button>
+              </form>
+            )}
           </div>
 
           <aside className="contact__right">

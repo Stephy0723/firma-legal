@@ -1,0 +1,374 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-profile-page {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .profile-layout-exact {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+    }
+
+    .profile-card-col {
+      flex: 4;
+
+      .admin-patient-card {
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+
+        .card-header-bg {
+          background: linear-gradient(135deg, #1E40AF, #1D4ED8);
+          height: 140px;
+          position: relative;
+
+          .btn-edit-profile {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover { background: rgba(255,255,255,0.2); }
+          }
+        }
+
+        .profile-avatar-wrapper {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          margin: -60px auto 1rem auto;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+          }
+
+          .status-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background: #198754;
+          }
+        }
+
+        .profile-info-dense {
+          padding: 1rem 2rem;
+          text-align: center;
+
+          h2 { margin: 0 0 0.5rem 0; font-family: $font-heading; color: #1E40AF; font-size: 1.8rem; }
+          .role-badge { 
+            display: inline-block; 
+            background: #DBEAFE; 
+            color: #1E40AF; 
+            padding: 0.4rem 1rem; 
+            border-radius: 20px; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            margin-bottom: 2rem;
+          }
+
+          .contact-grid-profile {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: left;
+            border-top: 2px solid #E5E7EB;
+            padding-top: 2rem;
+
+            .c-item {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+
+              .c-icon {
+                font-size: 1.2rem;
+                color: #3B82F6;
+                width: 24px;
+              }
+
+              .c-text {
+                display: flex;
+                flex-direction: column;
+                span { font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; }
+                strong { font-size: 0.95rem; color: #1F2937; }
+              }
+            }
+          }
+        }
+
+        .profile-metrics-mini {
+          display: flex;
+          border-top: 1px solid $border;
+          
+          .m-box {
+            flex: 1;
+            padding: 1.5rem;
+            text-align: center;
+            border-right: 1px solid $border;
+
+            &:last-child { border-right: none; }
+
+            h4 { margin: 0 0 0.3rem 0; font-size: 1.5rem; color: $ink-950; }
+            span { font-size: 0.8rem; color: $muted; }
+
+            &.success {
+              background: rgba(25, 135, 84, 0.03);
+              h4 { color: #198754; }
+            }
+          }
+        }
+      }
+    }
+
+    .settings-activity-col {
+      flex: 7;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .settings-panel, .recent-activity-panel {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+
+        h3 {
+          margin: 0 0 1.5rem 0;
+          color: $ink-950;
+          font-family: $font-heading;
+          font-size: 1.2rem;
+        }
+      }
+
+      .settings-panel {
+        .settings-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem;
+            border: 1px solid $border;
+            border-radius: 12px;
+            transition: border-color 0.2s;
+
+            &:hover { border-color: rgba(0,0,0,0.1); }
+
+            .s-info {
+              display: flex;
+              align-items: center;
+              gap: 1.2rem;
+
+              .icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+                background: rgba(0,0,0,0.03);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                color: $ink-900;
+              }
+
+              h4 { margin: 0 0 0.3rem 0; font-size: 1rem; color: $ink-900; }
+              p { margin: 0; font-size: 0.85rem; color: $muted; }
+            }
+
+            .toggle-switch {
+              width: 50px;
+              height: 26px;
+              border-radius: 15px;
+              border: none;
+              cursor: pointer;
+              position: relative;
+              transition: background 0.3s;
+
+              .handle {
+                width: 20px;
+                height: 20px;
+                background: #fff;
+                border-radius: 50%;
+                position: absolute;
+                top: 3px;
+                transition: left 0.3s;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+              }
+
+              &.on {
+                background: #198754;
+                .handle { left: 26px; }
+              }
+              &.off {
+                background: $border-medium;
+                .handle { left: 4px; }
+              }
+            }
+          }
+        }
+      }
+
+      .recent-activity-panel {
+        flex: 1;
+
+        .activity-timeline {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+          padding-left: 1rem;
+          margin-top: 1rem;
+
+          .a-item {
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: 30px;
+              left: 15px;
+              width: 2px;
+              height: calc(100% + 10px);
+              background: $border;
+              z-index: 1;
+            }
+
+            &:last-child::before { display: none; }
+
+            .a-marker {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              background: $surface-warm;
+              border: 2px solid #fff;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 0.8rem;
+              color: $muted;
+              z-index: 2;
+              position: relative;
+              box-shadow: 0 0 0 2px $border;
+
+              &.success {
+                background: rgba(25, 135, 84, 0.1);
+                color: #198754;
+                box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.3);
+              }
+            }
+
+            .a-content {
+              flex: 1;
+              background: rgba(0,0,0,0.01);
+              padding: 1rem 1.5rem;
+              border-radius: 12px;
+              border: 1px solid rgba(0,0,0,0.03);
+
+              .time {
+                display: block;
+                font-size: 0.75rem;
+                color: $muted;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+              }
+
+              p {
+                margin: 0;
+                font-size: 0.95rem;
+                color: $ink-900;
+                strong { color: $ink-950; }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// DARK MODE
+[data-theme="dark"] .admin-profile-page {
+  .profile-layout-exact {
+    .profile-card-col .admin-patient-card,
+    .settings-activity-col .settings-panel,
+    .settings-activity-col .recent-activity-panel {
+      background: #09090B;
+      border: 1px solid #27272A;
+      box-shadow: none;
+    }
+
+    .profile-card-col .admin-patient-card {
+      .profile-info-dense {
+        h2 { color: #FAFAFA; }
+        .role-badge { background: $gold-700; color: #18181B; } // Better contrast mode
+        .contact-grid-profile .c-item .c-text {
+          span { color: #A1A1AA; }
+          strong { color: #FAFAFA; }
+        }
+      }
+      .profile-metrics-mini {
+        border-color: #27272A;
+        .m-box {
+          border-right-color: #27272A;
+          h4 { color: #FAFAFA; }
+          &.success { background: rgba(25, 135, 84, 0.1); h4 { color: #20c997; } }
+        }
+      }
+    }
+
+    .settings-activity-col {
+      .settings-panel {
+        h3 { color: #FAFAFA; }
+        .setting-item {
+          border-color: #27272A;
+          &:hover { border-color: #3F3F46; }
+          .s-info {
+            .icon { background: #18181B; color: #FAFAFA; }
+            h4 { color: #FAFAFA; }
+            p { color: #A1A1AA; }
+          }
+          .toggle-switch.off { background: #27272A; }
+        }
+      }
+      .recent-activity-panel {
+        h3 { color: #FAFAFA; }
+        .activity-timeline .a-item .a-content {
+          background: #18181B; border-color: #27272A;
+          p { color: #E4E4E7; strong { color: #FAFAFA; } }
+        }
+        .activity-timeline .a-item::before { background: #27272A; }
+        .activity-timeline .a-item .a-marker { background: #18181B; box-shadow: 0 0 0 2px #27272A; color: #FAFAFA; }
+      }
+    }
+  }
+}

@@ -17,10 +17,7 @@ body {
   font-size: $fs-body;
   line-height: 1.65;
   color: $text;
-  background:
-    radial-gradient(ellipse at 8% -6%, rgba($gold-500, 0.08), transparent 42%),
-    radial-gradient(ellipse at 95% 8%, rgba($ink-800, 0.06), transparent 30%),
-    linear-gradient(178deg, $surface-warm 0%, $surface-3 50%, #eeeae3 100%);
+  background: $surface-warm;
   min-width: 320px;
   overflow-x: hidden;
 }
@@ -88,20 +85,20 @@ p {
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: $gold-500;
+  color: $ink-600;
 
   &::before {
     content: "";
     display: inline-block;
     width: 22px;
     height: 1.5px;
-    background: linear-gradient(90deg, $gold-400, $gold-500);
+    background: $ink-900;
     border-radius: 2px;
   }
 }
 
 // ──────────────────────────────────────────────
-// Buttons
+// Buttons — monochrome
 // ──────────────────────────────────────────────
 
 button,
@@ -113,9 +110,8 @@ button,
   border: none;
   border-radius: $radius-pill;
   cursor: pointer;
-  background:
-    linear-gradient(145deg, $gold-300 0%, $gold-400 40%, $gold-500 100%);
-  color: $ink-950;
+  background: $ink-900;
+  color: #FFFFFF;
   box-shadow: $shadow-gold-glow;
   transition:
     transform $duration-mid $ease-emphasis,
@@ -125,12 +121,11 @@ button,
   &:hover {
     transform: translateY(-2px) scale(1.015);
     box-shadow: $shadow-gold-glow-hover;
-    filter: brightness(1.03);
+    background: $ink-950;
   }
 
   &:active {
     transform: translateY(0) scale(0.99);
-    box-shadow: $shadow-gold-glow;
   }
 }
 
@@ -157,13 +152,11 @@ button {
   transform: translateY(0);
 }
 
-// fadeInUp — used by PageHeader, inline details
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(18px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -175,7 +168,7 @@ button {
 // ──────────────────────────────────────────────
 
 ::selection {
-  background: rgba($gold-400, 0.25);
+  background: rgba(0, 0, 0, 0.08);
   color: $ink-900;
 }
 
@@ -192,11 +185,11 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba($ink-800, 0.18);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 8px;
 
   &:hover {
-    background: rgba($ink-800, 0.30);
+    background: rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -205,7 +198,6 @@ button {
 // ──────────────────────────────────────────────
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

@@ -1,0 +1,105 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-services {
+  .flex-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .font-medium {
+    font-weight: 500;
+  }
+
+  .text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    border-radius: $radius-xs;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.edit-btn {
+      color: #3B82F6;
+      &:hover { background: rgba(59, 130, 246, 0.1); }
+    }
+
+    &.delete-btn {
+      color: #dc3545;
+      &:hover { background: rgba(220, 53, 69, 0.1); }
+    }
+  }
+
+  // Modal specific
+  .admin-modal--large {
+    max-width: 650px;
+  }
+
+  .form-scrollable {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .details-list {
+    background: $surface-warm;
+    padding: 1rem;
+    border-radius: $radius-sm;
+    border: 1px solid $border;
+
+    label {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .detail-input-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    input {
+      flex: 1;
+    }
+  }
+
+  .btn-remove-detail {
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    width: 40px;
+    border-radius: $radius-xs;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #dc3545;
+      color: white;
+    }
+  }
+
+  .add-detail-btn {
+    margin-top: 0.5rem;
+    width: 100%;
+    border-style: dashed;
+  }
+}

@@ -4,8 +4,8 @@
 .team {
   &__intro {
     color: $text-secondary;
-    max-width: 58ch;
-    margin-bottom: 2.2rem;
+    max-width: 62ch;
+    margin-bottom: 2.5rem;
     line-height: 1.75;
   }
 
@@ -27,98 +27,148 @@
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.2rem;
+    gap: 1.25rem;
   }
 }
 
 // ──────────────────────────────────────────────
-// Member Card
+// NEW: Horizontal Team Member Card
 // ──────────────────────────────────────────────
 
-.member {
-  @include card-premium;
-  @include elevated-hover;
-  border-radius: $radius-lg;
+.team-member-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  background: $surface;
+  border: 1px solid $border-medium;
+  border-radius: 12px;
   overflow: hidden;
-  padding: 0;
-  position: relative;
   cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+
+  &:hover {
+    border-color: $border-strong;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+  }
 
   &__photo {
     position: relative;
+    background: $surface-2;
     overflow: hidden;
-    aspect-ratio: 4 / 3.4;
-    background: rgba($ink-900, 0.04);
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 200px;
 
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      object-position: center;
-      transition: transform $duration-slow $ease-out-expo;
-    }
-
-    &-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba($ink-950, 0.45);
-      opacity: 0;
-      transition: opacity $duration-mid $ease-standard;
-
-      span {
-        font-size: $fs-small;
-        font-weight: 600;
-        color: #fff;
-        letter-spacing: 0.05em;
-        padding: 0.45rem 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: $radius-pill;
-        backdrop-filter: blur(4px);
-      }
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.5s ease;
     }
   }
 
-  &:hover .member__photo img {
-    transform: scale(1.06);
+  &:hover &__photo img {
+    transform: scale(1.05);
   }
 
-  &:hover .member__photo-overlay {
-    opacity: 1;
-  }
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  &__info {
-    padding: 1.1rem 1.3rem 1.3rem;
-  }
-
-  h3 {
-    font-family: $font-heading;
-    margin-bottom: 0.15rem;
-    color: $ink-900;
-    font-size: 1.08rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: $ink-900;
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
   }
 
   &__role {
-    display: block;
-    font-size: $fs-caption;
-    font-weight: 600;
-    color: $gold-500;
-    letter-spacing: 0.06em;
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $ink-600;
     margin-bottom: 0.2rem;
   }
 
   &__specialty {
     display: block;
-    font-size: $fs-small;
+    font-size: 0.82rem;
     color: $muted;
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+  }
+
+  &__bio {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    line-height: 1.6;
+    margin: 0 0 0.8rem 0;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.7rem;
+    border-top: 1px solid $border;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $ink-900;
+    letter-spacing: 0.02em;
+    transition: gap 0.2s;
+
+    svg { font-size: 0.65rem; transition: transform 0.2s; }
+  }
+
+  &:hover &__cta svg { transform: translateX(3px); }
+
+  &__actions {
+    display: flex;
+    gap: 0.4rem;
+
+    button, a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: $surface-2;
+      border: 1px solid $border;
+      color: $muted;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: none;
+
+      &:hover {
+        background: $ink-900;
+        color: #FFFFFF;
+        border-color: $ink-900;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    .team-member-card__book {
+      color: $ink-700;
+    }
   }
 }
 
@@ -127,7 +177,7 @@
 // ──────────────────────────────────────────────
 
 .member-detail {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   animation: fadeInUp 500ms $ease-emphasis both;
 
   &__back {
@@ -137,7 +187,7 @@
     margin-bottom: 1.5rem;
     font-size: $fs-small;
     font-weight: 600;
-    color: $gold-500;
+    color: $ink-700;
     background: none;
     border: none;
     padding: 0.4rem 0;
@@ -145,21 +195,14 @@
     cursor: pointer;
     letter-spacing: 0.03em;
 
-    &:hover {
-      color: $gold-600;
-      transform: none;
-      box-shadow: none;
-    }
-
-    svg {
-      font-size: 0.75rem;
-    }
+    &:hover { color: $ink-900; transform: none; box-shadow: none; }
+    svg { font-size: 0.75rem; }
   }
 
-  // Header with photo + text
   &__header {
-    @include card-premium;
-    border-radius: $radius-lg;
+    background: $surface;
+    border: 1px solid $border-medium;
+    border-radius: 12px;
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
     display: flex;
     gap: 1.5rem;
@@ -170,12 +213,12 @@
   &__photo {
     width: 130px;
     height: 160px;
-    border-radius: $radius-md;
-    object-fit: contain;
-    object-position: center;
-    background: rgba($ink-900, 0.04);
+    border-radius: 10px;
+    object-fit: cover;
+    object-position: center top;
+    background: $surface-2;
     flex-shrink: 0;
-    border: 2px solid $gold-100;
+    border: 2px solid $surface-3;
   }
 
   &__header-text {
@@ -189,10 +232,10 @@
 
   &__role {
     display: block;
-    font-size: $fs-caption;
-    font-weight: 600;
-    color: $gold-500;
-    letter-spacing: 0.06em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $ink-600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 0.15rem;
   }
@@ -216,21 +259,15 @@
       font-size: $fs-caption;
       color: $text-secondary;
       transition: color $duration-fast $ease-standard;
-
-      &:hover {
-        color: $gold-500;
-      }
-
-      svg {
-        font-size: 0.8rem;
-      }
+      &:hover { color: $ink-900; }
+      svg { font-size: 0.8rem; }
     }
   }
 
-  // Body
   &__body {
-    @include card-premium;
-    border-radius: $radius-lg;
+    background: $surface;
+    border: 1px solid $border-medium;
+    border-radius: 12px;
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
   }
 
@@ -261,10 +298,7 @@
       font-weight: 600;
     }
 
-    &-icon {
-      color: $gold-500;
-      font-size: 0.9rem;
-    }
+    &-icon { color: $ink-600; font-size: 0.9rem; }
 
     ul {
       list-style: none;
@@ -280,13 +314,10 @@
         &::before {
           content: "";
           position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 6px;
-          height: 6px;
+          left: 0; top: 50%; transform: translateY(-50%);
+          width: 5px; height: 5px;
           border-radius: 50%;
-          background: $gold-400;
+          background: $ink-700;
         }
       }
     }
@@ -306,44 +337,41 @@
 }
 
 // ──────────────────────────────────────────────
-// Mobile adjustments
+// Mobile
 // ──────────────────────────────────────────────
 
 @include mobile-only {
+  .team-member-card {
+    grid-template-columns: 1fr;
+    &__photo { min-height: 220px; }
+  }
+
   .member-detail {
-    &__header {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    &__photo {
-      width: 110px;
-      height: 140px;
-    }
-
-    &__links {
-      justify-content: center;
-    }
+    &__header { flex-direction: column; align-items: center; text-align: center; }
+    &__photo { width: 110px; height: 140px; }
+    &__links { justify-content: center; }
   }
 }
 
 // ──────────────────────────────────────────────
-// Responsive grid
+// Responsive
 // ──────────────────────────────────────────────
 
 @include tablet {
-  .team__grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .team__grid { grid-template-columns: 1fr 1fr; }
+  .member-detail__sections { grid-template-columns: 1fr 1fr; }
 
-  .member-detail__sections {
-    grid-template-columns: 1fr 1fr;
+  .team-member-card {
+    grid-template-columns: 160px 1fr;
+    &__photo { min-height: 180px; }
   }
 }
 
 @include desktop {
-  .team__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .team__grid { grid-template-columns: 1fr 1fr; }
+
+  .team-member-card {
+    grid-template-columns: 200px 1fr;
+    &__photo { min-height: 220px; }
   }
 }

@@ -24,7 +24,7 @@
     &-eyebrow {
       margin: 0 0 0.35rem;
       font-size: $fs-caption;
-      color: $gold-500;
+      color: $muted;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 700;
@@ -72,7 +72,7 @@
     &-list svg {
       margin-top: 0.18rem;
       flex-shrink: 0;
-      color: $gold-500;
+      color: $ink-700;
       font-size: 0.8rem;
     }
 
@@ -81,10 +81,40 @@
       color: $text-secondary;
       line-height: 1.75;
       font-size: $fs-small;
-      background: rgba($gold-50, 0.55);
-      border: 1px solid rgba($gold-500, 0.13);
+      background: $surface-2;
+      border: 1px solid $border;
       border-radius: $radius-md;
       padding: 0.9rem 1rem;
+    }
+
+    &-cta {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 1rem;
+      padding: 0.7rem 1.6rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: $font-body;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #FFFFFF;
+      background: $ink-900;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: none;
+
+      &:hover {
+        background: $ink-950;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    &-copy-wrap {
+      display: flex;
+      flex-direction: column;
     }
   }
 
@@ -124,7 +154,6 @@
   overflow: hidden;
   cursor: pointer;
 
-  // Subtle shimmer on hover
   &::after {
     content: "";
     position: absolute;
@@ -148,11 +177,11 @@
     width: 2.8rem;
     height: 2.8rem;
     border-radius: 50%;
-    background: $gold-50;
-    color: $gold-500;
+    background: $surface-2;
+    color: $ink-800;
     font-size: 1.15rem;
     margin-bottom: 1rem;
-    border: 1px solid rgba($gold-500, 0.12);
+    border: 1px solid $border;
     transition:
       transform $duration-mid $ease-emphasis,
       background $duration-fast $ease-standard;
@@ -160,7 +189,8 @@
 
   &:hover .icon {
     transform: translateY(-2px) rotate(-4deg);
-    background: $gold-100;
+    background: $ink-900;
+    color: #FFFFFF;
   }
 
   h3 {
@@ -177,18 +207,49 @@
     line-height: 1.7;
   }
 
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+  }
+
   &__more {
     display: inline-block;
-    margin-top: 0.8rem;
     font-size: $fs-caption;
     font-weight: 600;
-    color: $gold-500;
+    color: $ink-800;
     letter-spacing: 0.04em;
     transition: color $duration-fast $ease-standard;
   }
 
   &:hover &__more {
-    color: $gold-600;
+    color: $ink-950;
+  }
+
+  &__book {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: $surface-2;
+    border: 1px solid $border;
+    color: $muted;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: none;
+    padding: 0;
+
+    &:hover {
+      background: $ink-900;
+      color: #FFFFFF;
+      border-color: $ink-900;
+      transform: none;
+      box-shadow: none;
+    }
   }
 }
 
@@ -208,7 +269,7 @@
     margin-bottom: 1.5rem;
     font-size: $fs-small;
     font-weight: 600;
-    color: $gold-500;
+    color: $ink-800;
     background: none;
     border: none;
     padding: 0.4rem 0;
@@ -217,7 +278,7 @@
     letter-spacing: 0.03em;
 
     &:hover {
-      color: $gold-600;
+      color: $ink-950;
       transform: none;
       box-shadow: none;
     }
@@ -241,11 +302,11 @@
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
-    background: $gold-50;
-    color: $gold-500;
+    background: $surface-2;
+    color: $ink-800;
     font-size: 1.6rem;
     flex-shrink: 0;
-    border: 1px solid rgba($gold-500, 0.15);
+    border: 1px solid $border;
   }
 
   &__header h3 {
@@ -302,7 +363,7 @@
   &__check {
     flex-shrink: 0;
     font-size: 0.85rem;
-    color: $gold-400;
+    color: $ink-700;
   }
 
   &__cta-area {
@@ -324,8 +385,25 @@
     button {
       padding: 0.8rem 2rem;
       font-size: $fs-small;
+      font-weight: 700;
+      font-family: $font-body;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      color: #FFFFFF;
+      background: $ink-900;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: none;
+      transition: all 0.25s;
+
+      &:hover {
+        background: $ink-950;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      }
     }
   }
 }

@@ -1,0 +1,344 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-clients-exact {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  padding: 1rem;
+
+  .clients-header-exact {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+
+    .title-area {
+      h2 {
+        font-family: $font-heading;
+        font-size: 2.2rem;
+        margin: 0 0 0.3rem 0;
+        color: #1E40AF;
+      }
+      p {
+        margin: 0;
+        color: #6B7280;
+        font-size: 0.95rem;
+      }
+    }
+
+    .actions-area {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+
+      .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .icon {
+          position: absolute;
+          left: 1rem;
+          color: $muted;
+        }
+
+        input {
+          padding: 0.8rem 1rem 0.8rem 2.5rem;
+          border-radius: 9999px; // like image search fields
+          border: 1px solid rgba(0,0,0,0.1);
+          background: #fff;
+          width: 300px;
+          outline: none;
+          font-family: $font-body;
+          transition: all 0.3s;
+
+          &:focus {
+            border-color: $gold-400;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+          }
+        }
+      }
+
+      .btn-add {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+
+        &:hover {
+          background: #1D4ED8;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+        }
+      }
+    }
+  }
+
+  // 4 Metrics exactly like Image 3
+  .metrics-row-exact {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+
+    .metric-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      transition: all 0.3s;
+      border: 1px solid transparent;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+      }
+
+      .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: $ink-900;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .text-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        h3 {
+          margin: 0;
+          font-size: 1.8rem;
+          color: $ink-950;
+          font-family: $font-heading;
+        }
+
+        span {
+          color: $muted;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Clients List Area
+  .clients-list-section {
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+
+      h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-family: $font-heading;
+        color: $ink-900;
+      }
+
+      .btn-filter {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.1);
+        padding: 0.5rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        color: $ink-800;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: rgba(0,0,0,0.02);
+          border-color: $ink-900;
+        }
+      }
+    }
+
+    .clients-grid-exact {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .exact-client-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      border: 1px solid transparent;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      }
+
+      .card-actions {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        display: flex;
+        gap: 0.5rem;
+
+        .icon-btn {
+          background: transparent;
+          border: none;
+          color: $muted;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          padding: 0.4rem;
+          border-radius: 6px;
+
+          &:hover.edit { color: $ink-950; background: rgba(0,0,0,0.05); }
+          &:hover.delete { color: #dc3545; background: rgba(220, 53, 69, 0.1); }
+        }
+      }
+
+      .card-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 1.5rem;
+
+        img {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          border: 4px solid #fff;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          margin-bottom: 1rem;
+        }
+
+        h4 {
+          margin: 0 0 0.3rem 0;
+          font-size: 1.2rem;
+          color: $ink-950;
+          font-family: $font-heading;
+        }
+
+        .client-id {
+          font-size: 0.8rem;
+          color: $muted;
+        }
+      }
+
+      .card-middle {
+        background: rgba(244, 246, 248, 0.5);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .info-line {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.85rem;
+
+          .label {
+            color: $muted;
+          }
+          .value {
+            color: $ink-900;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1.5rem;
+        border-top: 1px dashed rgba(0,0,0,0.1);
+
+        .bottom-stat {
+          display: flex;
+          flex-direction: column;
+
+          span {
+            font-size: 0.75rem;
+            color: $muted;
+          }
+          strong {
+            font-size: 0.9rem;
+            color: $ink-900;
+          }
+        }
+
+        .bottom-tag {
+          .tag {
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            
+            &.active {
+              background: rgba(25, 135, 84, 0.1);
+              color: #198754;
+            }
+            &.closed {
+              background: rgba(220, 53, 69, 0.1);
+              color: #dc3545;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark Theme Overrides
+[data-theme="dark"] .admin-clients-exact {
+  .clients-header-exact {
+    border-bottom-color: rgba(255,255,255,0.05);
+    .title-area h2 { color: #FAFAFA; }
+    .actions-area .search-box input { background: #18181B; border-color: #3F3F46; color: #FAFAFA; }
+    .actions-area .btn-add { background: #FAFAFA; color: #09090B; }
+  }
+
+  .metrics-row-exact .metric-box {
+    background: #09090B;
+    border: 1px solid #27272A;
+    .icon-wrapper { background: #FAFAFA; color: #09090B; }
+    .text-wrapper h3 { color: #FAFAFA; }
+  }
+
+  .clients-list-section {
+    .list-header h3 { color: #FAFAFA; }
+    .list-header .btn-filter { background: #18181B; border-color: #3F3F46; color: #FAFAFA; }
+    
+    .exact-client-card {
+      background: #09090B;
+      border-color: #27272A;
+      .card-top h4 { color: #FAFAFA; }
+      .card-top img { border-color: #18181B; }
+      .card-middle { background: rgba(255,255,255,0.02); .value { color: #FAFAFA; } }
+      .card-bottom { border-top-color: rgba(255,255,255,0.1); .bottom-stat strong { color: #FAFAFA; } }
+    }
+  }
+}

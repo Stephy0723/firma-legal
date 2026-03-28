@@ -1,0 +1,126 @@
+@use '../../../styles/base/variables' as *;
+
+.page-help-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+
+  @media (max-width: 768px) {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .help-trigger {
+    background: #1E40AF;
+    color: #fff;
+    width: 60px;
+    height: 60px;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+    &:hover {
+      transform: scale(1.1);
+      background: #1D4ED8;
+    }
+    
+    &.active {
+      transform: rotate(90deg);
+      background: #3B82F6;
+    }
+  }
+
+  .help-bubble {
+    position: absolute;
+    bottom: calc(100% + 20px);
+    right: 0;
+    width: 350px;
+    background: #fff;
+    border: 2px solid #DBEAFE;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, 0.15);
+    animation: slideIn 0.2s ease-out forwards;
+    transform-origin: top right;
+
+    @media (max-width: 768px) {
+      right: auto;
+      left: auto;
+      width: 100%;
+      min-width: 280px;
+      max-width: calc(100vw - 3rem);
+    }
+
+    h4 {
+      color: #1E40AF;
+      font-family: $font-heading;
+      margin: 0 0 0.8rem 0;
+      font-size: 1.1rem;
+      border-bottom: 3px solid #3B82F6;
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    p {
+      color: #1F2937;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0 0 1rem 0;
+    }
+
+    h5 {
+      color: #1E40AF;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 0.5rem 0;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: #6B7280;
+      font-size: 0.85rem;
+      line-height: 1.6;
+
+      li {
+        margin-bottom: 0.4rem;
+        &::marker {
+          color: #3B82F6;
+        }
+      }
+    }
+  }
+}
+
+// Dark Theme Overrides
+[data-theme="dark"] .page-help-container {
+  .help-bubble {
+    background: #18181B;
+    border-color: #27272A;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+    h4 { color: #FAFAFA; border-bottom-color: $gold-600; }
+    p { color: #E4E4E7; }
+    h5 { color: #FAFAFA; }
+    ul { color: #A1A1AA; }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

@@ -1,0 +1,336 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-documents {
+  position: relative;
+  min-height: calc(100vh - 150px);
+  background: transparent;
+  padding: 1rem;
+
+  .drive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .drive-title {
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-family: $font-heading;
+        font-size: 1.6rem;
+        color: #1E40AF;
+        margin: 0;
+
+        .root-link {
+          color: #3B82F6;
+          cursor: pointer;
+          transition: color 0.2s;
+          &:hover { color: #2563EB; text-decoration: underline; }
+        }
+
+        .divider {
+          font-size: 1rem;
+          color: $muted;
+        }
+
+        .current {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #1E40AF;
+          color: #fff;
+          padding: 0.3rem 0.8rem;
+          border-radius: $radius-sm;
+          font-size: 1.2rem;
+          
+          svg { font-size: 1rem; }
+        }
+      }
+    }
+
+    .drive-actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: $radius-full;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .drive-btn-primary {
+        background: #1E40AF;
+        color: #fff;
+        &:hover { background: #1D4ED8; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+      }
+
+      .drive-btn-secondary {
+        background: transparent;
+        color: #1E40AF;
+        border: 1px solid #D1D5DB;
+        &:hover { background: #F8FAFC; border-color: #1E40AF; }
+      }
+    }
+  }
+
+  .drive-section {
+    margin-bottom: 3rem;
+
+    .section-title {
+      font-size: 0.85rem;
+      color: #6B7280;
+      letter-spacing: 0.05em;
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+    }
+
+    .empty-subtext {
+      color: #6B7280;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+  }
+
+  // Carpetas Estilo Drive Exacto
+  .folders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .drive-folder-card {
+    background: #fff;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    &:hover {
+      background: #F8FAFC;
+      border-color: #3B82F6;
+      .delete-icon { opacity: 1; visibility: visible; }
+    }
+
+    .folder-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      overflow: hidden;
+
+      .big-icon {
+        font-size: 1.4rem;
+        color: #3B82F6;
+      }
+
+      h5 {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #1F2937;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .delete-icon {
+      background: transparent;
+      border: none;
+      color: $muted;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+
+      &:hover { color: #dc3545; }
+    }
+  }
+
+  // Lista Archivos Estilo Drive Exacto
+  .drive-list-container {
+    background: transparent;
+    border-top: 1px solid $border;
+    margin-top: 1rem;
+  }
+
+  .drive-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid $border;
+      font-size: 0.9rem;
+    }
+
+    th {
+      color: $muted;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      padding-bottom: 1.5rem;
+    }
+
+    .drive-file-row {
+      transition: background 0.2s;
+      
+      &:hover {
+        background: rgba(0,0,0,0.02);
+      }
+
+      .col-name {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .file-icon {
+          font-size: 1.4rem;
+          color: $muted;
+        }
+
+        .file-title {
+          font-weight: 500;
+          color: $ink-900;
+        }
+      }
+
+      .col-owner {
+        .owner-chip {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+          }
+          span {
+            font-size: 0.85rem;
+            color: $ink-800;
+          }
+        }
+      }
+
+      .col-date, .col-size { color: $muted; }
+
+      .col-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.3rem;
+      }
+
+      .drive-icon-btn {
+        background: transparent;
+        border: none;
+        color: $muted;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0.4rem;
+        border-radius: 50%;
+        opacity: 0.4;
+        transition: all 0.2s;
+
+        &:hover {
+          opacity: 1;
+          color: $ink-950;
+          background: rgba(0,0,0,0.05);
+
+          &.delete {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+          }
+        }
+      }
+    }
+
+    .empty-list {
+      text-align: center;
+      padding: 3rem;
+      color: $muted;
+      font-style: italic;
+    }
+  }
+
+  // Modals mock
+  .mock-file-upload {
+    border: 2px dashed $border-strong;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-radius: $radius-sm;
+    background: $surface-warm;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    color: $muted;
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: $text-secondary;
+      transition: color 0.2s;
+    }
+
+    &:hover {
+      background: rgba(181, 148, 77, 0.05);
+      border-color: $gold-400;
+      color: $gold-600;
+
+      .upload-icon { transform: translateY(-2px); color: $gold-500; }
+    }
+  }
+}
+
+// Dark Mode Overrides
+[data-theme="dark"] .admin-documents {
+  .drive-header {
+    border-bottom-color: #27272A;
+    .drive-title .breadcrumb .root-link { color: $gold-600; }
+    .drive-title .breadcrumb .current { background: #FAFAFA; color: #09090B; }
+    .drive-actions .drive-btn-primary { background: #FAFAFA; color: #09090B; }
+    .drive-actions .drive-btn-secondary { background: transparent; color: #FAFAFA; border-color: #3F3F46; }
+  }
+
+  .drive-folder-card {
+    background: #09090B;
+    border-color: #27272A;
+    
+    &:hover { border-color: #FAFAFA; background: rgba(255,255,255,0.02); }
+    .folder-body .big-icon { color: #FAFAFA; }
+    .folder-body h5 { color: #FAFAFA; }
+    .folder-footer { border-top-color: #27272A; .doc-count { color: #E4E4E7; } }
+  }
+
+  .drive-list-container {
+    background: #09090B;
+    border-color: #27272A;
+  }
+
+  .drive-table {
+    th { border-bottom-color: #27272A; background: rgba(255,255,255,0.01); color: #A1A1AA; }
+    td { border-bottom-color: #27272A; }
+    .drive-file-row {
+      &:hover { background: rgba(255,255,255,0.03); }
+      .col-name .file-title { color: #E4E4E7; }
+      .col-owner .owner-chip span { color: #E4E4E7; }
+      .drive-icon-btn:hover { color: #FAFAFA; background: rgba(255,255,255,0.1); }
+    }
+  }
+}

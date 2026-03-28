@@ -1,0 +1,206 @@
+@use '../../../styles/base/variables' as *;
+
+.admin-cases {
+  .small-text {
+    font-size: 0.85rem;
+    color: $muted;
+  }
+
+  .cases-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid #D1D5DB;
+      background: transparent;
+      color: #1F2937;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(37, 99, 235, 0.05);
+      }
+
+      &.active {
+        background: #1E40AF;
+        color: #fff;
+        border-color: #1E40AF;
+      }
+    }
+  }
+
+  .cases-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (min-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: $muted;
+    background: rgba(0,0,0,0.02);
+    border-radius: 12px;
+    border: 1px dashed $border-medium;
+  }
+
+  .case-card {
+    background: #fff;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.15);
+      border-color: #3B82F6;
+    }
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .case-title {
+      font-family: $font-heading;
+      font-size: 1.1rem;
+      color: #1E40AF;
+      margin: 0 0 1.2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        color: #3B82F6;
+      }
+    }
+
+    .case-actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: $muted;
+      transition: color 0.2s;
+
+      &:hover {
+        &.edit-btn { color: $gold-600; }
+        &.delete-btn { color: #dc3545; }
+      }
+    }
+  }
+
+  .case-parties {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+    background: rgba(244, 246, 248, 0.5);
+    border-radius: 8px;
+
+    .party {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      
+      &-icon {
+        color: $muted;
+        font-size: 1.1rem;
+      }
+      
+      &-label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $muted;
+        margin-bottom: 0.1rem;
+      }
+      
+      &-name {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $ink-800;
+      }
+    }
+  }
+
+  .case-desc {
+    font-size: 0.85rem;
+    color: $muted;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+
+    svg {
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+  }
+
+  .case-footer {
+    padding-top: 1rem;
+    border-top: 1px solid $border;
+    font-size: 0.8rem;
+    color: $muted;
+    text-align: right;
+  }
+}
+
+// Dark Theme Overrides
+[data-theme="dark"] .admin-cases {
+  .filter-btn {
+    color: #A1A1AA;
+    border-color: #3F3F46;
+    
+    &:hover { background: rgba(255,255,255,0.05); }
+    &.active { background: #FAFAFA; color: #09090B; border-color: #FAFAFA; }
+  }
+
+  .case-card {
+    background: #09090B !important;
+    border-color: #27272A !important;
+
+    .case-title { color: #FAFAFA; }
+    .icon-btn { color: #71717A; }
+  }
+
+  .case-parties {
+    background: rgba(255,255,255,0.03);
+    .party-label { color: #A1A1AA; }
+    .party-name { color: #E4E4E7; }
+  }
+
+  .empty-state {
+    border-color: #3F3F46;
+    background: rgba(255,255,255,0.02);
+  }
+}
