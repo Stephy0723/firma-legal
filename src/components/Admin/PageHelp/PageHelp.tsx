@@ -12,23 +12,25 @@ const PageHelp: React.FC<PageHelpProps> = ({ title, description, features }) => 
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="page-help-container">
-      <button 
-        className={`help-trigger ${isOpen ? 'active' : ''}`} 
-        onClick={() => setIsOpen(!isOpen)}
-        title="¿Cómo usar esta página?"
+    <div className={`page-help-container ${isOpen ? 'is-open' : ''}`}>
+      <button
+        type="button"
+        className={`help-trigger ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen((current) => !current)}
+        title="Mas informacion de esta pagina"
       >
         {isOpen ? <FaTimes /> : <FaInfoCircle />}
+        <span>Ayuda</span>
       </button>
 
       {isOpen && (
-        <div className="help-bubble">
+        <div className="help-bubble" role="dialog" aria-label={`Ayuda de ${title}`}>
           <h4>{title}</h4>
           <p>{description}</p>
-          <h5>Funcionalidades Clave:</h5>
+          <h5>Lo mas importante</h5>
           <ul>
-            {features.map((feature, index) => (
-              <li key={index}>{feature}</li>
+            {features.map((feature) => (
+              <li key={feature}>{feature}</li>
             ))}
           </ul>
         </div>

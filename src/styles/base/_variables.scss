@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────
-// Color Palette — Monochrome Black & White
-// Professional legal firm: pure neutrals
+// Color Palette — Professional Legal Firm
+// Dark mode + Accent Colors for categorization
 // ──────────────────────────────────────────────
 
 // Darks (used for backgrounds, text, accents)
@@ -16,6 +16,15 @@ $ink-300: #D4D4D8;
 $ink-200: #E4E4E7;
 $ink-100: #F4F4F5;
 $ink-50:  #FAFAFA;
+
+// Professional Accent Colors for categorization
+$color-lawyers: #6366F1;    // Indigo - Lawyers/Team tags
+$color-services: #8B5CF6;   // Violet - Services/Practice Areas
+$color-folder-1: #0EA5E9;   // Sky Blue - Folder 1
+$color-folder-2: #10B981;   // Emerald - Folder 2
+$color-folder-3: #F59E0B;   // Amber - Folder 3
+$color-folder-4: #EC4899;   // Pink - Folder 4
+$color-folder-5: #6366F1;   // Indigo - Folder 5
 
 // Text
 $text: #18181B;

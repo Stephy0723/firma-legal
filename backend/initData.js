@@ -52,10 +52,19 @@ const initDatabase = async () => {
       CREATE TABLE IF NOT EXISTS appointments (
         id VARCHAR(50) PRIMARY KEY,
         clientName VARCHAR(255) NOT NULL,
+        email VARCHAR(255),
+        phone VARCHAR(50),
         date DATE NOT NULL,
         time VARCHAR(50) NOT NULL,
         purpose VARCHAR(255) NOT NULL,
-        status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending'
+        status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+        lawyerId VARCHAR(50),
+        notes TEXT,
+        source VARCHAR(50),
+        format VARCHAR(50),
+        confirmationPreference VARCHAR(50),
+        createdAt DATETIME NULL,
+        updatedAt DATETIME NULL
       )
     `);
 
@@ -67,7 +76,12 @@ const initDatabase = async () => {
         email VARCHAR(255) NOT NULL,
         phone VARCHAR(50),
         address VARCHAR(255),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME NULL,
+        caseTopic VARCHAR(255),
+        notes TEXT,
+        tags LONGTEXT,
+        assets LONGTEXT
       )
     `);
 
@@ -78,9 +92,13 @@ const initDatabase = async () => {
         client_id VARCHAR(50) NOT NULL,
         lawyer_id VARCHAR(50) NOT NULL,
         title VARCHAR(255) NOT NULL,
+        cedula VARCHAR(50) NOT NULL,
         description TEXT,
         status ENUM('Evaluación', 'En Proceso', 'En Corte', 'Cerrado') DEFAULT 'Evaluación',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updatedAt DATETIME NULL,
+        witnesses LONGTEXT,
+        assets LONGTEXT
       )
     `);
 
@@ -102,14 +120,139 @@ const initDatabase = async () => {
         folder_id VARCHAR(50),
         type VARCHAR(100) NOT NULL,
         url TEXT,
-        uploadDate DATETIME NOT NULL
+        uploadDate DATETIME NOT NULL,
+        updatedAt DATETIME NULL,
+        note TEXT,
+        tags LONGTEXT,
+        assets LONGTEXT,
+        history LONGTEXT
       )
     `);
 
     // Migrar tabla anterior de documentos si existía
     try {
       await db.query('ALTER TABLE documents ADD COLUMN client_id VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
       await db.query('ALTER TABLE documents ADD COLUMN folder_id VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE documents ADD COLUMN updatedAt DATETIME NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE documents ADD COLUMN note TEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE documents ADD COLUMN tags LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE documents ADD COLUMN assets LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE documents ADD COLUMN history LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN email VARCHAR(255)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN phone VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN lawyerId VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN notes TEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN source VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN format VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN confirmationPreference VARCHAR(50)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN createdAt DATETIME NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE appointments ADD COLUMN updatedAt DATETIME NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN updatedAt DATETIME NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN caseTopic VARCHAR(255)');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN notes TEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN tags LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN assets LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+
+    try {
+      await db.query('ALTER TABLE cases ADD COLUMN cedula VARCHAR(50) NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE cases ADD COLUMN updatedAt DATETIME NULL');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE cases ADD COLUMN witnesses LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE cases ADD COLUMN assets LONGTEXT');
     } catch (e) {
       // Ignorar error si la columna ya existe
     }

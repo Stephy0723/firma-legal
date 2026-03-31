@@ -3,8 +3,14 @@
 // ──────────────────────────────────────────────
 
 // ── GLOBAL ──
-[data-theme="dark"] body { background-color: #09090B !important; color: #FAFAFA !important; }
-[data-theme="dark"] section { background-color: #09090B !important; }
+[data-theme="dark"] body,
+[data-theme="dark"] main,
+[data-theme="dark"] #root {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme="dark"] section { background-color: transparent !important; }
 
 // ── NAVBAR (on hero only) ──
 [data-theme="dark"] .navbar::before { background: linear-gradient(180deg, rgba(9,9,11,0.95) 0%, rgba(9,9,11,0.6) 55%, transparent 100%); }
@@ -16,19 +22,23 @@
 
 // ── HEADINGS ──
 [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
-[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 { color: #FAFAFA !important; }
+[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 { color: var(--theme-text) !important; }
 
 // ── BODY TEXT ──
 [data-theme="dark"] p,
 [data-theme="dark"] li,
-[data-theme="dark"] label { color: #A1A1AA; }
+[data-theme="dark"] label,
+[data-theme="dark"] span { color: inherit; }
 
 // ── FORMS ──
 [data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select {
-  background-color: #18181B !important; border-color: #3F3F46 !important; color: #FAFAFA !important;
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border-strong) !important;
+  color: var(--theme-text) !important;
 }
 [data-theme="dark"] input:focus, [data-theme="dark"] textarea:focus, [data-theme="dark"] select:focus {
-  border-color: #52525B !important; box-shadow: 0 0 0 2px rgba(255,255,255,0.05) !important;
+  border-color: var(--theme-text-faint) !important;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.05) !important;
 }
 
 // ── PUBLIC SITE COMPONENTS ──

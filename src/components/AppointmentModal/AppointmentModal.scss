@@ -222,6 +222,90 @@
       margin: 0 auto;
     }
   }
+
+  &__disabled {
+    text-align: center;
+    padding: 1.25rem 0.25rem 0.5rem;
+
+    h3 {
+      margin: 1rem 0 0;
+      font-family: $font-heading;
+      font-size: 1.45rem;
+      color: $ink-950;
+    }
+
+    p {
+      margin: 0.75rem auto 0;
+      color: $muted;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      max-width: 42ch;
+    }
+  }
+
+  &__disabled-icon {
+    font-size: 2.6rem;
+    color: $ink-700;
+  }
+
+  &__disabled-meta {
+    margin-top: 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 12px;
+    background: $surface-2;
+    border: 1px solid $border;
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $muted;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    strong {
+      margin-top: 0.3rem;
+      color: $ink-950;
+      font-size: 0.95rem;
+    }
+  }
+
+  &__disabled-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+
+    @media (max-width: 500px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 10px;
+    border: 1px solid $border-medium;
+    background: transparent;
+    color: $ink-900;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $surface-2;
+      border-color: $ink-700;
+    }
+  }
 }
 
 // ── Dark Theme ──
@@ -244,3 +328,11 @@
 [data-theme="dark"] .appt-modal__submit:hover { background: #FFFFFF; }
 [data-theme="dark"] .appt-modal__success h3 { color: #FAFAFA; }
 [data-theme="dark"] .appt-modal__success p { color: #A1A1AA; }
+[data-theme="dark"] .appt-modal__disabled h3 { color: #FAFAFA; }
+[data-theme="dark"] .appt-modal__disabled p { color: #A1A1AA; }
+[data-theme="dark"] .appt-modal__disabled-icon { color: #E4E4E7; }
+[data-theme="dark"] .appt-modal__disabled-meta { background: #09090B; border-color: #27272A; }
+[data-theme="dark"] .appt-modal__disabled-meta span { color: #71717A; }
+[data-theme="dark"] .appt-modal__disabled-meta strong { color: #FAFAFA; }
+[data-theme="dark"] .appt-modal__secondary-btn { color: #FAFAFA; border-color: #3F3F46; }
+[data-theme="dark"] .appt-modal__secondary-btn:hover { background: #18181B; border-color: #52525B; }

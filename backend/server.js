@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { getDB } = require('./db');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -31,6 +32,189 @@ const parseJSON = (data, fields) => {
     }
     return parsedItem;
   });
+};
+
+const normalizeAppointmentStatus = (value) => {
+  if (value === 'confirmed' || value === 'confirmada') return 'confirmed';
+  if (value === 'cancelled' || value === 'cancelada') return 'cancelled';
+  return 'pending';
+};
+
+const normalizeAppointmentSource = (value) => {
+  if (['admin', 'walkin', 'phone', 'whatsapp'].includes(value)) return value;
+  return 'website';
+};
+
+const normalizeAppointmentFormat = (value) => {
+  if (value === 'virtual' || value === 'telefonica') return value;
+  return 'presencial';
+};
+
+const normalizeAppointmentConfirmation = (value) => {
+  if (value === 'email' || value === 'call') return value;
+  return 'whatsapp';
+};
+
+const LEGAL_ASSISTANT_SYSTEM_PROMPT = `Eres Alaya, asistente legal virtual de JRL Inversiones.
+
+Tu alcance esta limitado exclusivamente al marco legal. Solo puedes responder preguntas relacionadas con:
+- asesorias legales generales
+- orientacion juridica informativa
+- derechos, obligaciones y responsabilidades legales
+- contratos, demandas, expedientes, pruebas y documentos legales
+- tramites, plazos, procesos judiciales y administrativos
+- cumplimiento normativo y regulatorio
+- implicaciones legales de una situacion
+
+Reglas obligatorias:
+1. Responde siempre en espanol.
+2. Si la consulta NO es legal o no tiene un angulo juridico claro, debes rechazarla con amabilidad.
+3. No des consejos de salud, finanzas personales, relaciones, tecnologia general, marketing, ventas, productividad ni temas personales si no existe una pregunta legal concreta.
+4. Si el usuario mezcla temas, responde solo la parte legal y aclara que tu alcance termina ahi.
+5. No inventes leyes, articulos, tribunales, plazos ni autoridades. Si falta jurisdiccion o contexto, dilo claramente.
+6. No sustituyas a un abogado. Para decisiones sensibles, recomienda consulta profesional.
+7. No redactes fraudes, amenazas, encubrimientos, evasiones ni conductas ilegales.
+8. Si la consulta es de alto riesgo, indica que la respuesta es informativa y que debe revisarla un profesional del area.
+
+Formato de respuesta:
+- breve, claro y profesional
+- enfocado en la implicacion legal real
+- usa listas solo cuando ayuden
+- si aplica, pide jurisdiccion o documento para afinar el analisis
+
+Si la consulta esta fuera del marco legal, responde en esencia:
+"Solo puedo ayudar dentro del marco legal. Si deseas, reformula tu consulta desde su aspecto juridico y te ayudo."`;
+
+const LEGAL_ONLY_REPLY =
+  'Solo puedo ayudar dentro del marco legal. Si deseas, reformula tu consulta desde su aspecto juridico y con gusto te ayudo.';
+
+const LEGAL_KEYWORDS = [
+  'abogado',
+  'abogada',
+  'acto juridico',
+  'apelacion',
+  'audiencia',
+  'caso',
+  'cedula',
+  'citacion',
+  'cliente',
+  'codigo',
+  'comparecencia',
+  'compliance',
+  'contrato',
+  'custodia',
+  'damnificado',
+  'demanda',
+  'denuncia',
+  'derecho',
+  'desalojo',
+  'despido',
+  'divorcio',
+  'documento legal',
+  'embargo',
+  'escritura',
+  'estatuto',
+  'evidencia',
+  'expediente',
+  'firma',
+  'fiscalia',
+  'herencia',
+  'impuesto',
+  'incumplimiento',
+  'indemnizacion',
+  'juridic',
+  'juez',
+  'juicio',
+  'laboral',
+  'ley',
+  'legal',
+  'litigio',
+  'matrimonio',
+  'mediacion',
+  'multa',
+  'norma',
+  'normativa',
+  'notificacion',
+  'penal',
+  'permiso',
+  'plazo',
+  'poder notarial',
+  'prueba',
+  'proceso',
+  'propiedad',
+  'reglamento',
+  'regulacion',
+  'representacion',
+  'recurso',
+  'resolucion',
+  'sentencia',
+  'sucesion',
+  'testamento',
+  'testigo',
+  'tribunal',
+  'visita familiar',
+];
+
+const OUT_OF_SCOPE_KEYWORDS = [
+  'calorias',
+  'dieta',
+  'ejercicio',
+  'entrenamiento',
+  'marketing',
+  'publicidad',
+  'seo',
+  'programacion',
+  'codigo fuente',
+  'css',
+  'html',
+  'javascript',
+  'react',
+  'ventas',
+  'novia',
+  'novio',
+  'amor',
+  'pareja',
+  'depresion',
+  'ansiedad',
+  'medicina',
+  'medico',
+  'tratamiento',
+  'receta',
+  'horoscopo',
+  'viaje',
+  'restaurante',
+  'musica',
+  'pelicula',
+  'videojuego',
+];
+
+const normalizeLegalText = (value) =>
+  value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+const containsKeyword = (value, keywords) =>
+  keywords.some((keyword) => value.includes(keyword));
+
+const isLikelyLegalQuery = (value) => {
+  const normalized = normalizeLegalText(value);
+
+  if (containsKeyword(normalized, LEGAL_KEYWORDS)) {
+    return true;
+  }
+
+  if (containsKeyword(normalized, OUT_OF_SCOPE_KEYWORDS)) {
+    return false;
+  }
+
+  return (
+    normalized.includes('puedo demandar')
+    || normalized.includes('me pueden demandar')
+    || normalized.includes('es legal')
+    || normalized.includes('es ilegal')
+    || normalized.includes('que hago si')
+    || normalized.includes('que procede')
+    || normalized.includes('que puedo reclamar')
+    || normalized.includes('que derechos tengo')
+  );
 };
 
 
@@ -179,7 +363,7 @@ app.put('/api/messages/:id/read', async (req, res) => {
 app.get('/api/appointments', async (req, res) => {
   try {
     const db = await getDB();
-    const [rows] = await db.query('SELECT * FROM appointments ORDER BY fecha DESC, hora DESC');
+    const [rows] = await db.query('SELECT * FROM appointments ORDER BY date DESC, time DESC');
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -187,12 +371,44 @@ app.get('/api/appointments', async (req, res) => {
 });
 
 app.post('/api/appointments', async (req, res) => {
-  const { nombre, email, telefono, area, fecha, hora, mensaje, estatus } = req.body;
+  const {
+    id,
+    clientName,
+    email,
+    phone,
+    date,
+    time,
+    purpose,
+    status,
+    lawyerId,
+    notes,
+    source,
+    format,
+    confirmationPreference,
+    createdAt,
+    updatedAt,
+  } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO appointments (nombre, email, telefono, area, fecha, hora, mensaje, estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [nombre, email, telefono, area, fecha, hora, mensaje || '', estatus || 'pendiente']
+      'INSERT INTO appointments (id, clientName, email, phone, date, time, purpose, status, lawyerId, notes, source, format, confirmationPreference, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        id,
+        clientName,
+        email || null,
+        phone || null,
+        date,
+        time,
+        purpose,
+        normalizeAppointmentStatus(status),
+        lawyerId || null,
+        notes || null,
+        normalizeAppointmentSource(source),
+        normalizeAppointmentFormat(format),
+        normalizeAppointmentConfirmation(confirmationPreference),
+        createdAt ? new Date(createdAt) : new Date(),
+        updatedAt ? new Date(updatedAt) : null,
+      ]
     );
     res.status(201).json({ success: true });
   } catch (err) {
@@ -200,11 +416,58 @@ app.post('/api/appointments', async (req, res) => {
   }
 });
 
-app.put('/api/appointments/:id/status', async (req, res) => {
-  const { estatus } = req.body;
+app.put('/api/appointments/:id', async (req, res) => {
+  const {
+    clientName,
+    email,
+    phone,
+    date,
+    time,
+    purpose,
+    status,
+    lawyerId,
+    notes,
+    source,
+    format,
+    confirmationPreference,
+    updatedAt,
+  } = req.body;
   try {
     const db = await getDB();
-    await db.query('UPDATE appointments SET estatus=? WHERE id=?', [estatus, req.params.id]);
+    await db.query(
+      'UPDATE appointments SET clientName=?, email=?, phone=?, date=?, time=?, purpose=?, status=?, lawyerId=?, notes=?, source=?, format=?, confirmationPreference=?, updatedAt=? WHERE id=?',
+      [
+        clientName,
+        email || null,
+        phone || null,
+        date,
+        time,
+        purpose,
+        normalizeAppointmentStatus(status),
+        lawyerId || null,
+        notes || null,
+        normalizeAppointmentSource(source),
+        normalizeAppointmentFormat(format),
+        normalizeAppointmentConfirmation(confirmationPreference),
+        updatedAt ? new Date(updatedAt) : new Date(),
+        req.params.id,
+      ]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/appointments/:id/status', async (req, res) => {
+  const { status, updatedAt } = req.body;
+  try {
+    const db = await getDB();
+    await db.query('UPDATE appointments SET status=?, updatedAt=? WHERE id=?', [
+      normalizeAppointmentStatus(status),
+      updatedAt ? new Date(updatedAt) : new Date(),
+      req.params.id,
+    ]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -218,29 +481,52 @@ app.get('/api/clients', async (req, res) => {
   try {
     const db = await getDB();
     const [rows] = await db.query('SELECT * FROM clients ORDER BY created_at DESC');
-    res.json(rows);
+    res.json(parseJSON(rows, ['tags', 'assets']));
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/clients', async (req, res) => {
-  const { id, name, email, phone, address } = req.body;
+  const { id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO clients (id, name, email, phone, address) VALUES (?, ?, ?, ?, ?)',
-      [id, name, email, phone, address]
+      'INSERT INTO clients (id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        id,
+        name,
+        email,
+        phone,
+        address,
+        created_at ? new Date(created_at) : new Date(),
+        updatedAt ? new Date(updatedAt) : null,
+        caseTopic || null,
+        notes || null,
+        JSON.stringify(tags || []),
+        JSON.stringify(assets || []),
+      ]
     );
     res.status(201).json({ success: true, id });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/clients/:id', async (req, res) => {
-  const { name, email, phone, address } = req.body;
+  const { name, email, phone, address, updatedAt, caseTopic, notes, tags, assets } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'UPDATE clients SET name=?, email=?, phone=?, address=? WHERE id=?',
-      [name, email, phone, address, req.params.id]
+      'UPDATE clients SET name=?, email=?, phone=?, address=?, updatedAt=?, caseTopic=?, notes=?, tags=?, assets=? WHERE id=?',
+      [
+        name,
+        email,
+        phone,
+        address,
+        updatedAt ? new Date(updatedAt) : new Date(),
+        caseTopic || null,
+        notes || null,
+        JSON.stringify(tags || []),
+        JSON.stringify(assets || []),
+        req.params.id,
+      ]
     );
     res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -261,29 +547,29 @@ app.get('/api/cases', async (req, res) => {
   try {
     const db = await getDB();
     const [rows] = await db.query('SELECT * FROM cases ORDER BY created_at DESC');
-    res.json(rows);
+    res.json(parseJSON(rows, ['witnesses', 'assets']));
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/cases', async (req, res) => {
-  const { id, client_id, lawyer_id, title, description, status } = req.body;
+  const { id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO cases (id, client_id, lawyer_id, title, description, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [id, client_id, lawyer_id, title, description, status || 'Evaluación']
+      'INSERT INTO cases (id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, client_id, lawyer_id, title, cedula || '', description || null, status || 'Evaluación', created_at ? new Date(created_at) : new Date(), updatedAt ? new Date(updatedAt) : null, JSON.stringify(witnesses || []), JSON.stringify(assets || [])]
     );
     res.status(201).json({ success: true, id });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/cases/:id', async (req, res) => {
-  const { client_id, lawyer_id, title, description, status } = req.body;
+  const { client_id, lawyer_id, title, cedula, description, status, updatedAt, witnesses, assets } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'UPDATE cases SET client_id=?, lawyer_id=?, title=?, description=?, status=? WHERE id=?',
-      [client_id, lawyer_id, title, description, status, req.params.id]
+      'UPDATE cases SET client_id=?, lawyer_id=?, title=?, cedula=?, description=?, status=?, updatedAt=?, witnesses=?, assets=? WHERE id=?',
+      [client_id, lawyer_id, title, cedula || '', description || null, status, updatedAt ? new Date(updatedAt) : new Date(), JSON.stringify(witnesses || []), JSON.stringify(assets || []), req.params.id]
     );
     res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -331,20 +617,57 @@ app.delete('/api/document_folders/:id', async (req, res) => {
 app.get('/api/documents', async (req, res) => {
   try {
     const db = await getDB();
-    const [rows] = await db.query('SELECT * FROM documents ORDER BY uploadDate DESC');
+    const [rows] = await db.query('SELECT * FROM documents ORDER BY COALESCE(updatedAt, uploadDate) DESC');
     res.json(rows);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/documents', async (req, res) => {
-  const { id, title, client_id, folder_id, type, url, uploadDate } = req.body;
+  const { id, title, client_id, folder_id, type, url, uploadDate, updatedAt, note, tags, assets, history } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO documents (id, title, client_id, folder_id, type, url, uploadDate) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [id, title, client_id || null, folder_id || null, type, url, new Date(uploadDate)]
+      'INSERT INTO documents (id, title, client_id, folder_id, type, url, uploadDate, updatedAt, note, tags, assets, history) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        id,
+        title,
+        client_id || null,
+        folder_id || null,
+        type,
+        url,
+        new Date(uploadDate),
+        updatedAt ? new Date(updatedAt) : null,
+        note || null,
+        JSON.stringify(tags || []),
+        JSON.stringify(assets || []),
+        JSON.stringify(history || []),
+      ]
     );
     res.status(201).json({ success: true, id });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/documents/:id', async (req, res) => {
+  const { title, client_id, folder_id, type, url, updatedAt, note, tags, assets, history } = req.body;
+  try {
+    const db = await getDB();
+    await db.query(
+      'UPDATE documents SET title=?, client_id=?, folder_id=?, type=?, url=?, updatedAt=?, note=?, tags=?, assets=?, history=? WHERE id=?',
+      [
+        title,
+        client_id || null,
+        folder_id || null,
+        type,
+        url,
+        updatedAt ? new Date(updatedAt) : new Date(),
+        note || null,
+        JSON.stringify(tags || []),
+        JSON.stringify(assets || []),
+        JSON.stringify(history || []),
+        req.params.id,
+      ]
+    );
+    res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -354,6 +677,89 @@ app.delete('/api/documents/:id', async (req, res) => {
     await db.query('DELETE FROM documents WHERE id=?', [req.params.id]);
     res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/legal-assistant', async (req, res) => {
+  const { message, history } = req.body || {};
+  const trimmedMessage = typeof message === 'string' ? message.trim() : '';
+
+  if (!trimmedMessage) {
+    return res.status(400).json({ error: 'Debes enviar una consulta legal.' });
+  }
+
+  if (!isLikelyLegalQuery(trimmedMessage)) {
+    return res.json({ answer: LEGAL_ONLY_REPLY });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({
+      error: 'OPENAI_API_KEY no esta configurada en el backend.',
+    });
+  }
+
+  try {
+    const safeHistory = Array.isArray(history)
+      ? history
+          .filter(
+            (item) =>
+              item
+              && (item.role === 'user' || item.role === 'assistant')
+              && typeof item.content === 'string'
+              && item.content.trim(),
+          )
+          .slice(-12)
+          .map((item) => ({
+            role: item.role,
+            content: item.content.trim(),
+          }))
+      : [];
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: LEGAL_ASSISTANT_SYSTEM_PROMPT,
+          },
+          ...safeHistory,
+          {
+            role: 'user',
+            content: trimmedMessage,
+          },
+        ],
+        temperature: 0.35,
+        max_tokens: 1024,
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return res.status(response.status || 500).json({
+        error: data.error?.message || 'No se pudo conectar con OpenAI.',
+      });
+    }
+
+    const answer = data.choices?.[0]?.message?.content;
+
+    if (!answer) {
+      return res.status(502).json({
+        error: 'OpenAI no devolvio contenido para esta consulta.',
+      });
+    }
+
+    return res.json({ answer });
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message || 'No se pudo procesar la consulta legal.',
+    });
+  }
 });
 
 // Health check endpoint
@@ -376,7 +782,7 @@ app.get('/api/search', async (req, res) => {
     const [clients] = await db.query('SELECT id, name AS title, "Cliente" AS type FROM clients WHERE name LIKE ? OR email LIKE ? LIMIT 5', [searchTerm, searchTerm]);
     results.push(...clients.map(c => ({ title: c.title, type: c.type, path: '/admin/clients' })));
 
-    const [cases] = await db.query('SELECT id, title, "Expediente" AS type FROM cases WHERE title LIKE ? OR description LIKE ? LIMIT 5', [searchTerm, searchTerm]);
+    const [cases] = await db.query('SELECT id, title, "Expediente" AS type FROM cases WHERE title LIKE ? OR description LIKE ? OR cedula LIKE ? LIMIT 5', [searchTerm, searchTerm, searchTerm]);
     results.push(...cases.map(c => ({ title: c.title, type: c.type, path: '/admin/cases' })));
 
     const [docs] = await db.query('SELECT id, title, "Documento" AS type FROM documents WHERE title LIKE ? LIMIT 5', [searchTerm]);

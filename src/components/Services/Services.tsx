@@ -26,6 +26,13 @@ const iconMap: Record<string, React.ElementType> = {
   FaSearch,
 };
 
+const SERVICE_COLORS = ['#6366F1', '#8B5CF6', '#0EA5E9', '#10B981', '#F59E0B'];
+
+const getServiceColorClass = (index: number) => {
+  const colors = ['purple', 'violet', 'sky', 'emerald', 'amber'];
+  return colors[index % colors.length];
+};
+
 const Services = () => {
   const { services } = useData();
   const [activeService, setActiveService] = useState<number | null>(null);
@@ -170,7 +177,7 @@ const Services = () => {
                 const Icon = iconMap[service.icon] || FaSuitcase;
                 return (
                   <article
-                    className="service-card"
+                    className={`service-card service-color-${getServiceColorClass(index)}`}
                     key={index}
                     onClick={() => openDetail(index)}
                     role="button"

@@ -45,12 +45,19 @@ export interface ContactMessage {
 export interface Appointment {
   id: string;
   clientName: string;
+  email?: string;
+  phone?: string;
   date: string;
   time: string;
   purpose: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   lawyerId?: string;
   notes?: string;
+  source?: 'website' | 'admin' | 'walkin' | 'phone' | 'whatsapp';
+  format?: 'presencial' | 'virtual' | 'telefonica';
+  confirmationPreference?: 'email' | 'whatsapp' | 'call';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ClientData {
@@ -60,6 +67,19 @@ export interface ClientData {
   phone: string;
   address: string;
   created_at?: string;
+  updatedAt?: string;
+  caseTopic?: string;
+  notes?: string;
+  tags?: string[];
+  assets?: DocumentAsset[];
+}
+
+export interface CaseWitness {
+  id: string;
+  name: string;
+  cedula: string;
+  phone?: string;
+  note?: string;
 }
 
 export interface LegalCase {
@@ -67,15 +87,41 @@ export interface LegalCase {
   client_id: string;
   lawyer_id: string;
   title: string;
+  cedula: string;
   description: string;
   status: 'Evaluación' | 'En Proceso' | 'En Corte' | 'Cerrado';
   created_at?: string;
+  updatedAt?: string;
+  witnesses?: CaseWitness[];
+  assets?: DocumentAsset[];
 }
 
 export interface DocumentFolder {
   id: string;
   name: string;
   created_at?: string;
+}
+
+export interface DocumentAsset {
+  id: string;
+  name: string;
+  kind: 'image' | 'file';
+  type: string;
+  url: string;
+}
+
+export interface DocumentHistoryEntry {
+  id: string;
+  action: string;
+  details: string;
+  actor: string;
+  date: string;
+}
+
+export interface DocumentUpdateMeta {
+  action?: string;
+  details?: string;
+  actor?: string;
 }
 
 export interface DocumentInfo {
@@ -85,8 +131,13 @@ export interface DocumentInfo {
   client_id?: string;
   folder_id?: string;
   uploadDate: string;
+  updatedAt?: string;
   type: string;
   url: string;
+  note?: string;
+  tags?: string[];
+  assets?: DocumentAsset[];
+  history?: DocumentHistoryEntry[];
 }
 
 interface DataContextType {
@@ -106,7 +157,8 @@ interface DataContextType {
   addAppointment: (app: Omit<Appointment, 'id'>) => void;
   updateAppointmentStatus: (id: string, status: Appointment['status']) => void;
   updateAppointment: (id: string, updated: Partial<Appointment>) => void;
-  addDocument: (doc: Omit<DocumentInfo, 'id' | 'uploadDate'>) => void;
+  addDocument: (doc: Omit<DocumentInfo, 'id' | 'uploadDate' | 'updatedAt'>) => void;
+  updateDocument: (id: string, updated: Partial<DocumentInfo>, meta?: DocumentUpdateMeta) => void;
   deleteDocument: (id: string) => void;
 
   clients: ClientData[];
@@ -282,6 +334,139 @@ const initialTeam: TeamMember[] = [
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const createDocumentHistoryEntry = (
+  action: string,
+  details: string,
+  actor = 'Panel admin',
+): DocumentHistoryEntry => ({
+  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  action,
+  details,
+  actor,
+  date: new Date().toISOString(),
+});
+
+const parseStoredArray = <T,>(value: unknown): T[] => {
+  if (Array.isArray(value)) {
+    return value as T[];
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+};
+
+const normalizeAppointmentStatus = (value: unknown): Appointment['status'] => {
+  if (value === 'confirmed' || value === 'confirmada') {
+    return 'confirmed';
+  }
+
+  if (value === 'cancelled' || value === 'cancelada') {
+    return 'cancelled';
+  }
+
+  return 'pending';
+};
+
+const normalizeAppointmentSource = (value: unknown): NonNullable<Appointment['source']> => {
+  if (value === 'admin' || value === 'walkin' || value === 'phone' || value === 'whatsapp') {
+    return value;
+  }
+
+  return 'website';
+};
+
+const normalizeAppointmentFormat = (value: unknown): NonNullable<Appointment['format']> => {
+  if (value === 'virtual' || value === 'telefonica') {
+    return value;
+  }
+
+  return 'presencial';
+};
+
+const normalizeAppointmentConfirmation = (
+  value: unknown,
+): NonNullable<Appointment['confirmationPreference']> => {
+  if (value === 'email' || value === 'call') {
+    return value;
+  }
+
+  return 'whatsapp';
+};
+
+const normalizeAppointment = (appointment: Partial<Appointment> & Record<string, unknown>): Appointment => ({
+  id: String(appointment.id || Date.now().toString()),
+  clientName: String(appointment.clientName || appointment.nombre || ''),
+  email: typeof appointment.email === 'string' ? appointment.email : '',
+  phone:
+    typeof appointment.phone === 'string'
+      ? appointment.phone
+      : typeof appointment.telefono === 'string'
+        ? appointment.telefono
+        : '',
+  date: String(appointment.date || appointment.fecha || '').slice(0, 10),
+  time: String(appointment.time || appointment.hora || ''),
+  purpose: String(appointment.purpose || appointment.area || ''),
+  status: normalizeAppointmentStatus(appointment.status || appointment.estatus),
+  lawyerId: typeof appointment.lawyerId === 'string' ? appointment.lawyerId : '',
+  notes:
+    typeof appointment.notes === 'string'
+      ? appointment.notes
+      : typeof appointment.mensaje === 'string'
+        ? appointment.mensaje
+        : '',
+  source: normalizeAppointmentSource(appointment.source),
+  format: normalizeAppointmentFormat(appointment.format),
+  confirmationPreference: normalizeAppointmentConfirmation(
+    appointment.confirmationPreference || appointment.confirmation,
+  ),
+  createdAt:
+    typeof appointment.createdAt === 'string'
+      ? appointment.createdAt
+      : typeof appointment.date === 'string'
+        ? `${appointment.date}T${String(appointment.time || '00:00')}`
+        : new Date().toISOString(),
+  updatedAt:
+    typeof appointment.updatedAt === 'string'
+      ? appointment.updatedAt
+      : typeof appointment.createdAt === 'string'
+        ? appointment.createdAt
+        : new Date().toISOString(),
+});
+
+const normalizeDocument = (doc: DocumentInfo): DocumentInfo => ({
+  ...doc,
+  updatedAt: doc.updatedAt || doc.uploadDate,
+  note: doc.note || '',
+  tags: parseStoredArray<string>(doc.tags),
+  assets: parseStoredArray<DocumentAsset>(doc.assets),
+  history: parseStoredArray<DocumentHistoryEntry>(doc.history),
+});
+
+const normalizeClient = (client: ClientData): ClientData => ({
+  ...client,
+  updatedAt: client.updatedAt || client.created_at,
+  caseTopic: client.caseTopic || '',
+  notes: client.notes || '',
+  tags: parseStoredArray<string>(client.tags),
+  assets: parseStoredArray<DocumentAsset>(client.assets),
+});
+
+const normalizeCase = (caseItem: LegalCase): LegalCase => ({
+  ...caseItem,
+  cedula: caseItem.cedula || '',
+  updatedAt: caseItem.updatedAt || caseItem.created_at,
+  witnesses: parseStoredArray<CaseWitness>(caseItem.witnesses),
+  assets: parseStoredArray<DocumentAsset>(caseItem.assets),
+});
+
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const loadInitialData = (key: string, defaultData: any) => {
     const saved = localStorage.getItem(`crm_${key}`);
@@ -291,26 +476,46 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<ServiceData[]>(() => loadInitialData('services', initialServices));
   const [team, setTeam] = useState<TeamMember[]>(() => loadInitialData('team', initialTeam));
   const [messages, setMessages] = useState<ContactMessage[]>(() => loadInitialData('messages', []));
-  const [appointments, setAppointments] = useState<Appointment[]>(() => loadInitialData('appointments', []));
-  const [documents, setDocuments] = useState<DocumentInfo[]>(() => loadInitialData('documents', []));
+  const [appointments, setAppointments] = useState<Appointment[]>(() =>
+    loadInitialData('appointments', []).map(normalizeAppointment),
+  );
+  const [documents, setDocuments] = useState<DocumentInfo[]>(() =>
+    loadInitialData('documents', []).map(normalizeDocument),
+  );
 
-  const [clients, setClients] = useState<ClientData[]>(() => loadInitialData('clients', []));
-  const [cases, setCases] = useState<LegalCase[]>(() => loadInitialData('cases', []));
+  const [clients, setClients] = useState<ClientData[]>(() =>
+    loadInitialData('clients', []).map(normalizeClient),
+  );
+  const [cases, setCases] = useState<LegalCase[]>(() => loadInitialData('cases', []).map(normalizeCase));
   const [documentFolders, setDocumentFolders] = useState<DocumentFolder[]>(() => loadInitialData('document_folders', []));
 
   useEffect(() => {
     const fetchDB = async () => {
       try {
-        const [clientsRes, casesRes, foldersRes, docsRes] = await Promise.all([
+        const [appointmentsRes, clientsRes, casesRes, foldersRes, docsRes] = await Promise.all([
+          fetch('http://localhost:3001/api/appointments'),
           fetch('http://localhost:3001/api/clients'),
           fetch('http://localhost:3001/api/cases'),
           fetch('http://localhost:3001/api/document_folders'),
           fetch('http://localhost:3001/api/documents')
         ]);
-        if (clientsRes.ok) { const data = await clientsRes.json(); if (data.length) setClients(data); }
-        if (casesRes.ok) { const data = await casesRes.json(); if (data.length) setCases(data); }
+        if (appointmentsRes.ok) {
+          const data = await appointmentsRes.json();
+          if (data.length) setAppointments(data.map(normalizeAppointment));
+        }
+        if (clientsRes.ok) {
+          const data = await clientsRes.json();
+          if (data.length) setClients(data.map(normalizeClient));
+        }
+        if (casesRes.ok) {
+          const data = await casesRes.json();
+          if (data.length) setCases(data.map(normalizeCase));
+        }
         if (foldersRes.ok) { const data = await foldersRes.json(); if (data.length) setDocumentFolders(data); }
-        if (docsRes.ok) { const data = await docsRes.json(); if (data.length) setDocuments(data); }
+        if (docsRes.ok) {
+          const data = await docsRes.json();
+          if (data.length) setDocuments(data.map(normalizeDocument));
+        }
       } catch (e) {
         console.warn('Backend no disponible, usando localStorage fallback');
       }
@@ -380,76 +585,265 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setMessages(messages.map(m => m.id === id ? { ...m, read: true } : m));
   };
 
-  const addAppointment = (app: Omit<Appointment, 'id'>) => {
-    setAppointments([...appointments, { ...app, id: Date.now().toString() }]);
-  };
+  const addAppointment = async (app: Omit<Appointment, 'id'>) => {
+    const timestamp = new Date().toISOString();
+    const newAppointment = normalizeAppointment({
+      ...app,
+      id: Date.now().toString(),
+      createdAt: app.createdAt || timestamp,
+      updatedAt: app.updatedAt || timestamp,
+    });
 
-  const updateAppointmentStatus = (id: string, status: Appointment['status']) => {
-    setAppointments(appointments.map(a => a.id === id ? { ...a, status } : a));
-  };
+    setAppointments((prev) => [newAppointment, ...prev]);
 
-  const updateAppointment = (id: string, updated: Partial<Appointment>) => {
-    setAppointments(appointments.map(a => a.id === id ? { ...a, ...updated } : a));
-  };
-
-  const addDocument = async (doc: Omit<DocumentInfo, 'id' | 'uploadDate'>) => {
-    const newDoc = { ...doc, id: Date.now().toString(), uploadDate: new Date().toISOString() };
     try {
-      const res = await fetch('http://localhost:3001/api/documents', {
-        method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newDoc)
+      await fetch('http://localhost:3001/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newAppointment),
       });
-      if(res.ok) setDocuments([newDoc, ...documents]);
-      else setDocuments([newDoc, ...documents]);
-    } catch { setDocuments([newDoc, ...documents]); }
+    } catch {}
+  };
+
+  const updateAppointmentStatus = async (id: string, status: Appointment['status']) => {
+    const timestamp = new Date().toISOString();
+    setAppointments((prev) =>
+      prev.map((appointment) =>
+        appointment.id === id ? normalizeAppointment({ ...appointment, status, updatedAt: timestamp }) : appointment,
+      ),
+    );
+
+    try {
+      await fetch(`http://localhost:3001/api/appointments/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, updatedAt: timestamp }),
+      });
+    } catch {}
+  };
+
+  const updateAppointment = async (id: string, updated: Partial<Appointment>) => {
+    const currentAppointment = appointments.find((appointment) => appointment.id === id);
+    if (!currentAppointment) {
+      return;
+    }
+
+    const nextAppointment = normalizeAppointment({
+      ...currentAppointment,
+      ...updated,
+      updatedAt: new Date().toISOString(),
+    });
+
+    setAppointments((prev) =>
+      prev.map((appointment) => (appointment.id === id ? nextAppointment : appointment)),
+    );
+
+    try {
+      await fetch(`http://localhost:3001/api/appointments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nextAppointment),
+      });
+    } catch {}
+  };
+
+  const addDocument = async (doc: Omit<DocumentInfo, 'id' | 'uploadDate' | 'updatedAt'>) => {
+    const timestamp = new Date().toISOString();
+    const folderName =
+      doc.folder_id && documentFolders.find((folder) => folder.id === doc.folder_id)?.name
+        ? (documentFolders.find((folder) => folder.id === doc.folder_id)?.name as string)
+        : 'archivo central';
+
+    const newDoc = normalizeDocument({
+      ...doc,
+      id: Date.now().toString(),
+      uploadDate: timestamp,
+      updatedAt: timestamp,
+      history: [
+        createDocumentHistoryEntry(
+          'Creado',
+          `Documento registrado en ${folderName}.`,
+          'Panel admin',
+        ),
+        ...(doc.history || []),
+      ],
+    });
+
+    try {
+      await fetch('http://localhost:3001/api/documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newDoc),
+      });
+    } catch {}
+
+    setDocuments((prev) => [newDoc, ...prev]);
+  };
+
+  const updateDocument = async (
+    id: string,
+    updated: Partial<DocumentInfo>,
+    meta?: DocumentUpdateMeta,
+  ) => {
+    const timestamp = new Date().toISOString();
+    const currentDocument = documents.find((doc) => doc.id === id);
+    const nextHistoryEntry =
+      currentDocument
+        ? createDocumentHistoryEntry(
+            meta?.action || 'Actualizado',
+            meta?.details ||
+              [
+                updated.title && updated.title !== currentDocument.title ? `renombrado a ${updated.title}` : null,
+                updated.note !== undefined && updated.note !== currentDocument.note ? 'nota actualizada' : null,
+                updated.tags ? 'tags actualizados' : null,
+                updated.assets ? 'imagenes ajustadas' : null,
+                updated.folder_id !== undefined && updated.folder_id !== currentDocument.folder_id
+                  ? 'folder actualizado'
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(', ') ||
+              'Se actualizo la ficha del documento.',
+            meta?.actor,
+          )
+        : null;
+
+    setDocuments((prev) =>
+      prev.map((doc) => {
+        if (doc.id !== id) {
+          return doc;
+        }
+
+        const nextDoc = normalizeDocument({
+          ...doc,
+          ...updated,
+          updatedAt: timestamp,
+        });
+
+        const details =
+          meta?.details ||
+          [
+            updated.title && updated.title !== doc.title ? `renombrado a ${updated.title}` : null,
+            updated.note !== undefined && updated.note !== doc.note ? 'nota actualizada' : null,
+            updated.tags ? 'tags actualizados' : null,
+            updated.assets ? 'imagenes ajustadas' : null,
+            updated.folder_id !== undefined && updated.folder_id !== doc.folder_id
+              ? 'folder actualizado'
+              : null,
+          ]
+            .filter(Boolean)
+            .join(', ') ||
+          'Se actualizo la ficha del documento.';
+
+        return {
+          ...nextDoc,
+          history: [
+            createDocumentHistoryEntry(meta?.action || 'Actualizado', details, meta?.actor),
+            ...(doc.history || []),
+          ],
+        };
+      }),
+    );
+
+    try {
+      await fetch(`http://localhost:3001/api/documents/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...updated,
+          updatedAt: timestamp,
+          history: currentDocument
+            ? [nextHistoryEntry, ...(currentDocument.history || [])].filter(Boolean)
+            : undefined,
+        }),
+      });
+    } catch {}
   };
 
   const deleteDocument = async (id: string) => {
-    try { await fetch(`http://localhost:3001/api/documents/${id}`, { method: 'DELETE' }); } catch {}
-    setDocuments(documents.filter(d => d.id !== id));
+    setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+    try {
+      await fetch(`http://localhost:3001/api/documents/${id}`, { method: 'DELETE' });
+    } catch {}
   };
 
   const addClient = async (client: Omit<ClientData, 'id'>) => {
     const dbId = Date.now().toString();
-    const newClient = { ...client, id: dbId };
+    const newClient = normalizeClient({
+      ...client,
+      created_at: client.created_at || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      id: dbId,
+    });
     try {
       const res = await fetch('http://localhost:3001/api/clients', {
         method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newClient)
       });
-      if(res.ok) setClients([newClient, ...clients]);
-      else setClients([newClient, ...clients]);
-    } catch { setClients([newClient, ...clients]); }
+      if(res.ok) setClients((prev) => [newClient, ...prev]);
+      else setClients((prev) => [newClient, ...prev]);
+    } catch { setClients((prev) => [newClient, ...prev]); }
   };
 
   const updateClient = async (id: string, updated: Partial<ClientData>) => {
-    try { await fetch(`http://localhost:3001/api/clients/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(updated) }); } catch {}
-    setClients(clients.map(c => c.id === id ? { ...c, ...updated } : c));
+    const nextClient = {
+      ...updated,
+      updatedAt: new Date().toISOString(),
+    };
+    try { await fetch(`http://localhost:3001/api/clients/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(nextClient) }); } catch {}
+    setClients((prev) =>
+      prev.map((client) => (client.id === id ? normalizeClient({ ...client, ...nextClient }) : client)),
+    );
   };
 
   const deleteClient = async (id: string) => {
+    setClients((prev) => prev.filter(c => c.id !== id));
     try { await fetch(`http://localhost:3001/api/clients/${id}`, { method: 'DELETE' }); } catch {}
-    setClients(clients.filter(c => c.id !== id));
   };
 
   const addCase = async (caseData: Omit<LegalCase, 'id'>) => {
     const dbId = Date.now().toString();
-    const newCase = { ...caseData, id: dbId };
+    const timestamp = new Date().toISOString();
+    const newCase = normalizeCase({
+      ...caseData,
+      created_at: caseData.created_at || timestamp,
+      updatedAt: caseData.updatedAt || timestamp,
+      id: dbId,
+    });
     try {
       const res = await fetch('http://localhost:3001/api/cases', {
         method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newCase)
       });
-      if(res.ok) setCases([newCase, ...cases]);
-      else setCases([newCase, ...cases]);
-    } catch { setCases([newCase, ...cases]); }
+      if(res.ok) setCases((prev) => [newCase, ...prev]);
+      else setCases((prev) => [newCase, ...prev]);
+    } catch { setCases((prev) => [newCase, ...prev]); }
   };
 
   const updateCase = async (id: string, updated: Partial<LegalCase>) => {
-    try { await fetch(`http://localhost:3001/api/cases/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(updated) }); } catch {}
-    setCases(cases.map(c => c.id === id ? { ...c, ...updated } : c));
+    const currentCase = cases.find((caseItem) => caseItem.id === id);
+    if (!currentCase) {
+      return;
+    }
+
+    const nextCase = normalizeCase({
+      ...currentCase,
+      ...updated,
+      updatedAt: new Date().toISOString(),
+    });
+
+    try {
+      await fetch(`http://localhost:3001/api/cases/${id}`, {
+        method: 'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(nextCase),
+      });
+    } catch {}
+
+    setCases((prev) => prev.map((caseItem) => (caseItem.id === id ? nextCase : caseItem)));
   };
 
   const deleteCase = async (id: string) => {
+    setCases((prev) => prev.filter(c => c.id !== id));
     try { await fetch(`http://localhost:3001/api/cases/${id}`, { method: 'DELETE' }); } catch {}
-    setCases(cases.filter(c => c.id !== id));
   };
 
   const addFolder = async (folder: Omit<DocumentFolder, 'id'>) => {
@@ -478,7 +872,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       addAppointment,
       updateAppointmentStatus,
       updateAppointment,
-      addDocument, deleteDocument,
+      addDocument, updateDocument, deleteDocument,
       clients, cases, documentFolders,
       addClient, updateClient, deleteClient,
       addCase, updateCase, deleteCase,

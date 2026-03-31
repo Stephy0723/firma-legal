@@ -337,6 +337,60 @@
 }
 
 // ──────────────────────────────────────────────
+// Team Member Card Colors
+// ──────────────────────────────────────────────
+
+.team-color-purple {
+  &__role {
+    background: #6366F1;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-violet {
+  &__role {
+    background: #8B5CF6;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-sky {
+  &__role {
+    background: #0EA5E9;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-emerald {
+  &__role {
+    background: #10B981;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-amber {
+  &__role {
+    background: #F59E0B;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+// ──────────────────────────────────────────────
 // Mobile
 // ──────────────────────────────────────────────
 

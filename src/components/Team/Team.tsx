@@ -12,6 +12,13 @@ import AppointmentModal from "../AppointmentModal/AppointmentModal";
 import "./Team.scss";
 import { useData } from "../../context/DataContext";
 
+const LAWYER_COLORS = ['#6366F1', '#8B5CF6', '#0EA5E9', '#10B981', '#F59E0B'];
+
+const getLawyerColorClass = (index: number) => {
+  const colors = ['purple', 'violet', 'sky', 'emerald', 'amber'];
+  return colors[index % colors.length];
+};
+
 const Team = () => {
   const { team: teamMembers } = useData();
   const [activeMember, setActiveMember] = useState<number | null>(null);
@@ -130,7 +137,7 @@ const Team = () => {
               .filter(({ index }) => activeMember === null || index !== activeMember)
               .map(({ member, index }) => (
                 <article
-                  className="team-member-card"
+                  className={`team-member-card team-color-${getLawyerColorClass(index)}`}
                   key={index}
                   onClick={() => openProfile(index)}
                   role="button"

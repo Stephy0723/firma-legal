@@ -1,167 +1,508 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  FaBell,
+  FaBriefcase,
+  FaCalendarAlt,
+  FaCheckCircle,
+  FaCog,
+  FaEnvelope,
+  FaFolderOpen,
+  FaHome,
+  FaInbox,
+  FaMapMarkerAlt,
+  FaMoon,
+  FaPhoneAlt,
+  FaSave,
+  FaShieldAlt,
+  FaSyncAlt,
+  FaUserTie,
+  FaWhatsapp,
+} from 'react-icons/fa';
 import { useData } from '../../../context/DataContext';
 import { useTheme } from '../../../context/ThemeContext';
-import { FaEdit, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaCheckCircle, FaBell, FaShieldAlt } from 'react-icons/fa';
 import PageHelp from '../../../components/Admin/PageHelp/PageHelp';
+import type {
+  AdminProfileConfig,
+  AdminWorkspaceSettings,
+} from '../../../utils/adminWorkspace';
+import {
+  defaultAdminProfileConfig,
+  loadAdminProfileConfig,
+  loadAdminWorkspaceSettings,
+  saveAdminProfileConfig,
+  saveAdminWorkspaceSettings,
+} from '../../../utils/adminWorkspace';
 import './AdminProfile.scss';
 
+type ActivityItem = {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+};
+
+const formatLongDate = (value: string) =>
+  new Intl.DateTimeFormat('es-DO', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(value));
+
+const normalizeValue = (value: string) =>
+  value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+const isClosedCase = (status: string) => normalizeValue(status).includes('cerrado');
+
 const AdminProfile = () => {
-  const { cases, appointments } = useData();
+  const navigate = useNavigate();
+  const { cases, appointments, messages, documents } = useData();
   const { theme, toggleTheme } = useTheme();
+  const [profileForm, setProfileForm] = useState<AdminProfileConfig>(() => loadAdminProfileConfig());
+  const [workspaceSettings, setWorkspaceSettings] = useState<AdminWorkspaceSettings>(() =>
+    loadAdminWorkspaceSettings(),
+  );
+  const [saveMessage, setSaveMessage] = useState('');
 
-  // Mock Admin User Data
-  const [adminUser] = useState({
-    name: "Lic. Javier Ruiz",
-    role: "Socio Fundador",
-    email: "jrylinversiones@gmail.com",
-    phone: "+1 829 344 7586",
-    location: "Sede Principal, SD",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"
-  });
+  const metrics = useMemo(
+    () => ({
+      totalCases: cases.length,
+      closedCases: cases.filter((caseItem) => isClosedCase(caseItem.status)).length,
+      pendingAppointments: appointments.filter((appointment) => appointment.status === 'pending')
+        .length,
+      unreadMessages: messages.filter((message) => !message.read).length,
+    }),
+    [appointments, cases, messages],
+  );
 
-  const myCases = cases.length;
-  const wonCases = cases.filter(c => c.status === 'Cerrado').length;
-  const myAppointments = appointments.filter(a => a.status === 'confirmed').length;
+  const recentActivity = useMemo<ActivityItem[]>(() => {
+    const items: ActivityItem[] = [
+      ...messages.map((message) => ({
+        id: `message-${message.id}`,
+        date: message.date,
+        title: `Mensaje de ${message.name}`,
+        description: message.area ? `Consulta recibida en ${message.area}.` : 'Consulta general desde el sitio web.',
+      })),
+      ...appointments.map((appointment) => ({
+        id: `appointment-${appointment.id}`,
+        date: appointment.updatedAt || appointment.createdAt || `${appointment.date}T${appointment.time || '00:00'}`,
+        title: `Cita para ${appointment.clientName}`,
+        description: `${appointment.purpose} con estado ${appointment.status}.`,
+      })),
+      ...cases.map((caseItem) => ({
+        id: `case-${caseItem.id}`,
+        date: caseItem.updatedAt || caseItem.created_at || new Date().toISOString(),
+        title: `Expediente ${caseItem.title}`,
+        description: `Movimiento registrado en estado ${caseItem.status}.`,
+      })),
+      ...documents.map((document) => ({
+        id: `document-${document.id}`,
+        date: document.updatedAt || document.uploadDate,
+        title: `Documento ${document.title}`,
+        description: document.note || 'Actualizacion documental registrada.',
+      })),
+    ];
+
+    return items
+      .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
+      .slice(0, 6);
+  }, [appointments, cases, documents, messages]);
+
+  const quickLinks = [
+    {
+      label: 'Dashboard',
+      meta: 'panel principal',
+      route: '/admin',
+      icon: FaHome,
+    },
+    {
+      label: 'Mensajes',
+      meta: `${metrics.unreadMessages} nuevos`,
+      route: '/admin/inbox',
+      icon: FaInbox,
+    },
+    {
+      label: 'Citas',
+      meta: `${metrics.pendingAppointments} pendientes`,
+      route: '/admin/appointments',
+      icon: FaCalendarAlt,
+    },
+    {
+      label: 'Expedientes',
+      meta: `${metrics.totalCases} casos`,
+      route: '/admin/cases',
+      icon: FaBriefcase,
+    },
+    {
+      label: 'Documentos',
+      meta: `${documents.length} archivos`,
+      route: '/admin/documents',
+      icon: FaFolderOpen,
+    },
+    {
+      label: 'Configuracion',
+      meta: 'ajustes del sistema',
+      route: '/admin/settings',
+      icon: FaCog,
+    },
+  ];
+
+  const handleFieldChange =
+    (field: keyof AdminProfileConfig) =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setProfileForm((current) => ({ ...current, [field]: event.target.value }));
+      setSaveMessage('');
+    };
+
+  const handleSaveProfile = () => {
+    saveAdminProfileConfig(profileForm);
+    setSaveMessage('Perfil guardado correctamente.');
+  };
+
+  const handleResetProfile = () => {
+    setProfileForm(defaultAdminProfileConfig);
+    saveAdminProfileConfig(defaultAdminProfileConfig);
+    setSaveMessage('Perfil restablecido al valor base.');
+  };
+
+  const handleSettingToggle = (
+    field:
+      | 'emailNotificationsEnabled'
+      | 'desktopNotificationsEnabled'
+      | 'automaticInboxOpening',
+  ) => {
+    const nextSettings = { ...workspaceSettings, [field]: !workspaceSettings[field] };
+    setWorkspaceSettings(nextSettings);
+    saveAdminWorkspaceSettings(nextSettings);
+    setSaveMessage('Preferencias rapidas actualizadas.');
+  };
 
   return (
-    <div className="admin-profile-page">
-      <PageHelp 
+    <div className="profile-studio services-studio">
+      <PageHelp
         title="Mi Perfil"
-        description="Gestiona tu información personal, revisa tu rendimiento individual y ajusta las preferencias de tu cuenta."
+        description="Gestione su identidad ejecutiva, firma institucional y preferencias rapidas del CRM."
         features={[
-          "Tarjeta de Identificación: Edita tus datos de contacto públicos.",
-          "Estadísticas Personales: Visualiza los casos que has gestionado y resuelto exitosamente.",
-          "Ajustes Rápidos: Modifica el tema visual, notificaciones y seguridad de tu cuenta."
+          'Edicion real del perfil con persistencia local.',
+          'Preferencias rapidas conectadas a configuracion del sistema.',
+          'Actividad reciente del despacho desde una sola ficha.',
         ]}
       />
 
-      <div className="profile-layout-exact">
-        {/* LEFT COLUMN: Patient Card Clone for Admin */}
-        <div className="profile-card-col">
-          <div className="admin-patient-card">
-            <div className="card-header-bg">
-              <button className="btn-edit-profile"><FaEdit /> Editar</button>
-            </div>
-            <div className="profile-avatar-wrapper">
-              <img src={adminUser.image} alt={adminUser.name} />
-              <div className="status-indicator online"></div>
-            </div>
-            
-            <div className="profile-info-dense">
-              <h2>{adminUser.name}</h2>
-              <span className="role-badge">{adminUser.role}</span>
-              
-              <div className="contact-grid-profile">
-                <div className="c-item">
-                  <FaEnvelope className="c-icon" />
-                  <div className="c-text">
-                    <span>Email</span>
-                    <strong>{adminUser.email}</strong>
-                  </div>
-                </div>
-                <div className="c-item">
-                  <FaPhone className="c-icon" />
-                  <div className="c-text">
-                    <span>Teléfono</span>
-                    <strong>{adminUser.phone}</strong>
-                  </div>
-                </div>
-                <div className="c-item">
-                  <FaMapMarkerAlt className="c-icon" />
-                  <div className="c-text">
-                    <span>Ubicación</span>
-                    <strong>{adminUser.location}</strong>
-                  </div>
-                </div>
+      <section className="profile-header">
+        <article className="profile-identity">
+          <div className="profile-identity__top">
+            <div className="profile-identity__media">
+              <img src={profileForm.image} alt={profileForm.name} className="profile-identity__avatar" />
+              <div className="profile-identity__copy">
+                <span className="profile-identity__eyebrow">Perfil ejecutivo</span>
+                <h2>{profileForm.name}</h2>
+                <strong>{profileForm.role}</strong>
+                <p>{profileForm.specialty}</p>
               </div>
             </div>
 
-            <div className="profile-metrics-mini">
-              <div className="m-box">
-                <h4>{myCases}</h4>
-                <span>Casos Totales</span>
-              </div>
-              <div className="m-box success">
-                <h4>{wonCases}</h4>
-                <span>Casos Ganados</span>
-              </div>
-              <div className="m-box">
-                <h4>{myAppointments}</h4>
-                <span>Citas Activas</span>
-              </div>
+            <div className="profile-identity__actions">
+              <a href={`mailto:${profileForm.email}`} className="admin-btn-outline">
+                <FaEnvelope />
+                Correo
+              </a>
+              <a
+                href={`https://wa.me/${profileForm.phone.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="admin-btn-primary"
+              >
+                <FaWhatsapp />
+                WhatsApp
+              </a>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT COLUMN: Settings and Recent Activity */}
-        <div className="settings-activity-col">
-          
-          <div className="settings-panel">
-            <h3>Ajustes de Plataforma</h3>
-            <div className="settings-list">
-              
-              <div className="setting-item">
-                <div className="s-info">
-                  <div className="icon"><img src={theme === 'dark' ? "https://cdn-icons-png.flaticon.com/512/766/766031.png" : "https://cdn-icons-png.flaticon.com/512/3222/3222675.png"} width="24" style={{filter: theme === 'dark' ? 'invert(1)' : 'none'}} alt="Theme"/></div>
-                  <div>
-                    <h4>Modo Visual</h4>
-                    <p>Cambiar entre Modo Claro y Oscuro para la interfaz.</p>
-                  </div>
-                </div>
-                <button 
-                  className={`toggle-switch ${theme === 'dark' ? 'on' : 'off'}`} 
-                  onClick={toggleTheme}
+          <div className="profile-identity__details">
+            <article className="profile-identity__detail">
+              <FaEnvelope />
+              <div>
+                <span>Correo</span>
+                <strong>{profileForm.email}</strong>
+              </div>
+            </article>
+            <article className="profile-identity__detail">
+              <FaPhoneAlt />
+              <div>
+                <span>Telefono</span>
+                <strong>{profileForm.phone}</strong>
+              </div>
+            </article>
+            <article className="profile-identity__detail">
+              <FaMapMarkerAlt />
+              <div>
+                <span>Ubicacion</span>
+                <strong>{profileForm.location}</strong>
+              </div>
+            </article>
+            <article className="profile-identity__detail">
+              <FaShieldAlt />
+              <div>
+                <span>Firma</span>
+                <strong>{profileForm.signature}</strong>
+              </div>
+            </article>
+          </div>
+
+          <div className="profile-identity__bio">
+            <span>Resumen</span>
+            <p>{profileForm.bio}</p>
+          </div>
+        </article>
+
+        <aside className="profile-overview">
+          <div className="profile-metrics">
+            <article className="profile-metric">
+              <span>Expedientes</span>
+              <strong>{metrics.totalCases}</strong>
+              <small>en plataforma</small>
+            </article>
+            <article className="profile-metric">
+              <span>Cerrados</span>
+              <strong>{metrics.closedCases}</strong>
+              <small>resueltos</small>
+            </article>
+            <article className="profile-metric">
+              <span>Citas</span>
+              <strong>{metrics.pendingAppointments}</strong>
+              <small>pendientes</small>
+            </article>
+            <article className="profile-metric">
+              <span>Inbox</span>
+              <strong>{metrics.unreadMessages}</strong>
+              <small>sin revisar</small>
+            </article>
+          </div>
+
+          <article className="profile-overview__panel">
+            <span>Operacion</span>
+            <div className="profile-overview__rows">
+              <div>
+                <small>Tema</small>
+                <strong>{theme === 'dark' ? 'Oscuro' : 'Claro'}</strong>
+              </div>
+              <div>
+                <small>Inbox</small>
+                <strong>{workspaceSettings.automaticInboxOpening ? 'Automatico' : 'Manual'}</strong>
+              </div>
+              <div>
+                <small>Correo</small>
+                <strong>{workspaceSettings.emailNotificationsEnabled ? 'Activo' : 'Pausado'}</strong>
+              </div>
+              <div>
+                <small>Escritorio</small>
+                <strong>{workspaceSettings.desktopNotificationsEnabled ? 'Activo' : 'Pausado'}</strong>
+              </div>
+            </div>
+          </article>
+        </aside>
+      </section>
+
+      <div className="profile-grid">
+        <section className="profile-card profile-card--editor">
+          <div className="profile-card__header">
+            <div>
+              <span>Identidad</span>
+              <h3>Ficha del administrador</h3>
+            </div>
+            {saveMessage ? <small>{saveMessage}</small> : null}
+          </div>
+
+          <div className="profile-form">
+            <div className="form-group">
+              <label>Nombre completo</label>
+              <input type="text" value={profileForm.name} onChange={handleFieldChange('name')} />
+            </div>
+            <div className="form-group">
+              <label>Cargo</label>
+              <input type="text" value={profileForm.role} onChange={handleFieldChange('role')} />
+            </div>
+            <div className="form-group">
+              <label>Correo</label>
+              <input type="email" value={profileForm.email} onChange={handleFieldChange('email')} />
+            </div>
+            <div className="form-group">
+              <label>Telefono</label>
+              <input type="text" value={profileForm.phone} onChange={handleFieldChange('phone')} />
+            </div>
+            <div className="form-group">
+              <label>Ubicacion</label>
+              <input type="text" value={profileForm.location} onChange={handleFieldChange('location')} />
+            </div>
+            <div className="form-group">
+              <label>Especialidad</label>
+              <input
+                type="text"
+                value={profileForm.specialty}
+                onChange={handleFieldChange('specialty')}
+              />
+            </div>
+            <div className="form-group form-group--full">
+              <label>Foto de perfil</label>
+              <input type="url" value={profileForm.image} onChange={handleFieldChange('image')} />
+            </div>
+            <div className="form-group form-group--full">
+              <label>Biografia ejecutiva</label>
+              <textarea rows={5} value={profileForm.bio} onChange={handleFieldChange('bio')} />
+            </div>
+            <div className="form-group form-group--full">
+              <label>Firma institucional</label>
+              <input
+                type="text"
+                value={profileForm.signature}
+                onChange={handleFieldChange('signature')}
+              />
+            </div>
+          </div>
+
+          <div className="profile-card__footer">
+            <button type="button" className="admin-btn-outline" onClick={handleResetProfile}>
+              <FaSyncAlt />
+              Restablecer
+            </button>
+            <button type="button" className="admin-btn-primary" onClick={handleSaveProfile}>
+              <FaSave />
+              Guardar perfil
+            </button>
+          </div>
+        </section>
+
+        <section className="profile-card profile-card--preferences">
+          <div className="profile-card__header">
+            <div>
+              <span>Preferencias</span>
+              <h3>Ajustes rapidos</h3>
+            </div>
+          </div>
+
+          <div className="profile-preferences">
+            <button type="button" className="profile-preference" onClick={toggleTheme}>
+              <div>
+                <strong>Tema visual</strong>
+                <span>{theme === 'dark' ? 'Oscuro activo' : 'Claro activo'}</span>
+              </div>
+              <b>
+                <FaMoon />
+              </b>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-preference ${workspaceSettings.emailNotificationsEnabled ? 'is-active' : ''}`}
+              onClick={() => handleSettingToggle('emailNotificationsEnabled')}
+            >
+              <div>
+                <strong>Alertas por correo</strong>
+                <span>seguimiento interno</span>
+              </div>
+              <b>
+                <FaBell />
+              </b>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-preference ${workspaceSettings.desktopNotificationsEnabled ? 'is-active' : ''}`}
+              onClick={() => handleSettingToggle('desktopNotificationsEnabled')}
+            >
+              <div>
+                <strong>Notificaciones de escritorio</strong>
+                <span>alertas del navegador</span>
+              </div>
+              <b>
+                <FaCheckCircle />
+              </b>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-preference ${workspaceSettings.automaticInboxOpening ? 'is-active' : ''}`}
+              onClick={() => handleSettingToggle('automaticInboxOpening')}
+            >
+              <div>
+                <strong>Apertura automatica del inbox</strong>
+                <span>seleccion inicial en mensajes</span>
+              </div>
+              <b>
+                <FaUserTie />
+              </b>
+            </button>
+          </div>
+
+          <div className="profile-contact-actions">
+            <a href={`mailto:${profileForm.email}`} className="admin-btn-outline">
+              <FaEnvelope />
+              Escribir correo
+            </a>
+            <a href={`tel:${profileForm.phone}`} className="admin-btn-outline">
+              <FaPhoneAlt />
+              Llamar
+            </a>
+            <a
+              href={`https://wa.me/${profileForm.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="admin-btn-outline"
+            >
+              <FaWhatsapp />
+              WhatsApp
+            </a>
+          </div>
+
+          <div className="profile-shortcuts">
+            <div className="profile-shortcuts__head">
+              <h4>Links utiles</h4>
+            </div>
+            <div className="profile-shortcuts__grid">
+              {quickLinks.map((link) => (
+                <button
+                  key={link.label}
+                  type="button"
+                  className="profile-shortcut"
+                  onClick={() => navigate(link.route)}
                 >
-                  <div className="handle"></div>
+                  <link.icon />
+                  <div>
+                    <strong>{link.label}</strong>
+                    <span>{link.meta}</span>
+                  </div>
                 </button>
-              </div>
-
-              <div className="setting-item">
-                <div className="s-info">
-                  <div className="icon"><FaBell /></div>
-                  <div>
-                    <h4>Notificaciones por Email</h4>
-                    <p>Recibir alertas cuando se asignen nuevos expedientes.</p>
-                  </div>
-                </div>
-                <button className="toggle-switch on"><div className="handle"></div></button>
-              </div>
-
-              <div className="setting-item">
-                <div className="s-info">
-                  <div className="icon"><FaShieldAlt /></div>
-                  <div>
-                    <h4>Autenticación de Dos Pasos</h4>
-                    <p>Capa extra de seguridad para tu inicio de sesión.</p>
-                  </div>
-                </div>
-                <button className="toggle-switch off"><div className="handle"></div></button>
-              </div>
-
+              ))}
             </div>
           </div>
+        </section>
 
-          <div className="recent-activity-panel">
-            <h3>Registro de Actividad</h3>
-            <div className="activity-timeline">
-              <div className="a-item">
-                <div className="a-marker success"><FaCheckCircle /></div>
-                <div className="a-content">
-                  <span className="time">Hoy, 10:30 AM</span>
-                  <p>Resolución favorable en el expediente <strong>#EXP-0042</strong></p>
-                </div>
-              </div>
-              <div className="a-item">
-                <div className="a-marker"><FaBriefcase /></div>
-                <div className="a-content">
-                  <span className="time">Ayer, 04:15 PM</span>
-                  <p>Asignación estructurada del caso <strong>Guzmán Corporativo</strong></p>
-                </div>
-              </div>
+        <section className="profile-card profile-card--activity">
+          <div className="profile-card__header">
+            <div>
+              <span>Movimiento</span>
+              <h3>Actividad reciente</h3>
             </div>
+            <FaShieldAlt />
           </div>
 
-        </div>
+          <div className="profile-activity">
+            {recentActivity.map((item) => (
+              <article key={item.id} className="profile-activity__item">
+                <div className="profile-activity__marker" />
+                <div className="profile-activity__copy">
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                  <small>{formatLongDate(item.date)}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 const mysql = require('mysql2/promise');
 const { Client } = require('ssh2');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const dbConfig = {
   host: process.env.DB_HOST || '127.0.0.1',

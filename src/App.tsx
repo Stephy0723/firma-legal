@@ -14,8 +14,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import { Outlet } from "react-router-dom";
 
 // Admin Imports
-import AdminLayout from "./components/Admin/AdminLayout/AdminLayout";
-import AdminDashboard from "./pages/Admin/Dashboard/AdminDashboard";
+import AdminLayoutV2 from "./components/Admin/AdminLayoutV2/AdminLayoutV2";
+import AdminDashboardV2 from "./pages/Admin/Dashboard/AdminDashboardV2";
 import AdminInbox from "./pages/Admin/Inbox/AdminInbox";
 import AdminAppointments from "./pages/Admin/Appointments/AdminAppointments";
 import AdminDocuments from "./pages/Admin/Documents/AdminDocuments";
@@ -25,6 +25,7 @@ import AdminLogin from "./pages/Admin/Login/AdminLogin";
 import AdminClients from "./pages/Admin/Clients/AdminClients";
 import AdminCases from "./pages/Admin/Cases/AdminCases";
 import AdminProfile from "./pages/Admin/Profile/AdminProfile";
+import AdminSettings from "./pages/Admin/Settings/AdminSettings";
 import { Navigate } from "react-router-dom";
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
@@ -75,8 +76,8 @@ function App() {
         <Route path="/admin">
           <Route path="login" element={<AdminLogin />} />
           
-          <Route element={<RequireAuth><AdminLayout /></RequireAuth>}>
-            <Route index element={<AdminDashboard />} />
+          <Route element={<RequireAuth><AdminLayoutV2 /></RequireAuth>}>
+            <Route index element={<AdminDashboardV2 />} />
             <Route path="inbox" element={<AdminInbox />} />
             <Route path="appointments" element={<AdminAppointments />} />
             <Route path="clients" element={<AdminClients />} />
@@ -85,6 +86,7 @@ function App() {
             <Route path="services" element={<AdminServices />} />
             <Route path="team" element={<AdminTeam />} />
             <Route path="profile" element={<AdminProfile />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
         </Route>
       </Routes>

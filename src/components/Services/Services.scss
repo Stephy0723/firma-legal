@@ -409,6 +409,70 @@
 }
 
 // ──────────────────────────────────────────────
+// Service Card Colors
+// ──────────────────────────────────────────────
+
+.service-color-purple {
+  .icon {
+    background: #6366F1;
+    color: #fff;
+    border-color: #6366F1;
+
+    &::before {
+      background: #6366F1;
+    }
+  }
+}
+
+.service-color-violet {
+  .icon {
+    background: #8B5CF6;
+    color: #fff;
+    border-color: #8B5CF6;
+
+    &::before {
+      background: #8B5CF6;
+    }
+  }
+}
+
+.service-color-sky {
+  .icon {
+    background: #0EA5E9;
+    color: #fff;
+    border-color: #0EA5E9;
+
+    &::before {
+      background: #0EA5E9;
+    }
+  }
+}
+
+.service-color-emerald {
+  .icon {
+    background: #10B981;
+    color: #fff;
+    border-color: #10B981;
+
+    &::before {
+      background: #10B981;
+    }
+  }
+}
+
+.service-color-amber {
+  .icon {
+    background: #F59E0B;
+    color: #fff;
+    border-color: #F59E0B;
+
+    &::before {
+      background: #F59E0B;
+    }
+  }
+}
+
+// ──────────────────────────────────────────────
 // Responsive
 // ──────────────────────────────────────────────
 

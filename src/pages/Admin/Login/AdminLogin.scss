@@ -1,242 +1,375 @@
 @use '../../../styles/base/variables' as *;
 
+// ─── Layout ───────────────────────────────────────────────────────────────────
 .admin-login-layout {
   display: flex;
   min-height: 100vh;
   width: 100vw;
   font-family: $font-body;
-  background: #FFFFFF;
+  background: $ink-950;
 }
 
-// ─────────────────────────────────────────────
-// LEFT — Brand / Visual side
-// ─────────────────────────────────────────────
+// ─── LEFT — Visual / Brand ────────────────────────────────────────────────────
 .admin-login-brand {
-  flex: 1.1;
+  flex: 1.15;
   position: relative;
+  overflow: hidden;
   display: none;
-  background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
 
   @media (min-width: 1024px) {
     display: flex;
     flex-direction: column;
-    justify-content: center;
   }
 
-  .brand-overlay {
+  // Background image
+  &::before {
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(145deg, rgba(15,23,42,0.92) 0%, rgba(30,58,138,0.80) 100%);
+    background: url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+    filter: grayscale(100%);
   }
 
-  .brand-content {
-    position: relative;
-    z-index: 10;
-    color: #FFFFFF;
-    padding: 4rem 5rem;
-    max-width: 620px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    h1 {
-      font-size: clamp(2.4rem, 3.5vw, 3.4rem);
-      font-weight: 700;
-      margin-bottom: 1.2rem;
-      font-family: $font-heading;
-      letter-spacing: -0.02em;
-      line-height: 1.08;
-      color: #FFFFFF;
-    }
-
-    p {
-      font-size: 1.05rem;
-      color: rgba(255,255,255,0.68);
-      line-height: 1.75;
-      max-width: 88%;
-      font-weight: 400;
-    }
-
-    .brand-footer {
-      position: absolute;
-      bottom: 3rem;
-      left: 5rem;
-      font-size: 0.78rem;
-      color: rgba(255,255,255,0.35);
-      font-weight: 400;
-    }
+  // Dark veil
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      160deg,
+      rgba(9, 9, 11, 0.88) 0%,
+      rgba(9, 9, 11, 0.72) 55%,
+      rgba(9, 9, 11, 0.85) 100%
+    );
   }
 }
 
-// ─────────────────────────────────────────────
-// RIGHT — Form side
-// ─────────────────────────────────────────────
+.brand-content {
+  position: relative;
+  z-index: 10;
+  color: #FFFFFF;
+  padding: 4rem 4.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+
+  // Top eyebrow
+  .brand-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: $fs-eyebrow;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  // Center copy
+  .brand-center {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 520px;
+  }
+
+  h1 {
+    font-family: $font-heading;
+    font-size: clamp(2.6rem, 3vw + 1rem, 3.8rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .brand-desc {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.8;
+    font-weight: 400;
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  // Divider line
+  .brand-rule {
+    width: 48px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  // Pillars
+  .brand-pillars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brand-pillar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.83rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+  }
+
+  // Footer copyright
+  .brand-footer {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.22);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+}
+
+// ─── RIGHT — Form panel ───────────────────────────────────────────────────────
 .admin-login-form-container {
-  flex: 0.9;
-  min-width: 400px;
-  background: #FFFFFF;
+  flex: 0.85;
+  min-width: 420px;
+  background: $surface;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 5%;
+  padding: 2rem 6%;
   position: relative;
 
-  @media (max-width: 1024px) { flex: 1; min-width: 100%; }
-
-  [data-theme='dark'] & { background: #070F1C; }
+  @media (max-width: 1024px) {
+    flex: 1;
+    min-width: 100%;
+    background: $ink-950;
+  }
 
   .back-link {
     position: absolute;
     top: 2.5rem;
     left: 2.5rem;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: #64748B;
+    gap: 0.45rem;
+    color: $ink-500;
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: 0.82rem;
     font-weight: 500;
-    transition: color 0.2s;
+    transition: color 0.15s;
+    letter-spacing: 0.01em;
 
-    &:hover { color: #0F172A; }
-    [data-theme='dark'] & { color: #94A3B8; &:hover { color: #F1F5F9; } }
+    &:hover {
+      color: $ink-900;
+    }
+
+    @media (max-width: 1024px) {
+      color: rgba(255, 255, 255, 0.45);
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
   }
 }
 
+// ─── Form wrapper ─────────────────────────────────────────────────────────────
 .form-wrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
+}
 
-  .form-header {
-    margin-bottom: 2.5rem;
-    text-align: left;
+// ─── Form header ─────────────────────────────────────────────────────────────
+.form-header {
+  margin-bottom: 2.5rem;
 
-    .form-logo {
-      height: 44px;
-      width: auto;
-      border-radius: 8px;
-      margin-bottom: 1.8rem;
-    }
+  h2 {
+    font-family: $font-heading;
+    font-size: clamp(1.7rem, 2vw + 0.5rem, 2.2rem);
+    font-weight: 700;
+    color: $ink-900;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
 
-    h2 {
-      font-size: 1.85rem;
-      font-weight: 700;
-      color: #0F172A;
-      margin: 0 0 0.4rem;
-      letter-spacing: -0.03em;
-      font-family: $font-body;
-      [data-theme='dark'] & { color: #F1F5F9; }
-    }
-
-    p {
-      color: #64748B;
-      font-size: 0.925rem;
-      margin: 0;
-      [data-theme='dark'] & { color: #94A3B8; }
+    @media (max-width: 1024px) {
+      color: #FFFFFF;
     }
   }
 
-  .admin-login-error {
-    background: #FEF2F2;
-    color: #B91C1C;
-    border-left: 3px solid #EF4444;
-    padding: 0.9rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    margin-bottom: 1.5rem;
-    font-weight: 500;
-    [data-theme='dark'] & { background: rgba(153,27,27,0.12); color: #FCA5A5; border-left-color: #F87171; }
+  p {
+    color: $ink-500;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+
+    @media (max-width: 1024px) {
+      color: rgba(255, 255, 255, 0.5);
+    }
   }
+}
+
+// ─── Error ────────────────────────────────────────────────────────────────────
+.admin-login-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: #FEF2F2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.835rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+
+  @media (max-width: 1024px) {
+    background: rgba(153, 27, 27, 0.15);
+    color: #FCA5A5;
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 
   .form-group {
-    margin-bottom: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
 
     label {
-      display: block;
-      color: #374151;
-      font-size: 0.825rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      margin-bottom: 0.4rem;
-      [data-theme='dark'] & { color: #CBD5E1; }
+      color: $ink-700;
+      letter-spacing: 0.01em;
+
+      @media (max-width: 1024px) {
+        color: rgba(255, 255, 255, 0.75);
+      }
     }
 
     .password-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.4rem;
-
-      label { margin-bottom: 0; }
 
       .forgot-password {
-        font-size: 0.78rem;
-        color: #64748B;
+        font-size: 0.775rem;
+        color: $ink-500;
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.2s;
+        transition: color 0.15s;
 
-        &:hover { color: #2563EB; }
-        [data-theme='dark'] & { color: #94A3B8; &:hover { color: #60A5FA; } }
+        &:hover {
+          color: $ink-900;
+        }
+
+        @media (max-width: 1024px) {
+          color: rgba(255, 255, 255, 0.4);
+
+          &:hover {
+            color: rgba(255, 255, 255, 0.8);
+          }
+        }
       }
     }
 
     input {
       width: 100%;
-      background: #F8FAFC;
-      border: 1.5px solid #E2E8F0;
-      color: #0F172A;
+      background: $ink-50;
+      border: 1.5px solid $ink-200;
+      color: $ink-900;
       padding: 0.8rem 1rem;
-      border-radius: 8px;
-      font-size: 0.925rem;
-      transition: all 0.2s ease;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-family: $font-body;
+      transition: all 0.15s ease;
 
-      [data-theme='dark'] & {
-        background: #0F172A;
-        border-color: #1E293B;
-        color: #F1F5F9;
+      &::placeholder {
+        color: $ink-400;
       }
-
-      &::placeholder { color: #94A3B8; }
 
       &:focus {
         outline: none;
-        border-color: #2563EB;
-        background: #FFFFFF;
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
-        [data-theme='dark'] & { background: #0F172A; }
+        border-color: $ink-900;
+        background: $surface;
+        box-shadow: 0 0 0 3px rgba(9, 9, 11, 0.07);
+      }
+
+      @media (max-width: 1024px) {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #FFFFFF;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.25);
+        }
+
+        &:focus {
+          border-color: rgba(255, 255, 255, 0.5);
+          background: rgba(255, 255, 255, 0.1);
+          box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+        }
       }
     }
   }
 
   .login-btn {
     width: 100%;
-    padding: 0.875rem;
-    font-size: 0.95rem;
-    margin-top: 0.5rem;
-    background: #2563EB;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
+    padding: 0.9rem;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 14px rgba(37,99,235,0.30);
-    letter-spacing: 0.01em;
     font-family: $font-body;
+    letter-spacing: 0.02em;
+    background: $ink-950;
+    color: #FFFFFF;
+    border: 1.5px solid $ink-950;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
 
     &:hover {
-      background: #1D4ED8;
-      box-shadow: 0 6px 20px rgba(37,99,235,0.38);
+      background: $ink-800;
+      border-color: $ink-800;
       transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(9, 9, 11, 0.22);
     }
-    &:active { transform: scale(0.98); box-shadow: none; }
 
-    [data-theme='dark'] & {
-      background: #2563EB;
-      color: #FFFFFF;
-      &:hover { background: #1D4ED8; }
+    &:active {
+      transform: scale(0.99);
+      box-shadow: none;
+    }
+
+    @media (max-width: 1024px) {
+      background: #FFFFFF;
+      color: $ink-950;
+      border-color: #FFFFFF;
+
+      &:hover {
+        background: $ink-100;
+        border-color: $ink-100;
+      }
     }
   }
 }
