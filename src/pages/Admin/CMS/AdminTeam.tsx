@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import type { FormEvent } from 'react';
 import type { IconType } from 'react-icons';
 import {
@@ -16,6 +16,7 @@ import {
   FaShieldAlt,
   FaTimes,
   FaTrash,
+  FaUpload,
   FaUserTie,
   FaUsers,
 } from 'react-icons/fa';
@@ -112,6 +113,9 @@ const AdminTeam = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<TeamMember, 'id'>>(createEmptyFormData);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const insights = useMemo<TeamInsight[]>(() => {
     const activeMap = new Map<string, number>();
@@ -268,10 +272,20 @@ const AdminTeam = () => {
       setFormData(createEmptyFormData());
     }
 
+    setImageFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const payload = {
       ...formData,
@@ -280,15 +294,37 @@ const AdminTeam = () => {
       achievements: cleanList(formData.achievements),
     };
 
-    if (editingId) {
-      updateTeamMember(editingId, payload);
+    let memberId = editingId;
+
+    if (memberId) {
+      await updateTeamMember(memberId, payload);
     } else {
-      addTeamMember(payload);
+      memberId = await addTeamMember(payload);
+    }
+
+    if (imageFile && memberId) {
+      const fd = new FormData();
+      fd.append('image', imageFile);
+      try {
+        const res = await fetch(`http://localhost:3001/api/team/${memberId}/upload`, {
+          method: 'POST',
+          body: fd,
+        });
+        const data = await res.json();
+        if (data.image) {
+          // Actualizar estado local con la URL completa de la imagen en el VPS
+          await updateTeamMember(memberId, { image: data.image });
+        }
+      } catch (err) {
+        console.error('Error subiendo imagen:', err);
+      }
     }
 
     setIsModalOpen(false);
     setEditingId(null);
     setFormData(createEmptyFormData());
+    setImageFile(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -621,9 +657,29 @@ const AdminTeam = () => {
                 <label>Email</label>
                 <input required type="email" value={formData.email} onChange={(event) => setFormData({ ...formData, email: event.target.value })} />
               </div>
-              <div className="form-group">
-                <label>Imagen (URL)</label>
-                <input type="url" placeholder="https://..." value={formData.image} onChange={(event) => setFormData({ ...formData, image: event.target.value })} />
+              <div className="form-group form-group--full">
+                <label>Foto del perfil</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <label className="admin-btn-outline" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                    <FaUpload />
+                    Seleccionar archivo
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      style={{ display: 'none' }}
+                      onChange={handleImageSelect}
+                    />
+                  </label>
+                  {(previewUrl || formData.image) && (
+                    <img
+                      src={previewUrl || formData.image}
+                      alt="Preview"
+                      style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
+                    />
+                  )}
+                  {imageFile && <span style={{ fontSize: '0.85rem', color: '#666' }}>{imageFile.name}</span>}
+                </div>
               </div>
               <div className="form-group">
                 <label>LinkedIn (URL)</label>

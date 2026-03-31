@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const { getDB } = require('./db');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -10,6 +12,50 @@ const port = process.env.PORT || 3001;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Servir archivos estáticos de uploads
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
+// Servir imágenes legacy de FTS-JRLinversiones
+app.use('/FTS-JRLinversiones', express.static(path.resolve(__dirname, '..', 'public', 'FTS-JRLinversiones')));
+
+// Multer config para imágenes del equipo
+const TEAM_UPLOADS = path.join(__dirname, 'public', 'uploads', 'team');
+if (!fs.existsSync(TEAM_UPLOADS)) {
+  fs.mkdirSync(TEAM_UPLOADS, { recursive: true });
+}
+
+const teamStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, TEAM_UPLOADS),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${req.params.id}_${Date.now()}${ext}`);
+  },
+});
+
+const teamUpload = multer({
+  storage: teamStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(jpe?g|png)$/i;
+    if (allowed.test(path.extname(file.originalname))) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten imágenes JPG o PNG'));
+    }
+  },
+});
+
+// Logger: imprime cada petición
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    const timestamp = new Date().toLocaleTimeString('es-DO', { hour12: false });
+    console.log(`[${timestamp}] ${req.method} ${req.originalUrl} → ${res.statusCode} (${ms}ms)`);
+  });
+  next();
+});
 
 // Helpers to format JSON arrays from MySQL
 const parseJSON = (data, fields) => {
@@ -276,7 +322,15 @@ app.get('/api/team', async (req, res) => {
   try {
     const db = await getDB();
     const [rows] = await db.query('SELECT * FROM team');
-    res.json(parseJSON(rows, ['education', 'achievements']));
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const parsed = parseJSON(rows, ['education', 'achievements']);
+    // Normalizar rutas de imagen a URLs completas
+    parsed.forEach(m => {
+      if (m.image && !m.image.startsWith('http')) {
+        m.image = baseUrl + m.image;
+      }
+    });
+    res.json(parsed);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -297,14 +351,57 @@ app.post('/api/team', async (req, res) => {
 });
 
 app.put('/api/team/:id', async (req, res) => {
-  const { name, role, specialty, image, bio, linkedin, email, education, achievements } = req.body;
   try {
     const db = await getDB();
-    await db.query(
-      'UPDATE team SET name=?, role=?, specialty=?, image=?, bio=?, linkedin=?, email=?, education=?, achievements=? WHERE id=?',
-      [name, role, specialty, image, bio, linkedin, email, JSON.stringify(education), JSON.stringify(achievements), req.params.id]
-    );
+    const fields = req.body;
+    const updates = [];
+    const values = [];
+    const allowed = ['name', 'role', 'specialty', 'image', 'bio', 'linkedin', 'email', 'education', 'achievements'];
+    const jsonFields = ['education', 'achievements'];
+    for (const key of allowed) {
+      if (fields[key] !== undefined) {
+        updates.push(`${key}=?`);
+        values.push(jsonFields.includes(key) ? JSON.stringify(fields[key]) : fields[key]);
+      }
+    }
+    if (!updates.length) return res.status(400).json({ error: 'No fields to update' });
+    values.push(req.params.id);
+    await db.query(`UPDATE team SET ${updates.join(', ')} WHERE id=?`, values);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/team/:id/upload', teamUpload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se recibió ninguna imagen' });
+    }
+    const imagePath = `/uploads/team/${req.file.filename}`;
+    const fullUrl = `${req.protocol}://${req.get('host')}${imagePath}`;
+    const db = await getDB();
+    await db.query('UPDATE team SET image=? WHERE id=?', [fullUrl, req.params.id]);
+    res.json({ success: true, image: fullUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/team/:id/image', async (req, res) => {
+  try {
+    const db = await getDB();
+    const [rows] = await db.query('SELECT image FROM team WHERE id=?', [req.params.id]);
+    if (!rows.length || !rows[0].image) {
+      return res.status(404).json({ error: 'Imagen no encontrada' });
+    }
+    const imgPath = rows[0].image;
+    // Si es una ruta local de uploads, servir el archivo
+    if (imgPath.startsWith('/uploads/')) {
+      return res.sendFile(path.join(__dirname, 'public', imgPath));
+    }
+    // Si es ruta legacy (FTS-JRLinversiones) o URL externa, redirigir
+    return res.redirect(imgPath);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
