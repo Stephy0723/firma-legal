@@ -46,6 +46,34 @@ const teamUpload = multer({
   },
 });
 
+// Multer config para documentos
+const DOCS_UPLOADS = path.join(__dirname, 'public', 'uploads', 'documents');
+if (!fs.existsSync(DOCS_UPLOADS)) {
+  fs.mkdirSync(DOCS_UPLOADS, { recursive: true });
+}
+
+const docStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, DOCS_UPLOADS),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, `${Date.now()}_${safeName}`);
+  },
+});
+
+const docUpload = multer({
+  storage: docStorage,
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /\.(jpe?g|png|gif|pdf|docx?|xlsx?|pptx?|txt|csv|odt|ods)$/i;
+    if (allowed.test(path.extname(file.originalname))) {
+      cb(null, true);
+    } else {
+      cb(new Error('Tipo de archivo no permitido'));
+    }
+  },
+});
+
 // Logger: imprime cada petición
 app.use((req, res, next) => {
   const start = Date.now();
@@ -305,10 +333,30 @@ app.put('/api/services/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/messages/:id', async (req, res) => {
+  try {
+    const db = await getDB();
+    await db.query('DELETE FROM messages WHERE id=?', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.delete('/api/services/:id', async (req, res) => {
   try {
     const db = await getDB();
     await db.query('DELETE FROM services WHERE id=?', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/appointments/:id', async (req, res) => {
+  try {
+    const db = await getDB();
+    await db.query('DELETE FROM appointments WHERE id=?', [req.params.id]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -454,6 +502,20 @@ app.put('/api/messages/:id/read', async (req, res) => {
   }
 });
 
+app.put('/api/messages/:id', async (req, res) => {
+  const { name, email, phone, area, message, read } = req.body;
+  try {
+    const db = await getDB();
+    await db.query(
+      'UPDATE messages SET name=?, email=?, phone=?, area=?, message=?, is_read=? WHERE id=?',
+      [name, email, phone, area, message, read ? 1 : 0, req.params.id],
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ──────────────────────────────────────────────
 // CITAS (APPOINTMENTS)
 // ──────────────────────────────────────────────
@@ -578,16 +640,30 @@ app.get('/api/clients', async (req, res) => {
   try {
     const db = await getDB();
     const [rows] = await db.query('SELECT * FROM clients ORDER BY created_at DESC');
-    res.json(parseJSON(rows, ['tags', 'assets']));
+    const parsed = parseJSON(rows, ['tags', 'assets']);
+    res.json(parsed.map(r => {
+      const { extra, ...rest } = r;
+      const extraObj = typeof extra === 'string' ? (() => { try { return JSON.parse(extra); } catch { return {}; } })() : (extra || {});
+      return { ...rest, ...extraObj };
+    }));
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/document_folders/:id', async (req, res) => {
+  const { name, description, color, lawyer_id, client_id } = req.body;
+  try {
+    const db = await getDB();
+    await db.query('UPDATE document_folders SET name=?, description=?, color=?, lawyer_id=?, client_id=? WHERE id=?', [name, description || null, color || '#6366F1', lawyer_id || null, client_id || null, req.params.id]);
+    res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/clients', async (req, res) => {
-  const { id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets } = req.body;
+  const { id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets, ...extra } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO clients (id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO clients (id, name, email, phone, address, created_at, updatedAt, caseTopic, notes, tags, assets, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         id,
         name,
@@ -600,6 +676,7 @@ app.post('/api/clients', async (req, res) => {
         notes || null,
         JSON.stringify(tags || []),
         JSON.stringify(assets || []),
+        JSON.stringify(extra || {}),
       ]
     );
     res.status(201).json({ success: true, id });
@@ -607,11 +684,11 @@ app.post('/api/clients', async (req, res) => {
 });
 
 app.put('/api/clients/:id', async (req, res) => {
-  const { name, email, phone, address, updatedAt, caseTopic, notes, tags, assets } = req.body;
+  const { name, email, phone, address, updatedAt, caseTopic, notes, tags, assets, ...extra } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'UPDATE clients SET name=?, email=?, phone=?, address=?, updatedAt=?, caseTopic=?, notes=?, tags=?, assets=? WHERE id=?',
+      'UPDATE clients SET name=?, email=?, phone=?, address=?, updatedAt=?, caseTopic=?, notes=?, tags=?, assets=?, extra=? WHERE id=?',
       [
         name,
         email,
@@ -622,6 +699,7 @@ app.put('/api/clients/:id', async (req, res) => {
         notes || null,
         JSON.stringify(tags || []),
         JSON.stringify(assets || []),
+        JSON.stringify(extra || {}),
         req.params.id,
       ]
     );
@@ -644,29 +722,35 @@ app.get('/api/cases', async (req, res) => {
   try {
     const db = await getDB();
     const [rows] = await db.query('SELECT * FROM cases ORDER BY created_at DESC');
-    res.json(parseJSON(rows, ['witnesses', 'assets']));
+    const parsed = parseJSON(rows, ['witnesses', 'assets', 'extra']);
+    // Merge extra fields into top level
+    const result = parsed.map(r => {
+      const { extra, ...rest } = r;
+      return { ...rest, ...(extra && typeof extra === 'object' ? extra : {}) };
+    });
+    res.json(result);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/cases', async (req, res) => {
-  const { id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets } = req.body;
+  const { id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets, ...extra } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO cases (id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [id, client_id, lawyer_id, title, cedula || '', description || null, status || 'Evaluación', created_at ? new Date(created_at) : new Date(), updatedAt ? new Date(updatedAt) : null, JSON.stringify(witnesses || []), JSON.stringify(assets || [])]
+      'INSERT INTO cases (id, client_id, lawyer_id, title, cedula, description, status, created_at, updatedAt, witnesses, assets, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, client_id, lawyer_id, title, cedula || '', description || null, status || 'Evaluación', created_at ? new Date(created_at) : new Date(), updatedAt ? new Date(updatedAt) : null, JSON.stringify(witnesses || []), JSON.stringify(assets || []), JSON.stringify(extra || {})]
     );
     res.status(201).json({ success: true, id });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/cases/:id', async (req, res) => {
-  const { client_id, lawyer_id, title, cedula, description, status, updatedAt, witnesses, assets } = req.body;
+  const { client_id, lawyer_id, title, cedula, description, status, updatedAt, witnesses, assets, ...extra } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'UPDATE cases SET client_id=?, lawyer_id=?, title=?, cedula=?, description=?, status=?, updatedAt=?, witnesses=?, assets=? WHERE id=?',
-      [client_id, lawyer_id, title, cedula || '', description || null, status, updatedAt ? new Date(updatedAt) : new Date(), JSON.stringify(witnesses || []), JSON.stringify(assets || []), req.params.id]
+      'UPDATE cases SET client_id=?, lawyer_id=?, title=?, cedula=?, description=?, status=?, updatedAt=?, witnesses=?, assets=?, extra=? WHERE id=?',
+      [client_id, lawyer_id, title, cedula || '', description || null, status, updatedAt ? new Date(updatedAt) : new Date(), JSON.stringify(witnesses || []), JSON.stringify(assets || []), JSON.stringify(extra || {}), req.params.id]
     );
     res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -692,10 +776,10 @@ app.get('/api/document_folders', async (req, res) => {
 });
 
 app.post('/api/document_folders', async (req, res) => {
-  const { id, name } = req.body;
+  const { id, name, description, color, lawyer_id, client_id } = req.body;
   try {
     const db = await getDB();
-    await db.query('INSERT INTO document_folders (id, name) VALUES (?, ?)', [id, name]);
+    await db.query('INSERT INTO document_folders (id, name, description, color, lawyer_id, client_id) VALUES (?, ?, ?, ?, ?, ?)', [id, name, description || null, color || '#6366F1', lawyer_id || null, client_id || null]);
     res.status(201).json({ success: true, id });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -719,22 +803,38 @@ app.get('/api/documents', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Subir archivo de documento
+app.post('/api/documents/upload', docUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No se recibió ningún archivo' });
+    }
+    const filePath = `/uploads/documents/${req.file.filename}`;
+    const fullUrl = `${req.protocol}://${req.get('host')}${filePath}`;
+    res.json({ success: true, url: fullUrl, filename: req.file.originalname });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/documents', async (req, res) => {
-  const { id, title, client_id, folder_id, type, url, uploadDate, updatedAt, note, tags, assets, history } = req.body;
+  const { id, title, client_id, lawyer_id, folder_id, type, url, uploadDate, updatedAt, note, description, tags, assets, history } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'INSERT INTO documents (id, title, client_id, folder_id, type, url, uploadDate, updatedAt, note, tags, assets, history) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO documents (id, title, client_id, lawyer_id, folder_id, type, url, uploadDate, updatedAt, note, description, tags, assets, history) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         id,
         title,
         client_id || null,
+        lawyer_id || null,
         folder_id || null,
         type,
         url,
         new Date(uploadDate),
         updatedAt ? new Date(updatedAt) : null,
         note || null,
+        description || null,
         JSON.stringify(tags || []),
         JSON.stringify(assets || []),
         JSON.stringify(history || []),
@@ -745,19 +845,21 @@ app.post('/api/documents', async (req, res) => {
 });
 
 app.put('/api/documents/:id', async (req, res) => {
-  const { title, client_id, folder_id, type, url, updatedAt, note, tags, assets, history } = req.body;
+  const { title, client_id, lawyer_id, folder_id, type, url, updatedAt, note, description, tags, assets, history } = req.body;
   try {
     const db = await getDB();
     await db.query(
-      'UPDATE documents SET title=?, client_id=?, folder_id=?, type=?, url=?, updatedAt=?, note=?, tags=?, assets=?, history=? WHERE id=?',
+      'UPDATE documents SET title=?, client_id=?, lawyer_id=?, folder_id=?, type=?, url=?, updatedAt=?, note=?, description=?, tags=?, assets=?, history=? WHERE id=?',
       [
         title,
         client_id || null,
+        lawyer_id || null,
         folder_id || null,
         type,
         url,
         updatedAt ? new Date(updatedAt) : new Date(),
         note || null,
+        description || null,
         JSON.stringify(tags || []),
         JSON.stringify(assets || []),
         JSON.stringify(history || []),

@@ -107,6 +107,10 @@ const initDatabase = async () => {
       CREATE TABLE IF NOT EXISTS document_folders (
         id VARCHAR(50) PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
+        description TEXT,
+        color VARCHAR(30) DEFAULT '#6366F1',
+        lawyer_id VARCHAR(50),
+        client_id VARCHAR(50),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -117,12 +121,14 @@ const initDatabase = async () => {
         id VARCHAR(50) PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         client_id VARCHAR(50),
+        lawyer_id VARCHAR(50),
         folder_id VARCHAR(50),
         type VARCHAR(100) NOT NULL,
         url TEXT,
         uploadDate DATETIME NOT NULL,
         updatedAt DATETIME NULL,
         note TEXT,
+        description TEXT,
         tags LONGTEXT,
         assets LONGTEXT,
         history LONGTEXT
@@ -165,6 +171,17 @@ const initDatabase = async () => {
     } catch (e) {
       // Ignorar error si la columna ya existe
     }
+
+    // Migrar columnas nuevas de documents
+    try { await db.query('ALTER TABLE documents ADD COLUMN lawyer_id VARCHAR(50)'); } catch (e) {}
+    try { await db.query('ALTER TABLE documents ADD COLUMN description TEXT'); } catch (e) {}
+
+    // Migrar columnas nuevas de document_folders
+    try { await db.query('ALTER TABLE document_folders ADD COLUMN description TEXT'); } catch (e) {}
+    try { await db.query('ALTER TABLE document_folders ADD COLUMN color VARCHAR(30) DEFAULT \'#6366F1\''); } catch (e) {}
+    try { await db.query('ALTER TABLE document_folders ADD COLUMN lawyer_id VARCHAR(50)'); } catch (e) {}
+    try { await db.query('ALTER TABLE document_folders ADD COLUMN client_id VARCHAR(50)'); } catch (e) {}
+
     try {
       await db.query('ALTER TABLE appointments ADD COLUMN email VARCHAR(255)');
     } catch (e) {
@@ -253,6 +270,16 @@ const initDatabase = async () => {
     }
     try {
       await db.query('ALTER TABLE cases ADD COLUMN assets LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE cases ADD COLUMN extra LONGTEXT');
+    } catch (e) {
+      // Ignorar error si la columna ya existe
+    }
+    try {
+      await db.query('ALTER TABLE clients ADD COLUMN extra LONGTEXT');
     } catch (e) {
       // Ignorar error si la columna ya existe
     }

@@ -92,6 +92,10 @@ export interface LegalCase {
 export interface DocumentFolder {
   id: string;
   name: string;
+  description?: string;
+  color?: string;
+  lawyer_id?: string;
+  client_id?: string;
   created_at?: string;
 }
 
@@ -122,12 +126,14 @@ export interface DocumentInfo {
   title: string;
   clientName?: string;
   client_id?: string;
+  lawyer_id?: string;
   folder_id?: string;
   uploadDate: string;
   updatedAt?: string;
   type: string;
   url: string;
   note?: string;
+  description?: string;
   tags?: string[];
   assets?: DocumentAsset[];
   history?: DocumentHistoryEntry[];
@@ -147,9 +153,12 @@ interface DataContextType {
   deleteTeamMember: (id: string) => void;
   addMessage: (msg: Omit<ContactMessage, 'id' | 'date' | 'read'>) => void;
   markMessageRead: (id: string) => void;
+  updateMessage: (id: string, updated: Partial<ContactMessage>) => void;
+  deleteMessage: (id: string) => void;
   addAppointment: (app: Omit<Appointment, 'id'>) => void;
   updateAppointmentStatus: (id: string, status: Appointment['status']) => void;
   updateAppointment: (id: string, updated: Partial<Appointment>) => void;
+  deleteAppointment: (id: string) => void;
   addDocument: (doc: Omit<DocumentInfo, 'id' | 'uploadDate' | 'updatedAt'>) => void;
   updateDocument: (id: string, updated: Partial<DocumentInfo>, meta?: DocumentUpdateMeta) => void;
   deleteDocument: (id: string) => void;
@@ -164,6 +173,7 @@ interface DataContextType {
   updateCase: (id: string, updated: Partial<LegalCase>) => void;
   deleteCase: (id: string) => void;
   addFolder: (folder: Omit<DocumentFolder, 'id'>) => void;
+  updateFolder: (id: string, updated: Partial<DocumentFolder>) => void;
   deleteFolder: (id: string) => void;
 }
 
@@ -439,6 +449,31 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     } catch {}
   };
 
+  const deleteMessage = async (id: string) => {
+    setMessages((prev) => prev.filter((message) => message.id !== id));
+    try {
+      await fetch(`http://localhost:3001/api/messages/${id}`, { method: 'DELETE' });
+    } catch {}
+  };
+
+  const updateMessage = async (id: string, updated: Partial<ContactMessage>) => {
+    const current = messages.find((message) => message.id === id);
+    if (!current) {
+      return;
+    }
+
+    const next = { ...current, ...updated };
+    setMessages((prev) => prev.map((message) => (message.id === id ? next : message)));
+
+    try {
+      await fetch(`http://localhost:3001/api/messages/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(next),
+      });
+    } catch {}
+  };
+
   const addAppointment = async (app: Omit<Appointment, 'id'>) => {
     const timestamp = new Date().toISOString();
     const newAppointment = normalizeAppointment({
@@ -498,6 +533,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nextAppointment),
       });
+    } catch {}
+  };
+
+  const deleteAppointment = async (id: string) => {
+    setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
+    try {
+      await fetch(`http://localhost:3001/api/appointments/${id}`, { method: 'DELETE' });
     } catch {}
   };
 
@@ -712,6 +754,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     } catch { setDocumentFolders([newFolder, ...documentFolders]); }
   };
 
+  const updateFolder = async (id: string, updated: Partial<DocumentFolder>) => {
+    setDocumentFolders((prev) => prev.map((folder) => (folder.id === id ? { ...folder, ...updated } : folder)));
+    try {
+      await fetch(`http://localhost:3001/api/document_folders/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated),
+      });
+    } catch {}
+  };
+
   const deleteFolder = async (id: string) => {
     try { await fetch(`http://localhost:3001/api/document_folders/${id}`, { method: 'DELETE' }); } catch {}
     setDocumentFolders(documentFolders.filter(f => f.id !== id));
@@ -722,15 +775,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       services, team, messages, appointments, documents,
       addService, updateService, deleteService,
       addTeamMember, updateTeamMember, deleteTeamMember,
-      addMessage, markMessageRead,
+      addMessage, markMessageRead, updateMessage, deleteMessage,
       addAppointment,
       updateAppointmentStatus,
       updateAppointment,
+      deleteAppointment,
       addDocument, updateDocument, deleteDocument,
       clients, cases, documentFolders,
       addClient, updateClient, deleteClient,
       addCase, updateCase, deleteCase,
-      addFolder, deleteFolder
+      addFolder, updateFolder, deleteFolder
     }}>
       {children}
     </DataContext.Provider>

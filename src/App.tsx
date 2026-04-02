@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import HomePage from "./pages/HomePage";
@@ -12,38 +11,22 @@ import PoliticaPrivacidadPage from "./pages/PoliticaPrivacidadPage";
 import TerminosUsoPage from "./pages/TerminosUsoPage";
 import ScrollToTop from "./components/ScrollToTop";
 import { Outlet } from "react-router-dom";
-
-// Admin Imports
-import AdminLayoutV2 from "./components/Admin/AdminLayoutV2/AdminLayoutV2";
-import AdminDashboardV2 from "./pages/Admin/Dashboard/AdminDashboardV2";
-import AdminInbox from "./pages/Admin/Inbox/AdminInbox";
-import AdminAppointments from "./pages/Admin/Appointments/AdminAppointments";
-import AdminDocuments from "./pages/Admin/Documents/AdminDocuments";
-import AdminServices from "./pages/Admin/CMS/AdminServices";
-import AdminTeam from "./pages/Admin/CMS/AdminTeam";
-import AdminLogin from "./pages/Admin/Login/AdminLogin";
-import AdminClients from "./pages/Admin/Clients/AdminClients";
-import AdminCases from "./pages/Admin/Cases/AdminCases";
-import AdminProfile from "./pages/Admin/Profile/AdminProfile";
-import AdminSettings from "./pages/Admin/Settings/AdminSettings";
-import { Navigate } from "react-router-dom";
-
-const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const isAuth = localStorage.getItem('crm_auth') === 'true';
-  const loginTime = localStorage.getItem('crm_auth_time');
-  
-  // 2 hours in milliseconds: 2 * 60 * 60 * 1000 = 7200000
-  const isExpired = loginTime ? (Date.now() - parseInt(loginTime)) > 7200000 : true;
-
-  if (!isAuth || isExpired) {
-    if (isExpired) {
-      localStorage.removeItem('crm_auth');
-      localStorage.removeItem('crm_auth_time');
-    }
-    return <Navigate to="/admin/login" replace />;
-  }
-  return children;
-};
+import LoginPage from "./admin/pages/login/LoginPage";
+import RegisterPage from "./admin/pages/register/RegisterPage";
+import DashboardPage from "./admin/pages/dashboard/DashboardPage";
+import { AdminThemeProvider } from "./admin/theme/AdminThemeContext";
+import AdminLayout from "./admin/layout/AdminLayout";
+import DocumentsPage from "./admin/pages/documents/DocumentsPage";
+import NotificationsPage from "./admin/pages/notifications/NotificationsPage";
+import SettingsPage from "./admin/pages/settings/SettingsPage";
+import ServicesPage from "./admin/pages/services/ServicesPage";
+import TeamPage from "./admin/pages/team/TeamPage";
+import ClientsPage from "./admin/pages/clients/ClientsPage";
+import CasesPage from "./admin/pages/cases/CasesPage";
+import AppointmentsPage from "./admin/pages/appointments/AppointmentsPage";
+import InboxPage from "./admin/pages/inbox/InboxPage";
+import ExpedientePage from "./admin/pages/expedientes/ExpedientePage";
+import "./admin/styles/admin.scss";
 
 const PublicLayout = () => (
   <>
@@ -55,41 +38,53 @@ const PublicLayout = () => (
   </>
 );
 
+const PrivateAdminRoute = ({ children }: { children: JSX.Element }) => {
+  const isAuthenticated = localStorage.getItem("admin_auth") === "true";
+  return isAuthenticated ? children : <Navigate to="/admin/login" replace />;
+};
+
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <ScrollToTop />
-      <Routes>
-        {/* Public Routes */}
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/nosotros" element={<NosotrosPage />} />
-          <Route path="/servicios" element={<ServiciosPage />} />
-          <Route path="/equipo" element={<EquipoPage />} />
-          <Route path="/testimonios" element={<TestimoniosPage />} />
-          <Route path="/contacto" element={<ContactoPage />} />
-          <Route path="/politica-privacidad" element={<PoliticaPrivacidadPage />} />
-          <Route path="/terminos-uso" element={<TerminosUsoPage />} />
-        </Route>
-
-        {/* Admin Routes */}
-        <Route path="/admin">
-          <Route path="login" element={<AdminLogin />} />
-          
-          <Route element={<RequireAuth><AdminLayoutV2 /></RequireAuth>}>
-            <Route index element={<AdminDashboardV2 />} />
-            <Route path="inbox" element={<AdminInbox />} />
-            <Route path="appointments" element={<AdminAppointments />} />
-            <Route path="clients" element={<AdminClients />} />
-            <Route path="cases" element={<AdminCases />} />
-            <Route path="documents" element={<AdminDocuments />} />
-            <Route path="services" element={<AdminServices />} />
-            <Route path="team" element={<AdminTeam />} />
-            <Route path="profile" element={<AdminProfile />} />
-            <Route path="settings" element={<AdminSettings />} />
+      <AdminThemeProvider>
+        <ScrollToTop />
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/nosotros" element={<NosotrosPage />} />
+            <Route path="/servicios" element={<ServiciosPage />} />
+            <Route path="/equipo" element={<EquipoPage />} />
+            <Route path="/testimonios" element={<TestimoniosPage />} />
+            <Route path="/contacto" element={<ContactoPage />} />
+            <Route path="/politica-privacidad" element={<PoliticaPrivacidadPage />} />
+            <Route path="/terminos-uso" element={<TerminosUsoPage />} />
           </Route>
-        </Route>
-      </Routes>
+
+          <Route path="/admin/login" element={<LoginPage />} />
+          <Route path="/admin/register" element={<RegisterPage />} />
+          <Route
+            path="/admin"
+            element={(
+              <PrivateAdminRoute>
+                <AdminLayout />
+              </PrivateAdminRoute>
+            )}
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="documents" element={<DocumentsPage />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="clients" element={<ClientsPage />} />
+            <Route path="cases" element={<CasesPage />} />
+            <Route path="expedientes" element={<ExpedientePage />} />
+            <Route path="expedientes/:id" element={<ExpedientePage />} />
+            <Route path="appointments" element={<AppointmentsPage />} />
+            <Route path="inbox" element={<InboxPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
+        </Routes>
+      </AdminThemeProvider>
     </BrowserRouter>
   );
 }
