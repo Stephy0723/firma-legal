@@ -3,19 +3,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAdminTheme } from '../../theme/AdminThemeContext';
 import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope } from 'react-icons/fa';
 
+const API = 'http://localhost:3001';
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useAdminTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!email || !password) { setError('Completa todos los campos.'); return; }
-    localStorage.setItem('admin_auth', 'true');
-    localStorage.setItem('admin_email', email);
-    navigate('/admin');
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || 'Error al iniciar sesión.'); return; }
+      localStorage.setItem('admin_auth', 'true');
+      localStorage.setItem('admin_email', data.email);
+      if (data.name) localStorage.setItem('admin_name', data.name);
+      navigate('/admin');
+    } catch {
+      setError('No se pudo conectar con el servidor.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,8 +87,8 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          <button type="submit" className="a-btn a-btn--primary a-btn--lg" style={{ width: '100%', marginTop: '0.25rem' }}>
-            Iniciar sesión
+          <button type="submit" className="a-btn a-btn--primary a-btn--lg" style={{ width: '100%', marginTop: '0.25rem' }} disabled={loading}>
+            {loading ? 'Verificando...' : 'Iniciar sesión'}
           </button>
         </form>
 

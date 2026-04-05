@@ -1,37 +1,72 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, KeyboardEvent } from 'react';
 import { useData } from '../../../context/DataContext';
+import type { DocumentAsset } from '../../../context/DataContext';
 import AdminModal from '../../components/AdminModal';
 import {
   FaUsers, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaIdCard, FaCloudUploadAlt,
-  FaCheckCircle, FaFileAlt, FaTimes,
+  FaCheckCircle, FaFileAlt, FaTimes, FaTag,
+  FaChevronLeft, FaChevronRight,
 } from 'react-icons/fa';
 
 type View = 'card' | 'list';
+type StatusFilter = 'all' | 'Activo' | 'Inactivo' | 'Completado';
 
 const EMPTY = {
   name: '', email: '', phone: '', address: '', caseTopic: '', notes: '',
   cedula: '', occupation: '', dateOfBirth: '', referredBy: '',
+  status: 'Activo' as 'Activo' | 'Inactivo' | 'Completado',
 };
+
+const STATUS_BADGE: Record<string, string> = {
+  'Activo':     'a-badge--primary',
+  'Inactivo':   'a-badge--warning',
+  'Completado': 'a-badge--default',
+};
+
+const CLIENTS_PER_PAGE = 25;
 
 const ClientsPage = () => {
   const { clients, addClient, updateClient, deleteClient } = useData();
   const [view, setView] = useState<View>('card');
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [topicFilter, setTopicFilter] = useState('');
+  const [page, setPage] = useState(1);
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY });
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
   const [clientFiles, setClientFiles] = useState<File[]>([]);
   const [existingFiles, setExistingFiles] = useState<{ name: string; url: string }[]>([]);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filtered = clients.filter((c) =>
-    [c.name, c.email, c.phone, c.address].join(' ').toLowerCase().includes(search.toLowerCase()),
-  );
+  const topics = Array.from(new Set(clients.map((c) => c.caseTopic).filter(Boolean))) as string[];
+
+  const filtered = clients.filter((c) => {
+    const matchSearch = [c.name, c.email, c.phone, c.address]
+      .join(' ')
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'all' || (c as any).status === statusFilter;
+    const matchTopic = !topicFilter || c.caseTopic === topicFilter;
+    return matchSearch && matchStatus && matchTopic;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / CLIENTS_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * CLIENTS_PER_PAGE, safePage * CLIENTS_PER_PAGE);
 
   const selectedClient = clients.find((c) => c.id === selected);
 
-  const openAdd = () => { setForm({ ...EMPTY }); setClientFiles([]); setExistingFiles([]); setModal('add'); };
+  const openAdd = () => {
+    setForm({ ...EMPTY });
+    setTags([]); setTagInput('');
+    setClientFiles([]); setExistingFiles([]);
+    setModal('add');
+  };
   const openEdit = (id: string) => {
     const c = clients.find((x) => x.id === id);
     if (!c) return;
@@ -40,40 +75,82 @@ const ClientsPage = () => {
       caseTopic: c.caseTopic || '', notes: c.notes || '',
       cedula: (c as any).cedula || '', occupation: (c as any).occupation || '',
       dateOfBirth: (c as any).dateOfBirth || '', referredBy: (c as any).referredBy || '',
+      status: (c as any).status || 'Activo',
     });
+    setTags((c as any).tags || []);
+    setTagInput('');
     setExistingFiles((c.assets || []).map((a: any) => ({ name: a.name || 'Archivo', url: a.url })));
     setClientFiles([]);
     setSelected(id);
     setModal('edit');
   };
   const openDelete = (id: string) => { setSelected(id); setModal('delete'); };
-  const closeModal = () => { setModal(null); setSelected(null); setClientFiles([]); setExistingFiles([]); };
-
-  const handleSubmit = async () => {
-    if (!form.name.trim()) return;
-    const uploadedAssets = [...existingFiles.map(e => ({ name: e.name, url: e.url }))];
-    for (const file of clientFiles) {
-      try {
-        const fd = new FormData();
-        fd.append('file', file);
-        const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
-        const data = await res.json();
-        if (res.ok) uploadedAssets.push({ name: file.name, url: data.url });
-      } catch { /* skip */ }
-    }
-    const payload: any = {
-      name: form.name, email: form.email, phone: form.phone, address: form.address,
-      caseTopic: form.caseTopic, notes: form.notes, assets: uploadedAssets,
-      cedula: form.cedula, occupation: form.occupation,
-      dateOfBirth: form.dateOfBirth, referredBy: form.referredBy,
-    };
-    if (modal === 'add') addClient(payload);
-    else if (modal === 'edit' && selected) updateClient(selected, payload);
-    closeModal();
+  const closeModal = () => {
+    if (loading) return;
+    setModal(null); setSelected(null);
+    setClientFiles([]); setExistingFiles([]);
+    setTags([]); setTagInput('');
   };
 
-  const handleDelete = () => {
-    if (selected) deleteClient(selected);
+  const addTag = () => {
+    const t = tagInput.trim();
+    if (t && !tags.includes(t)) setTags([...tags, t]);
+    setTagInput('');
+  };
+
+  const onTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(); }
+    if (e.key === 'Backspace' && !tagInput && tags.length) setTags(tags.slice(0, -1));
+  };
+
+  const handleSubmit = async () => {
+    if (!form.name.trim() || loading) return;
+    setLoading(true);
+    try {
+      // Preserve full DocumentAsset objects for files user kept
+      const keptUrls = new Set(existingFiles.map((e) => e.url));
+      const uploadedAssets: DocumentAsset[] = (selectedClient?.assets || []).filter(
+        (a) => keptUrls.has(a.url),
+      );
+      // Upload new files and build proper DocumentAsset records
+      for (const file of clientFiles) {
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (res.ok) uploadedAssets.push({
+            id: `asset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            name: file.name,
+            kind: file.type.startsWith('image/') ? 'image' : 'file',
+            type: file.type || 'application/octet-stream',
+            url: data.url,
+          });
+        } catch { /* skip failed upload */ }
+      }
+      const payload: any = {
+        name: form.name, email: form.email, phone: form.phone, address: form.address,
+        caseTopic: form.caseTopic, notes: form.notes, assets: uploadedAssets,
+        cedula: form.cedula, occupation: form.occupation,
+        dateOfBirth: form.dateOfBirth, referredBy: form.referredBy,
+        status: form.status, tags,
+      };
+      if (modal === 'add') await addClient(payload);
+      else if (modal === 'edit' && selected) await updateClient(selected, payload);
+      closeModal();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selected || loading) return;
+    setLoading(true);
+    try {
+      await deleteClient(selected);
+    } finally {
+      setLoading(false);
+    }
     closeModal();
   };
 
@@ -84,7 +161,7 @@ const ClientsPage = () => {
       <div className="a-page-header">
         <div className="a-page-header__title">
           <h2>Clientes</h2>
-          <p>{clients.length} clientes registrados</p>
+          <p>{clients.length} clientes — {filtered.length} visibles</p>
         </div>
         <div className="a-page-header__actions">
           <button type="button" className="a-btn a-btn--primary" onClick={openAdd}>
@@ -99,9 +176,32 @@ const ClientsPage = () => {
           <input
             placeholder="Buscar por nombre, correo o teléfono..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+          {(['all', 'Activo', 'Inactivo', 'Completado'] as StatusFilter[]).map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`a-filter-chip ${statusFilter === s ? 'is-active' : ''}`}
+              onClick={() => { setStatusFilter(s); setPage(1); }}
+            >
+              {s === 'all' ? 'Todos' : s}
+            </button>
+          ))}
+        </div>
+        {topics.length > 0 && (
+          <select
+            className="a-select"
+            style={{ minWidth: 160, fontSize: '0.82rem', height: 34 }}
+            value={topicFilter}
+            onChange={(e) => { setTopicFilter(e.target.value); setPage(1); }}
+          >
+            <option value="">Todos los temas</option>
+            {topics.map((t) => <option key={t} value={t}>{t}</option>)}
+          </select>
+        )}
         <div className="a-view-toggle">
           <button type="button" className={view === 'card' ? 'is-active' : ''} onClick={() => setView('card')} title="Tarjetas"><FaTh /></button>
           <button type="button" className={view === 'list' ? 'is-active' : ''} onClick={() => setView('list')} title="Lista"><FaList /></button>
@@ -112,12 +212,16 @@ const ClientsPage = () => {
         <div className="a-empty">
           <FaUsers />
           <h3>Sin clientes</h3>
-          <p>{search ? 'No hay resultados para tu búsqueda.' : 'Aún no has registrado ningún cliente.'}</p>
-          {!search && <button type="button" className="a-btn a-btn--primary" onClick={openAdd}><FaPlus /> Agregar cliente</button>}
+          <p>{search || statusFilter !== 'all' || topicFilter
+            ? 'No hay resultados para los filtros seleccionados.'
+            : 'Aún no has registrado ningún cliente.'}</p>
+          {!search && statusFilter === 'all' && !topicFilter && (
+            <button type="button" className="a-btn a-btn--primary" onClick={openAdd}><FaPlus /> Agregar cliente</button>
+          )}
         </div>
       ) : view === 'card' ? (
         <div className="a-card-grid">
-          {filtered.map((c) => (
+          {paginated.map((c) => (
             <div key={c.id} className="a-card">
               <div className="a-card__header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -126,8 +230,9 @@ const ClientsPage = () => {
                     <p className="a-card__title">{c.name}</p>
                     {c.caseTopic && <p className="a-card__subtitle">{c.caseTopic}</p>}
                   </div>
-                </div>
-              </div>
+                </div>                <span className={`a-badge ${STATUS_BADGE[(c as any).status || 'Activo'] || 'a-badge--primary'}`}>
+                  {(c as any).status || 'Activo'}
+                </span>              </div>
               <div className="a-card__meta">
                 {c.email && <span><FaEnvelope />{c.email}</span>}
                 {c.phone && <span><FaPhone />{c.phone}</span>}
@@ -135,6 +240,13 @@ const ClientsPage = () => {
                 {(c as any).cedula && <span><FaIdCard />{(c as any).cedula}</span>}
                 {(c.assets?.length || 0) > 0 && <span><FaFileAlt />{c.assets!.length} docs</span>}
               </div>
+              {((c as any).tags?.length > 0) && (
+                <div className="a-tags-row">
+                  {((c as any).tags as string[]).map((t) => (
+                    <span key={t} className="a-tag"><FaTag />{t}</span>
+                  ))}
+                </div>
+              )}
               {c.notes && <p style={{ fontSize: '0.8rem', color: 'var(--tx2)', margin: 0, lineHeight: 1.5 }}>{c.notes}</p>}
               <div className="a-card__footer">
                 <span style={{ fontSize: '0.72rem', color: 'var(--tx3)' }}>
@@ -154,15 +266,16 @@ const ClientsPage = () => {
             <thead>
               <tr>
                 <th>Cliente</th>
+                <th>Estado</th>
                 <th>Correo</th>
                 <th>Teléfono</th>
-                <th>Dirección</th>
                 <th>Caso</th>
+                <th>Etiquetas</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
+              {paginated.map((c) => (
                 <tr key={c.id}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
@@ -170,10 +283,26 @@ const ClientsPage = () => {
                       <span className="a-table__name">{c.name}</span>
                     </div>
                   </td>
+                  <td>
+                    <span className={`a-badge a-badge--dot ${STATUS_BADGE[(c as any).status || 'Activo']}`}>
+                      {(c as any).status || 'Activo'}
+                    </span>
+                  </td>
                   <td>{c.email || '—'}</td>
                   <td>{c.phone || '—'}</td>
-                  <td>{c.address || '—'}</td>
                   <td>{c.caseTopic || '—'}</td>
+                  <td>
+                    {(c as any).tags?.length > 0 ? (
+                      <div className="a-tags-row a-tags-row--sm">
+                        {((c as any).tags as string[]).slice(0, 3).map((t) => (
+                          <span key={t} className="a-tag">{t}</span>
+                        ))}
+                        {(c as any).tags.length > 3 && (
+                          <span className="a-tag a-tag--more">+{(c as any).tags.length - 3}</span>
+                        )}
+                      </div>
+                    ) : '—'}
+                  </td>
                   <td>
                     <div className="a-table__actions">
                       <button type="button" className="a-btn a-btn--ghost a-btn--icon" onClick={() => openEdit(c.id)}><FaEdit /></button>
@@ -187,6 +316,27 @@ const ClientsPage = () => {
         </div>
       )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="a-pagination">
+          <button
+            className="a-btn a-btn--ghost a-btn--icon"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={safePage === 1}
+          >
+            <FaChevronLeft />
+          </button>
+          <span className="a-pagination__info">Página {safePage} de {totalPages}</span>
+          <button
+            className="a-btn a-btn--ghost a-btn--icon"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safePage === totalPages}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
+
       {/* Add / Edit Modal */}
       <AdminModal
         open={modal === 'add' || modal === 'edit'}
@@ -195,6 +345,7 @@ const ClientsPage = () => {
         onClose={closeModal}
         onSubmit={handleSubmit}
         submitLabel={modal === 'add' ? 'Crear cliente' : 'Guardar cambios'}
+        loading={loading}
         size="lg"
       >
         <div className="a-form a-form--2col">
@@ -202,6 +353,12 @@ const ClientsPage = () => {
           <div className="a-field a-field--full">
             <label>Nombre completo *</label>
             <input className="a-input" placeholder="Ej. Juan García López" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          </div>
+          <div className="a-field">
+            <label>Estado del cliente</label>
+            <select className="a-select" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as any })}>
+              <option>Activo</option><option>Inactivo</option><option>Completado</option>
+            </select>
           </div>
           <div className="a-field">
             <label>Cédula / Identificación</label>
@@ -234,10 +391,34 @@ const ClientsPage = () => {
             <input className="a-input" placeholder="Dirección del cliente" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
           </div>
 
-          <div className="a-field a-field--full"><div className="a-form-divider">Caso</div></div>
-          <div className="a-field a-field--full">
+          <div className="a-field a-field--full"><div className="a-form-divider">Caso y etiquetas</div></div>
+          <div className="a-field">
             <label>Tema del caso</label>
             <input className="a-input" placeholder="Ej. Divorcio, Laboral, Penal..." value={form.caseTopic} onChange={(e) => setForm({ ...form, caseTopic: e.target.value })} />
+          </div>
+          <div className="a-field">
+            <label>
+              Etiquetas&nbsp;
+              <small style={{ color: 'var(--tx3)', fontWeight: 400 }}>(Enter o coma para agregar)</small>
+            </label>
+            <div className="a-tags-input">
+              {tags.map((t) => (
+                <span key={t} className="a-tags-input__chip">
+                  {t}
+                  <button type="button" onClick={() => setTags(tags.filter((x) => x !== t))}>
+                    <FaTimes />
+                  </button>
+                </span>
+              ))}
+              <input
+                className="a-tags-input__field"
+                placeholder={tags.length ? '' : 'Etiqueta...'}
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={onTagKeyDown}
+                onBlur={addTag}
+              />
+            </div>
           </div>
 
           <div className="a-field a-field--full"><div className="a-form-divider"><FaFileAlt style={{ marginRight: '0.3rem' }} /> Documentos del cliente</div></div>

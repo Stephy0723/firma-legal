@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -958,6 +959,87 @@ app.post('/api/legal-assistant', async (req, res) => {
     return res.status(500).json({
       error: err.message || 'No se pudo procesar la consulta legal.',
     });
+  }
+});
+
+// ──────────────────────────────────────────────
+// AUTH
+// ──────────────────────────────────────────────
+app.post('/api/auth/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Nombre, correo y contraseña son requeridos.' });
+  }
+  try {
+    const db = await getDB();
+    const [existing] = await db.query('SELECT id FROM usuario WHERE correo_electronico = ?', [email]);
+    if (existing.length > 0) {
+      return res.status(409).json({ error: 'Ya existe una cuenta con ese correo.' });
+    }
+    const hash = await bcrypt.hash(password, 12);
+    await db.query('INSERT INTO usuario (name, correo_electronico, contrasena) VALUES (?, ?, ?)', [name, email, hash]);
+    res.json({ success: true, name, email });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Correo y contraseña son requeridos.' });
+  }
+  try {
+    const db = await getDB();
+    const [rows] = await db.query('SELECT id, name, correo_electronico, contrasena FROM usuario WHERE correo_electronico = ?', [email]);
+    if (rows.length === 0) {
+      return res.status(401).json({ error: 'Credenciales inválidas.' });
+    }
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.contrasena);
+    if (!match) {
+      return res.status(401).json({ error: 'Credenciales inválidas.' });
+    }
+    res.json({ success: true, name: user.name || '', email: user.correo_electronico });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ──────────────────────────────────────────────
+// SETTINGS
+// ──────────────────────────────────────────────
+const DEFAULT_SETTINGS = {
+  defaultAppointmentFormat: 'presencial',
+  defaultConfirmationChannel: 'whatsapp',
+  websiteAppointmentsEnabled: true,
+  intakeEmail: '',
+  intakeWhatsApp: '',
+  officeHours: 'Lun-Vie 8:00 AM - 6:00 PM',
+};
+
+app.get('/api/settings', async (req, res) => {
+  try {
+    const db = await getDB();
+    const [rows] = await db.query('SELECT data FROM settings WHERE id = 1');
+    if (rows.length === 0) return res.json(DEFAULT_SETTINGS);
+    res.json({ ...DEFAULT_SETTINGS, ...rows[0].data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/settings', async (req, res) => {
+  try {
+    const db = await getDB();
+    const data = { ...DEFAULT_SETTINGS, ...req.body };
+    await db.query(
+      'INSERT INTO settings (id, data) VALUES (1, ?) ON DUPLICATE KEY UPDATE data = VALUES(data)',
+      [JSON.stringify(data)]
+    );
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

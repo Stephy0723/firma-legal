@@ -284,6 +284,26 @@ const initDatabase = async () => {
       // Ignorar error si la columna ya existe
     }
 
+    // Tabla de Usuarios (administradores)
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS usuario (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        correo_electronico VARCHAR(150) NOT NULL UNIQUE,
+        contrasena VARCHAR(255) NOT NULL,
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    try { await db.query('ALTER TABLE usuario ADD COLUMN name VARCHAR(255)'); } catch (e) {}
+
+    // Tabla de Configuración del workspace
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id INT PRIMARY KEY DEFAULT 1,
+        data JSON NOT NULL
+      )
+    `);
+
     console.log('✅ Tablas inicializadas exitosamente en el esquema.');
 
     // ── SEED: Servicios ──────────────────────────────────────────────

@@ -166,13 +166,13 @@ interface DataContextType {
   clients: ClientData[];
   cases: LegalCase[];
   documentFolders: DocumentFolder[];
-  addClient: (client: Omit<ClientData, 'id'>) => void;
-  updateClient: (id: string, updated: Partial<ClientData>) => void;
-  deleteClient: (id: string) => void;
-  addCase: (caseData: Omit<LegalCase, 'id'>) => void;
-  updateCase: (id: string, updated: Partial<LegalCase>) => void;
-  deleteCase: (id: string) => void;
-  addFolder: (folder: Omit<DocumentFolder, 'id'>) => void;
+  addClient: (client: Omit<ClientData, 'id'>) => Promise<void>;
+  updateClient: (id: string, updated: Partial<ClientData>) => Promise<void>;
+  deleteClient: (id: string) => Promise<void>;
+  addCase: (caseData: Omit<LegalCase, 'id'>) => Promise<void>;
+  updateCase: (id: string, updated: Partial<LegalCase>) => Promise<void>;
+  deleteCase: (id: string) => Promise<void>;
+  addFolder: (folder: Omit<DocumentFolder, 'id'>) => Promise<void>;
   updateFolder: (id: string, updated: Partial<DocumentFolder>) => void;
   deleteFolder: (id: string) => void;
 }

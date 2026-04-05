@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { syncAdminWorkspaceSettingsFromAPI } from "./utils/adminWorkspace";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import HomePage from "./pages/HomePage";
@@ -44,6 +46,8 @@ const PrivateAdminRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 function App() {
+  useEffect(() => { syncAdminWorkspaceSettingsFromAPI(); }, []);
+
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AdminThemeProvider>

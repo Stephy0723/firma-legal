@@ -2449,3 +2449,130 @@
 
   .a-btn { white-space: nowrap; height: 36px; }
 }
+
+/* ════════════════════════════════════════════
+   TAGS INPUT
+   ════════════════════════════════════════════ */
+.a-tags-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 40px;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--bd);
+  border-radius: var(--radius-sm);
+  background: var(--sb2);
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: var(--ac);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    background: var(--sb);
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.55rem;
+    background: var(--ac-bg);
+    color: var(--ac-tx);
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    line-height: 1;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border: none;
+      background: none;
+      color: var(--ac);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.6rem;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: color 0.12s, background 0.12s;
+
+      &:hover { color: var(--danger); background: var(--danger-bg); }
+    }
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 80px;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.82rem;
+    color: var(--tx);
+    font-family: inherit;
+    padding: 0;
+    line-height: 1.5;
+
+    &::placeholder { color: var(--tx3); }
+  }
+}
+
+/* Tags display row (cards / table) */
+.a-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+
+  &--sm .a-tag { font-size: 0.7rem; padding: 0.15rem 0.45rem; }
+}
+
+.a-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  background: var(--ac-bg);
+  color: var(--ac-tx);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1;
+
+  svg { font-size: 0.6rem; flex-shrink: 0; }
+
+  &--more {
+    background: var(--sb2);
+    color: var(--tx3);
+    border: 1px solid var(--bd);
+  }
+}
+
+/* ════════════════════════════════════════════
+   PAGINATION
+   ════════════════════════════════════════════ */
+.a-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem 0 0.25rem;
+
+  &__info {
+    font-size: 0.82rem;
+    color: var(--tx2);
+    font-weight: 500;
+    min-width: 120px;
+    text-align: center;
+  }
+
+  .a-btn {
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}

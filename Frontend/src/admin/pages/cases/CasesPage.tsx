@@ -6,11 +6,15 @@ import {
   FaSuitcase, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash,
   FaUser, FaUserTie, FaTimes, FaCloudUploadAlt, FaCheckCircle,
   FaFileAlt, FaGavel, FaBalanceScale, FaFolderOpen,
+  FaChevronLeft, FaChevronRight,
 } from 'react-icons/fa';
-import type { LegalCase, CaseWitness } from '../../../context/DataContext';
+import type { LegalCase, CaseWitness, DocumentAsset } from '../../../context/DataContext';
 
 type View = 'card' | 'list';
 type StatusFilter = 'all' | LegalCase['status'];
+type PriorityFilter = 'all' | 'Baja' | 'Media' | 'Alta' | 'Urgente';
+
+const CASES_PER_PAGE = 20;
 
 const EMPTY_WITNESS: CaseWitness = { id: '', name: '', cedula: '', phone: '', note: '' };
 
@@ -51,6 +55,11 @@ const CasesPage = () => {
   const [view, setView] = useState<View>('card');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all');
+  const [lawyerFilter, setLawyerFilter] = useState('');
+  const [clientFilter, setClientFilter] = useState('');
+  const [courtFilter, setCourtFilter] = useState(false);
+  const [page, setPage] = useState(1);
   const [modal, setModal] = useState<'add' | 'edit' | 'delete' | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
@@ -58,13 +67,22 @@ const CasesPage = () => {
   const [newWitness, setNewWitness] = useState({ ...EMPTY_WITNESS });
   const [evidenceFiles, setEvidenceFiles] = useState<File[]>([]);
   const [existingEvidence, setExistingEvidence] = useState<{ name: string; url: string }[]>([]);
+  const [loading, setLoading] = useState(false);
   const evidenceInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = cases.filter((c) => {
     const matchSearch = [c.title, c.description, c.cedula].join(' ').toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || c.status === statusFilter;
-    return matchSearch && matchStatus;
+    const matchPriority = priorityFilter === 'all' || (c as any).priority === priorityFilter;
+    const matchLawyer = !lawyerFilter || c.lawyer_id === lawyerFilter;
+    const matchClient = !clientFilter || c.client_id === clientFilter;
+    const matchCourt = !courtFilter || (c as any).courtCase === true;
+    return matchSearch && matchStatus && matchPriority && matchLawyer && matchClient && matchCourt;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / CASES_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safePage - 1) * CASES_PER_PAGE, safePage * CASES_PER_PAGE);
 
   const selectedCase = cases.find((c) => c.id === selected);
 
@@ -103,6 +121,7 @@ const CasesPage = () => {
   const openDelete = (id: string) => { setSelected(id); setModal('delete'); };
 
   const closeModal = () => {
+    if (loading) return;
     setModal(null); setSelected(null);
     setEvidenceFiles([]); setExistingEvidence([]);
     setWitnesses([]); setNewWitness({ ...EMPTY_WITNESS });
@@ -117,29 +136,45 @@ const CasesPage = () => {
   const removeWitness = (wId: string) => setWitnesses(witnesses.filter(w => w.id !== wId));
 
   const handleSubmit = async () => {
-    if (!form.title.trim()) return;
-    const uploadedAssets = [...existingEvidence.map(e => ({ name: e.name, url: e.url }))];
-    for (const file of evidenceFiles) {
-      try {
-        const fd = new FormData();
-        fd.append('file', file);
-        const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
-        const data = await res.json();
-        if (res.ok) uploadedAssets.push({ name: file.name, url: data.url });
-      } catch { /* skip failed */ }
+    if (!form.title.trim() || loading) return;
+    setLoading(true);
+    try {
+      // Preserve full DocumentAsset objects for evidence the user kept
+      const keptUrls = new Set(existingEvidence.map((e) => e.url));
+      const uploadedAssets: DocumentAsset[] = (selectedCase?.assets || []).filter(
+        (a) => keptUrls.has(a.url),
+      );
+      // Upload new evidence and build proper DocumentAsset records
+      for (const file of evidenceFiles) {
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (res.ok) uploadedAssets.push({
+            id: `asset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            name: file.name,
+            kind: file.type.startsWith('image/') ? 'image' : 'file',
+            type: file.type || 'application/octet-stream',
+            url: data.url,
+          });
+        } catch { /* skip failed upload */ }
+      }
+      const payload: any = {
+        title: form.title, description: form.description, cedula: form.cedula,
+        status: form.status, client_id: form.client_id, lawyer_id: form.lawyer_id,
+        witnesses, assets: uploadedAssets,
+        courtCase: form.courtCase, tribunal: form.tribunal,
+        courtDate: form.courtDate, courtAddress: form.courtAddress,
+        judge: form.judge, caseNumber: form.caseNumber,
+        priority: form.priority, notes: form.notes,
+      };
+      if (modal === 'add') await addCase(payload);
+      else if (modal === 'edit' && selected) await updateCase(selected, payload);
+      closeModal();
+    } finally {
+      setLoading(false);
     }
-    const payload: any = {
-      title: form.title, description: form.description, cedula: form.cedula,
-      status: form.status, client_id: form.client_id, lawyer_id: form.lawyer_id,
-      witnesses, assets: uploadedAssets,
-      courtCase: form.courtCase, tribunal: form.tribunal,
-      courtDate: form.courtDate, courtAddress: form.courtAddress,
-      judge: form.judge, caseNumber: form.caseNumber,
-      priority: form.priority, notes: form.notes,
-    };
-    if (modal === 'add') addCase(payload);
-    else if (modal === 'edit' && selected) updateCase(selected, payload);
-    closeModal();
   };
 
   const clientName = (id: string) => clients.find((c) => c.id === id)?.name || '—';
@@ -150,7 +185,7 @@ const CasesPage = () => {
       <div className="a-page-header">
         <div className="a-page-header__title">
           <h2>Casos</h2>
-          <p>{cases.length} expedientes — {cases.filter((c) => c.status !== 'Cerrado').length} activos</p>
+          <p>{cases.length} expedientes — {cases.filter((c) => c.status !== 'Cerrado').length} activos — {filtered.length} visibles</p>
         </div>
         <div className="a-page-header__actions">
           <button type="button" className="a-btn a-btn--primary" onClick={openAdd}>
@@ -165,7 +200,7 @@ const CasesPage = () => {
           <input
             placeholder="Buscar por título, descripción o cédula..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -174,11 +209,51 @@ const CasesPage = () => {
               key={s}
               type="button"
               className={`a-filter-chip ${statusFilter === s ? 'is-active' : ''}`}
-              onClick={() => setStatusFilter(s)}
+              onClick={() => { setStatusFilter(s); setPage(1); }}
             >
               {s === 'all' ? 'Todos' : s}
             </button>
           ))}
+        </div>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <select
+            className="a-select"
+            style={{ width: 'auto', minWidth: 120, fontSize: '0.82rem', height: 34 }}
+            value={priorityFilter}
+            onChange={(e) => { setPriorityFilter(e.target.value as PriorityFilter); setPage(1); }}
+          >
+            <option value="all">Prioridad</option>
+            <option>Baja</option><option>Media</option><option>Alta</option><option>Urgente</option>
+          </select>
+          {team.length > 0 && (
+            <select
+              className="a-select"
+              style={{ width: 'auto', minWidth: 140, fontSize: '0.82rem', height: 34 }}
+              value={lawyerFilter}
+              onChange={(e) => { setLawyerFilter(e.target.value); setPage(1); }}
+            >
+              <option value="">Abogado</option>
+              {team.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+          )}
+          {clients.length > 0 && (
+            <select
+              className="a-select"
+              style={{ width: 'auto', minWidth: 140, fontSize: '0.82rem', height: 34 }}
+              value={clientFilter}
+              onChange={(e) => { setClientFilter(e.target.value); setPage(1); }}
+            >
+              <option value="">Cliente</option>
+              {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          )}
+          <button
+            type="button"
+            className={`a-filter-chip ${courtFilter ? 'is-active' : ''}`}
+            onClick={() => { setCourtFilter(!courtFilter); setPage(1); }}
+          >
+            <FaGavel /> Tribunal
+          </button>
         </div>
         <div className="a-view-toggle">
           <button type="button" className={view === 'card' ? 'is-active' : ''} onClick={() => setView('card')} title="Tarjetas"><FaTh /></button>
@@ -190,12 +265,17 @@ const CasesPage = () => {
         <div className="a-empty">
           <FaSuitcase />
           <h3>Sin casos</h3>
-          <p>{search || statusFilter !== 'all' ? 'No hay resultados.' : 'Aún no hay expedientes registrados.'}</p>
-          {!search && statusFilter === 'all' && <button type="button" className="a-btn a-btn--primary" onClick={openAdd}><FaPlus /> Agregar caso</button>}
+          <p>{search || statusFilter !== 'all' || priorityFilter !== 'all' || lawyerFilter || clientFilter || courtFilter
+            ? 'No hay resultados para los filtros seleccionados.'
+            : 'Aún no hay expedientes registrados.'}
+          </p>
+          {!search && statusFilter === 'all' && priorityFilter === 'all' && !lawyerFilter && !clientFilter && !courtFilter && (
+            <button type="button" className="a-btn a-btn--primary" onClick={openAdd}><FaPlus /> Agregar caso</button>
+          )}
         </div>
       ) : view === 'card' ? (
         <div className="a-card-grid">
-          {filtered.map((c) => (
+          {paginated.map((c) => (
             <div key={c.id} className="a-card" style={{ borderLeft: '3px solid var(--ac)' }}>
               <div className="a-card__header">
                 <div>
@@ -245,7 +325,7 @@ const CasesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
+              {paginated.map((c) => (
                 <tr key={c.id}>
                   <td className="a-table__name">
                     {c.title}
@@ -270,6 +350,27 @@ const CasesPage = () => {
         </div>
       )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="a-pagination">
+          <button
+            className="a-btn a-btn--ghost a-btn--icon"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={safePage === 1}
+          >
+            <FaChevronLeft />
+          </button>
+          <span className="a-pagination__info">Página {safePage} de {totalPages}</span>
+          <button
+            className="a-btn a-btn--ghost a-btn--icon"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safePage === totalPages}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
+
       {/* Add / Edit Modal */}
       <AdminModal
         open={modal === 'add' || modal === 'edit'}
@@ -278,6 +379,7 @@ const CasesPage = () => {
         onClose={closeModal}
         onSubmit={handleSubmit}
         submitLabel={modal === 'add' ? 'Crear caso' : 'Guardar cambios'}
+        loading={loading}
         size="lg"
       >
         <div className="a-form a-form--2col">
@@ -430,7 +532,7 @@ const CasesPage = () => {
         title="Eliminar caso"
         subtitle={`¿Eliminar el caso "${selectedCase?.title}"?`}
         onClose={closeModal}
-        onSubmit={() => { if (selected) deleteCase(selected); closeModal(); }}
+        onSubmit={async () => { if (selected) { await deleteCase(selected); } closeModal(); }}
         submitLabel="Sí, eliminar"
         submitDanger
         size="sm"
