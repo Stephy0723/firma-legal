@@ -1,0 +1,183 @@
+@use "../../styles/base/variables" as *;
+@use "../../styles/base/mixins" as *;
+
+.footer {
+  padding: 0;
+  background:
+    linear-gradient(180deg,
+      rgba($ink-900, 0.98) 0%,
+      rgba($ink-950, 1) 100%);
+  color: rgba(255, 255, 255, 0.75);
+  position: relative;
+
+  // Gold divider at top
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 600px);
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba($gold-400, 0.40) 30%,
+        rgba($gold-400, 0.55) 50%,
+        rgba($gold-400, 0.40) 70%,
+        transparent 100%);
+  }
+
+  // Main content — 4 columns
+  &__main {
+    @include container;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-block: 3rem;
+  }
+
+  &__col {
+    h4 {
+      font-family: $font-heading;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.90);
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  // Brand
+  &__brand {
+    font-family: $font-heading;
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+
+    span {
+      font-weight: 400;
+      @include gold-text;
+    }
+  }
+
+  &__tagline {
+    font-size: $fs-small;
+    color: rgba(255, 255, 255, 0.50);
+    line-height: 1.65;
+    max-width: 30ch;
+    margin-bottom: 1rem;
+  }
+
+  // Social icons
+  &__social {
+    display: flex;
+    gap: 0.6rem;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.60);
+      font-size: 0.85rem;
+      transition:
+        background $duration-fast $ease-standard,
+        color $duration-fast $ease-standard,
+        transform $duration-fast $ease-emphasis;
+
+      &:hover {
+        background: $gold-500;
+        color: $ink-950;
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  // Links
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+
+    a {
+      font-size: $fs-small;
+      color: rgba(255, 255, 255, 0.50);
+      letter-spacing: 0.02em;
+      transition: color $duration-fast $ease-standard;
+
+      &:hover {
+        color: $gold-400;
+      }
+    }
+
+    // Contact column — no links, just text
+    &--contact {
+      li {
+        font-size: $fs-small;
+        color: rgba(255, 255, 255, 0.50);
+        line-height: 1.55;
+      }
+    }
+  }
+
+  // Bottom bar
+  &__bottom {
+    @include container;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding-block: 1.3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: $fs-caption;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.38);
+  }
+
+  &__legal {
+    display: flex;
+    gap: 1.2rem;
+
+    a {
+      font-size: $fs-caption;
+      color: rgba(255, 255, 255, 0.38);
+      transition: color $duration-fast $ease-standard;
+
+      &:hover {
+        color: $gold-400;
+      }
+    }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Responsive
+// ──────────────────────────────────────────────
+
+@include tablet {
+  .footer {
+    &__main {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+
+@include desktop {
+  .footer {
+    &__main {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    }
+  }
+}

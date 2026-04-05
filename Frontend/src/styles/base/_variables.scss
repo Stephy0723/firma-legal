@@ -1,0 +1,123 @@
+// ──────────────────────────────────────────────
+// Color Palette — Institutional Green & Cream/Gold
+// Based on JR&L brand: dark forest green + warm cream
+// ──────────────────────────────────────────────
+
+// Green (institutional darks)
+$ink-950: #1a2e24;
+$ink-900: #213a2d;
+$ink-850: #274433;
+$ink-800: #2d4a3e;
+$ink-700: #3a5e4e;
+$ink-600: #4a7260;
+
+// Text
+$text: #1c3328;
+$text-secondary: #4a665a;
+$muted: #6b8a7d;
+
+// Surfaces — warm cream, no pure white
+$surface: #f8f5ec;
+$surface-warm: #f5f1e6;
+$surface-2: #f2eedf;
+$surface-3: #ece8db;
+
+// Gold / Cream accents
+$gold-600: #9a7d3e;
+$gold-500: #b5944d;
+$gold-400: #c9a85e;
+$gold-300: #d9be7e;
+$gold-200: #e6d4a5;
+$gold-100: #f2ebda;
+$gold-50: #faf6ed;
+
+// Borders
+$border: rgba(33, 58, 45, 0.08);
+$border-medium: rgba(33, 58, 45, 0.13);
+$border-strong: rgba(33, 58, 45, 0.20);
+$border-gold: rgba(181, 148, 77, 0.30);
+
+// ──────────────────────────────────────────────
+// Typography
+// ──────────────────────────────────────────────
+
+$font-heading: "Playfair Display", "Georgia", serif;
+$font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+
+$fs-display: clamp(2.6rem, 1.6rem + 4.2vw, 4.8rem);
+$fs-h1: clamp(2rem, 1.3rem + 3.2vw, 3.6rem);
+$fs-h2: clamp(1.65rem, 1.2rem + 2vw, 2.8rem);
+$fs-h3: clamp(1.1rem, 0.95rem + 0.6vw, 1.35rem);
+$fs-body: clamp(0.95rem, 0.9rem + 0.22vw, 1.08rem);
+$fs-small: clamp(0.82rem, 0.78rem + 0.18vw, 0.92rem);
+$fs-caption: 0.74rem;
+$fs-eyebrow: 0.72rem;
+
+// ──────────────────────────────────────────────
+// Spacing
+// ──────────────────────────────────────────────
+
+$section-space: clamp(5rem, 9vw, 9rem);
+$container-width: 1180px;
+$container-padding: 5%;
+
+// ──────────────────────────────────────────────
+// Border Radius
+// ──────────────────────────────────────────────
+
+$radius-xs: 6px;
+$radius-sm: 10px;
+$radius-md: 16px;
+$radius-lg: 24px;
+$radius-xl: 32px;
+$radius-pill: 999px;
+
+// ──────────────────────────────────────────────
+// Shadows — 5-level scale
+// ──────────────────────────────────────────────
+
+$shadow-ambient: 0 1px 3px rgba(26, 46, 36, 0.04),
+  0 1px 2px rgba(26, 46, 36, 0.03);
+
+$shadow-soft: 0 4px 12px rgba(26, 46, 36, 0.06),
+  0 1px 4px rgba(26, 46, 36, 0.04);
+
+$shadow-medium: 0 10px 28px rgba(26, 46, 36, 0.09),
+  0 4px 10px rgba(26, 46, 36, 0.06);
+
+$shadow-lux: 0 20px 44px rgba(26, 46, 36, 0.11),
+  0 8px 18px rgba(26, 46, 36, 0.08),
+  inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+$shadow-float: 0 32px 64px rgba(26, 46, 36, 0.15),
+  0 14px 28px rgba(26, 46, 36, 0.10),
+  inset 0 1px 0 rgba(255, 255, 255, 0.60);
+
+$shadow-gold-glow: 0 14px 32px rgba(181, 148, 77, 0.22),
+  inset 0 1px 0 rgba(255, 255, 255, 0.50);
+
+$shadow-gold-glow-hover: 0 20px 44px rgba(181, 148, 77, 0.30),
+  inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+// ──────────────────────────────────────────────
+// Motion — cubic-bezier easing
+// ──────────────────────────────────────────────
+
+$ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+$ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+$ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+$duration-fast: 200ms;
+$duration-mid: 380ms;
+$duration-slow: 600ms;
+$duration-reveal: 750ms;
+
+// ──────────────────────────────────────────────
+// Glassmorphism tokens
+// ──────────────────────────────────────────────
+
+$glass-bg: rgba(255, 255, 255, 0.58);
+$glass-bg-strong: rgba(255, 255, 255, 0.72);
+$glass-border: rgba(255, 255, 255, 0.35);
+$glass-blur: 16px;

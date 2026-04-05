@@ -1,0 +1,175 @@
+@use "./variables" as *;
+
+// ──────────────────────────────────────────────
+// Layout
+// ──────────────────────────────────────────────
+
+@mixin container {
+  width: min($container-width, 100% - $container-padding * 2);
+  margin-inline: auto;
+}
+
+// ──────────────────────────────────────────────
+// Responsive breakpoints (mobile-first)
+// ──────────────────────────────────────────────
+
+@mixin tablet {
+  @media (min-width: 700px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 980px) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  @media (max-width: 699px) {
+    @content;
+  }
+}
+
+// ──────────────────────────────────────────────
+// Typography
+// ──────────────────────────────────────────────
+
+@mixin section-title {
+  font-family: $font-heading;
+  font-size: $fs-h2;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: $ink-900;
+  text-wrap: balance;
+}
+
+@mixin gold-text {
+  background: linear-gradient(135deg, $gold-300 0%, $gold-500 50%, $gold-400 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// ──────────────────────────────────────────────
+// Cards & Surfaces
+// ──────────────────────────────────────────────
+
+@mixin card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-soft;
+}
+
+@mixin card-premium {
+  background: linear-gradient(180deg,
+      rgba(248, 245, 236, 0.98) 0%,
+      rgba(242, 238, 223, 0.96) 100%);
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-medium;
+}
+
+@mixin glass($opacity: 0.58) {
+  background: rgba(248, 245, 236, $opacity);
+  backdrop-filter: blur($glass-blur);
+  -webkit-backdrop-filter: blur($glass-blur);
+  border: 1px solid $glass-border;
+}
+
+// ──────────────────────────────────────────────
+// Interactive states
+// ──────────────────────────────────────────────
+
+@mixin elevated-hover {
+  transition:
+    transform $duration-mid $ease-emphasis,
+    box-shadow $duration-mid $ease-standard,
+    border-color $duration-fast $ease-standard;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-float;
+    border-color: $border-gold;
+  }
+}
+
+@mixin focus-ring($color: $gold-500) {
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color, 0.25);
+  }
+}
+
+// ──────────────────────────────────────────────
+// Form elements
+// ──────────────────────────────────────────────
+
+@mixin input-base {
+  width: 100%;
+  border: 1px solid $border-medium;
+  border-radius: $radius-sm;
+  background: rgba(248, 245, 236, 0.90);
+  color: $text;
+  font-family: $font-body;
+  font-size: $fs-body;
+  padding: 0.85rem 1rem;
+  transition:
+    border-color $duration-fast $ease-standard,
+    box-shadow $duration-mid $ease-standard,
+    background $duration-fast $ease-standard;
+
+  &::placeholder {
+    color: $muted;
+    opacity: 0.7;
+  }
+
+  &:focus {
+    border-color: rgba($gold-500, 0.55);
+    box-shadow: 0 0 0 4px rgba($gold-500, 0.12);
+    background: $surface;
+    outline: none;
+  }
+}
+
+// ──────────────────────────────────────────────
+// Decorative
+// ──────────────────────────────────────────────
+
+@mixin gold-line($height: 2px) {
+  content: "";
+  display: block;
+  width: 48px;
+  height: $height;
+  background: linear-gradient(90deg, $gold-400, $gold-500);
+  border-radius: $height;
+}
+
+@mixin gold-top-border {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, $gold-300, $gold-500, $gold-300);
+    border-radius: 3px;
+    transition: width $duration-mid $ease-emphasis;
+  }
+
+  &:hover::before {
+    width: 60px;
+  }
+}

@@ -1,0 +1,217 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+
+// ──────────────────────────────────────────────
+// Base HTML
+// ──────────────────────────────────────────────
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: $font-body;
+  font-size: $fs-body;
+  line-height: 1.65;
+  color: $text;
+  background:
+    radial-gradient(ellipse at 8% -6%, rgba($gold-500, 0.08), transparent 42%),
+    radial-gradient(ellipse at 95% 8%, rgba($ink-800, 0.06), transparent 30%),
+    linear-gradient(178deg, $surface-warm 0%, $surface-3 50%, #eeeae3 100%);
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+}
+
+// ──────────────────────────────────────────────
+// Base elements
+// ──────────────────────────────────────────────
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color $duration-fast $ease-standard;
+}
+
+section {
+  padding-block: $section-space;
+}
+
+.section {
+  @include container;
+}
+
+// ──────────────────────────────────────────────
+// Typography
+// ──────────────────────────────────────────────
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: $font-heading;
+  color: $ink-900;
+}
+
+h2 {
+  @include section-title;
+  margin-bottom: 0.6rem;
+}
+
+p {
+  font-size: $fs-body;
+  line-height: 1.7;
+}
+
+// ──────────────────────────────────────────────
+// Eyebrow label
+// ──────────────────────────────────────────────
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+  font-family: $font-body;
+  font-size: $fs-eyebrow;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: $gold-500;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 22px;
+    height: 1.5px;
+    background: linear-gradient(90deg, $gold-400, $gold-500);
+    border-radius: 2px;
+  }
+}
+
+// ──────────────────────────────────────────────
+// Buttons
+// ──────────────────────────────────────────────
+
+button,
+.btn {
+  font-family: $font-body;
+  font-weight: 600;
+  font-size: $fs-small;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: $radius-pill;
+  cursor: pointer;
+  background:
+    linear-gradient(145deg, $gold-300 0%, $gold-400 40%, $gold-500 100%);
+  color: $ink-950;
+  box-shadow: $shadow-gold-glow;
+  transition:
+    transform $duration-mid $ease-emphasis,
+    box-shadow $duration-mid $ease-standard,
+    filter $duration-fast $ease-standard;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.015);
+    box-shadow: $shadow-gold-glow-hover;
+    filter: brightness(1.03);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: $shadow-gold-glow;
+  }
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+// ──────────────────────────────────────────────
+// Reveal-on-scroll
+// ──────────────────────────────────────────────
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity $duration-reveal $ease-standard,
+    transform $duration-reveal $ease-emphasis;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// fadeInUp — used by PageHeader, inline details
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ──────────────────────────────────────────────
+// Custom selection
+// ──────────────────────────────────────────────
+
+::selection {
+  background: rgba($gold-400, 0.25);
+  color: $ink-900;
+}
+
+// ──────────────────────────────────────────────
+// Scrollbar (webkit)
+// ──────────────────────────────────────────────
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $surface-2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba($ink-800, 0.18);
+  border-radius: 8px;
+
+  &:hover {
+    background: rgba($ink-800, 0.30);
+  }
+}
+
+// ──────────────────────────────────────────────
+// Reduced motion
+// ──────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
