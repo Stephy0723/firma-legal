@@ -1,48 +1,6 @@
 @use "./variables" as *;
 @use "./mixins" as *;
 
-:root {
-  color-scheme: light;
-  --theme-bg: #ffffff;
-  --theme-surface: #ffffff;
-  --theme-surface-2: #f7f7f7;
-  --theme-text: #0a0a0a;
-  --theme-text-muted: #6b6b6b;
-  --theme-text-faint: #a0a0a0;
-  --theme-border: #e8e8e8;
-  --theme-border-strong: #c8c8c8;
-  --theme-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
-  --theme-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --color-lawyers: #6366F1;
-  --color-services: #8B5CF6;
-  --color-folder-1: #0EA5E9;
-  --color-folder-2: #10B981;
-  --color-folder-3: #F59E0B;
-  --color-folder-4: #EC4899;
-  --color-folder-5: #6366F1;
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-  --theme-bg: #09090b;
-  --theme-surface: #111318;
-  --theme-surface-2: #18181b;
-  --theme-text: #fafafa;
-  --theme-text-muted: #d4d4d8;
-  --theme-text-faint: #a1a1aa;
-  --theme-border: #27272a;
-  --theme-border-strong: #3f3f46;
-  --theme-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.22);
-  --theme-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
-  --color-lawyers: #818CF8;
-  --color-services: #A78BFA;
-  --color-folder-1: #06B6D4;
-  --color-folder-2: #34D399;
-  --color-folder-3: #FBBF24;
-  --color-folder-4: #F472B6;
-  --color-folder-5: #818CF8;
-}
-
 // ──────────────────────────────────────────────
 // Base HTML
 // ──────────────────────────────────────────────
@@ -58,23 +16,17 @@ body {
   font-family: $font-body;
   font-size: $fs-body;
   line-height: 1.65;
-  color: var(--theme-text);
-  background: var(--theme-bg);
+  color: $text;
+  background:
+    radial-gradient(ellipse at 8% -6%, rgba($gold-500, 0.08), transparent 42%),
+    radial-gradient(ellipse at 95% 8%, rgba($ink-800, 0.06), transparent 30%),
+    linear-gradient(178deg, $surface-warm 0%, $surface-3 50%, #eeeae3 100%);
   min-width: 320px;
   overflow-x: hidden;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
   width: 100%;
-  min-height: 100vh;
-  background: var(--theme-bg);
-  color: var(--theme-text);
-}
-
-main {
-  background: var(--theme-bg);
-  color: var(--theme-text);
 }
 
 // ──────────────────────────────────────────────
@@ -94,7 +46,6 @@ a {
 
 section {
   padding-block: $section-space;
-  background: transparent;
 }
 
 .section {
@@ -110,7 +61,7 @@ h2,
 h3,
 h4 {
   font-family: $font-heading;
-  color: var(--theme-text);
+  color: $ink-900;
 }
 
 h2 {
@@ -137,20 +88,20 @@ p {
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--theme-text-faint);
+  color: $gold-500;
 
   &::before {
     content: "";
     display: inline-block;
     width: 22px;
     height: 1.5px;
-    background: var(--theme-text);
+    background: linear-gradient(90deg, $gold-400, $gold-500);
     border-radius: 2px;
   }
 }
 
 // ──────────────────────────────────────────────
-// Buttons — monochrome
+// Buttons
 // ──────────────────────────────────────────────
 
 button,
@@ -162,8 +113,9 @@ button,
   border: none;
   border-radius: $radius-pill;
   cursor: pointer;
-  background: var(--theme-text);
-  color: var(--theme-bg);
+  background:
+    linear-gradient(145deg, $gold-300 0%, $gold-400 40%, $gold-500 100%);
+  color: $ink-950;
   box-shadow: $shadow-gold-glow;
   transition:
     transform $duration-mid $ease-emphasis,
@@ -173,28 +125,19 @@ button,
   &:hover {
     transform: translateY(-2px) scale(1.015);
     box-shadow: $shadow-gold-glow-hover;
-    filter: brightness(0.92);
+    filter: brightness(1.03);
   }
 
   &:active {
     transform: translateY(0) scale(0.99);
+    box-shadow: $shadow-gold-glow;
   }
 }
 
 input,
 textarea,
-select,
 button {
   font: inherit;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-input,
-textarea,
-select {
-  background: var(--theme-surface);
-  color: var(--theme-text);
-  border-color: var(--theme-border);
 }
 
 // ──────────────────────────────────────────────
@@ -214,11 +157,13 @@ select {
   transform: translateY(0);
 }
 
+// fadeInUp — used by PageHeader, inline details
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(18px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -230,8 +175,8 @@ select {
 // ──────────────────────────────────────────────
 
 ::selection {
-  background: rgba(0, 0, 0, 0.08);
-  color: var(--theme-text);
+  background: rgba($gold-400, 0.25);
+  color: $ink-900;
 }
 
 // ──────────────────────────────────────────────
@@ -243,15 +188,15 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--theme-surface-2);
+  background: $surface-2;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba($ink-800, 0.18);
   border-radius: 8px;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba($ink-800, 0.30);
   }
 }
 
@@ -260,6 +205,7 @@ select {
 // ──────────────────────────────────────────────
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

@@ -4,8 +4,13 @@
 .team {
   &__intro {
     color: $text-secondary;
+<<<<<<< HEAD
     max-width: 62ch;
     margin-bottom: 2.5rem;
+=======
+    max-width: 58ch;
+    margin-bottom: 2.2rem;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     line-height: 1.75;
   }
 
@@ -27,11 +32,16 @@
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
+<<<<<<< HEAD
     gap: 1.25rem;
+=======
+    gap: 1.2rem;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   }
 }
 
 // ──────────────────────────────────────────────
+<<<<<<< HEAD
 // NEW: Horizontal Team Member Card
 // ──────────────────────────────────────────────
 
@@ -96,11 +106,88 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: $ink-600;
+=======
+// Member Card
+// ──────────────────────────────────────────────
+
+.member {
+  @include card-premium;
+  @include elevated-hover;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+
+  &__photo {
+    position: relative;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      aspect-ratio: 4 / 3.4;
+      object-fit: cover;
+      transition: transform $duration-slow $ease-out-expo;
+    }
+
+    &-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($ink-950, 0.45);
+      opacity: 0;
+      transition: opacity $duration-mid $ease-standard;
+
+      span {
+        font-size: $fs-small;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: 0.05em;
+        padding: 0.45rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: $radius-pill;
+        backdrop-filter: blur(4px);
+      }
+    }
+  }
+
+  &:hover .member__photo img {
+    transform: scale(1.06);
+  }
+
+  &:hover .member__photo-overlay {
+    opacity: 1;
+  }
+
+  &__info {
+    padding: 1.1rem 1.3rem 1.3rem;
+  }
+
+  h3 {
+    font-family: $font-heading;
+    margin-bottom: 0.15rem;
+    color: $ink-900;
+    font-size: 1.08rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  &__role {
+    display: block;
+    font-size: $fs-caption;
+    font-weight: 600;
+    color: $gold-500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     margin-bottom: 0.2rem;
   }
 
   &__specialty {
     display: block;
+<<<<<<< HEAD
     font-size: 0.82rem;
     color: $muted;
     margin-bottom: 0.6rem;
@@ -169,6 +256,10 @@
     .team-member-card__book {
       color: $ink-700;
     }
+=======
+    font-size: $fs-small;
+    color: $muted;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   }
 }
 
@@ -177,7 +268,11 @@
 // ──────────────────────────────────────────────
 
 .member-detail {
+<<<<<<< HEAD
   margin-bottom: 1.5rem;
+=======
+  margin-bottom: 1rem;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   animation: fadeInUp 500ms $ease-emphasis both;
 
   &__back {
@@ -187,7 +282,11 @@
     margin-bottom: 1.5rem;
     font-size: $fs-small;
     font-weight: 600;
+<<<<<<< HEAD
     color: $ink-700;
+=======
+    color: $gold-500;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     background: none;
     border: none;
     padding: 0.4rem 0;
@@ -195,6 +294,7 @@
     cursor: pointer;
     letter-spacing: 0.03em;
 
+<<<<<<< HEAD
     &:hover { color: $ink-900; transform: none; box-shadow: none; }
     svg { font-size: 0.75rem; }
   }
@@ -203,6 +303,23 @@
     background: $surface;
     border: 1px solid $border-medium;
     border-radius: 12px;
+=======
+    &:hover {
+      color: $gold-600;
+      transform: none;
+      box-shadow: none;
+    }
+
+    svg {
+      font-size: 0.75rem;
+    }
+  }
+
+  // Header with photo + text
+  &__header {
+    @include card-premium;
+    border-radius: $radius-lg;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
     display: flex;
     gap: 1.5rem;
@@ -213,12 +330,19 @@
   &__photo {
     width: 130px;
     height: 160px;
+<<<<<<< HEAD
     border-radius: 10px;
     object-fit: cover;
     object-position: center top;
     background: $surface-2;
     flex-shrink: 0;
     border: 2px solid $surface-3;
+=======
+    border-radius: $radius-md;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid $gold-100;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   }
 
   &__header-text {
@@ -232,10 +356,17 @@
 
   &__role {
     display: block;
+<<<<<<< HEAD
     font-size: 0.7rem;
     font-weight: 700;
     color: $ink-600;
     letter-spacing: 0.08em;
+=======
+    font-size: $fs-caption;
+    font-weight: 600;
+    color: $gold-500;
+    letter-spacing: 0.06em;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     text-transform: uppercase;
     margin-bottom: 0.15rem;
   }
@@ -259,6 +390,7 @@
       font-size: $fs-caption;
       color: $text-secondary;
       transition: color $duration-fast $ease-standard;
+<<<<<<< HEAD
       &:hover { color: $ink-900; }
       svg { font-size: 0.8rem; }
     }
@@ -268,6 +400,23 @@
     background: $surface;
     border: 1px solid $border-medium;
     border-radius: 12px;
+=======
+
+      &:hover {
+        color: $gold-500;
+      }
+
+      svg {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  // Body
+  &__body {
+    @include card-premium;
+    border-radius: $radius-lg;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
   }
 
@@ -298,7 +447,14 @@
       font-weight: 600;
     }
 
+<<<<<<< HEAD
     &-icon { color: $ink-600; font-size: 0.9rem; }
+=======
+    &-icon {
+      color: $gold-500;
+      font-size: 0.9rem;
+    }
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
 
     ul {
       list-style: none;
@@ -314,10 +470,20 @@
         &::before {
           content: "";
           position: absolute;
+<<<<<<< HEAD
           left: 0; top: 50%; transform: translateY(-50%);
           width: 5px; height: 5px;
           border-radius: 50%;
           background: $ink-700;
+=======
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: $gold-400;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
         }
       }
     }
@@ -337,6 +503,7 @@
 }
 
 // ──────────────────────────────────────────────
+<<<<<<< HEAD
 // Team Member Card Colors
 // ──────────────────────────────────────────────
 
@@ -404,10 +571,32 @@
     &__header { flex-direction: column; align-items: center; text-align: center; }
     &__photo { width: 110px; height: 140px; }
     &__links { justify-content: center; }
+=======
+// Mobile adjustments
+// ──────────────────────────────────────────────
+
+@include mobile-only {
+  .member-detail {
+    &__header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    &__photo {
+      width: 110px;
+      height: 140px;
+    }
+
+    &__links {
+      justify-content: center;
+    }
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   }
 }
 
 // ──────────────────────────────────────────────
+<<<<<<< HEAD
 // Responsive
 // ──────────────────────────────────────────────
 
@@ -418,10 +607,23 @@
   .team-member-card {
     grid-template-columns: 160px 1fr;
     &__photo { min-height: 180px; }
+=======
+// Responsive grid
+// ──────────────────────────────────────────────
+
+@include tablet {
+  .team__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .member-detail__sections {
+    grid-template-columns: 1fr 1fr;
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
   }
 }
 
 @include desktop {
+<<<<<<< HEAD
   .team__grid { grid-template-columns: 1fr 1fr; }
 
   .team-member-card {
@@ -429,3 +631,9 @@
     &__photo { min-height: 220px; }
   }
 }
+=======
+  .team__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+>>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db

@@ -5,7 +5,6 @@ import Services from "../components/Services/Services";
 import Testimonials from "../components/Testimonials/Testimonials";
 import Team from "../components/Team/Team";
 import Contact from "../components/Contact/Contact";
-import "./HomePage.scss";
 
 const HomePage = () => {
     useEffect(() => {
@@ -33,10 +32,8 @@ const HomePage = () => {
             <Hero />
             <About />
             <Services />
-            <div className="home-page__team-testimonials">
-                <Team />
-                <Testimonials />
-            </div>
+            <Testimonials />
+            <Team />
             <Contact />
         </>
     );

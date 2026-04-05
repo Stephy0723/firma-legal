@@ -14,6 +14,7 @@
     backdrop-filter $duration-mid $ease-standard,
     padding $duration-mid $ease-emphasis;
 
+  // Gradient overlay behind navbar at top of page
   &::before {
     content: "";
     position: absolute;
@@ -26,6 +27,7 @@
     transition: opacity $duration-mid $ease-standard;
   }
 
+  // ── Inner container — proper centering ──
   &__inner {
     position: relative;
     z-index: 1;
@@ -37,6 +39,7 @@
     justify-content: space-between;
   }
 
+  // Scrolled state → frosted glass
   &--scrolled {
     padding: 0.7rem 0;
     background: rgba($ink-950, 0.78);
@@ -46,26 +49,14 @@
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.04),
       0 8px 28px rgba($ink-950, 0.30);
-    &::before { opacity: 0; }
-    .navbar__logo-img { height: 2.2rem; }
+
+    &::before {
+      opacity: 0;
+    }
   }
 
-  &__logo-img {
-    width: auto;
-    height: 2.8rem;
-    object-fit: contain;
-    flex-shrink: 0;
-    border-radius: 0;
-    background: none;
-    padding: 0;
-    filter: brightness(1.1);
-    transition: height $duration-mid $ease-standard;
-  }
-
+  // ── Logo (NavLink) ──
   &__logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     font-family: $font-heading;
     font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
     letter-spacing: 0.05em;
@@ -77,19 +68,11 @@
     span {
       margin-left: 0.15rem;
       font-weight: 400;
-      color: rgba(255, 255, 255, 0.60);
+      @include gold-text;
     }
   }
 
-  &__ampersand {
-    margin-inline: 0.04rem;
-    font-family: $font-body;
-    font-size: 0.9em;
-    font-weight: 700;
-    letter-spacing: 0;
-    color: #fff;
-  }
-
+  // ── Mobile toggle ──
   &__toggle {
     display: none;
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -100,6 +83,7 @@
     padding: 0.45rem 0.6rem;
     box-shadow: none;
     backdrop-filter: blur(8px);
+
     &:hover {
       background: rgba(255, 255, 255, 0.14);
       transform: none;
@@ -107,6 +91,7 @@
     }
   }
 
+  // ── Menu links ──
   &__menu {
     display: flex;
     align-items: center;
@@ -123,12 +108,18 @@
       padding-bottom: 0.15rem;
       transition: color $duration-fast $ease-standard;
 
+      // Underline hover effect
       &::after {
         content: "";
         position: absolute;
-        left: 0; bottom: -0.35rem;
-        width: 100%; height: 2px;
-        background: #FFFFFF;
+        left: 0;
+        bottom: -0.35rem;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            $gold-400 50%,
+            transparent 100%);
         opacity: 0;
         transform: scaleX(0.15);
         transform-origin: center;
@@ -139,17 +130,26 @@
 
       &:hover {
         color: #fff;
-        &::after { opacity: 1; transform: scaleX(1); }
+
+        &::after {
+          opacity: 1;
+          transform: scaleX(1);
+        }
       }
 
+      // Active route state (NavLink)
       &.active:not(.navbar__cta) {
         color: #fff;
-        &::after { opacity: 1; transform: scaleX(1); }
+
+        &::after {
+          opacity: 1;
+          transform: scaleX(1);
+        }
       }
     }
   }
 
-  // ── CTA button — monochrome white pill ──
+  // ── CTA button ──
   &__cta {
     display: inline-flex;
     align-items: center;
@@ -159,44 +159,27 @@
     color: $ink-950 !important;
     letter-spacing: 0.06em !important;
     border-radius: $radius-pill;
-    background: #FFFFFF;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(145deg, $gold-300 0%, $gold-400 40%, $gold-500 100%);
+    box-shadow: 0 4px 16px rgba($gold-500, 0.25);
     transition:
       transform $duration-fast $ease-emphasis,
       box-shadow $duration-fast $ease-standard !important;
 
-    &::after { display: none !important; }
+    &::after {
+      display: none !important;
+    }
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.20);
+      box-shadow: 0 6px 22px rgba($gold-500, 0.35);
       color: $ink-950 !important;
-      background: #F4F4F5;
-    }
-  }
-
-  &__theme-toggle {
-    display: flex;
-    align-items: center;
-
-    .theme-btn {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      box-shadow: none;
-
-      &:hover { color: #FFFFFF; background: rgba(255,255,255,0.1); }
     }
   }
 }
+
+// ──────────────────────────────────────────────
+// Mobile responsive
+// ──────────────────────────────────────────────
 
 @media (max-width: 920px) {
   .navbar {
@@ -208,7 +191,8 @@
 
     &__menu {
       position: fixed;
-      top: 0; right: -100%;
+      top: 0;
+      right: -100%;
       width: min(85vw, 340px);
       height: 100dvh;
       flex-direction: column;
@@ -216,17 +200,27 @@
       justify-content: flex-start;
       gap: 1.4rem;
       padding: 5.5rem 2rem 2rem;
-      background: rgba($ink-950, 0.98);
+      background: linear-gradient(185deg,
+          rgba($ink-950, 0.98) 0%,
+          rgba($ink-900, 0.99) 100%);
       border-left: 1px solid rgba(255, 255, 255, 0.06);
       box-shadow: -16px 0 48px rgba($ink-950, 0.45);
       transition:
         right $duration-mid $ease-emphasis,
         opacity $duration-mid $ease-standard;
 
-      a { font-size: $fs-body; letter-spacing: 0.06em; }
+      a {
+        font-size: $fs-body;
+        letter-spacing: 0.06em;
+      }
     }
 
-    &__menu.active { right: 0; }
-    &__cta { margin-top: 0.5rem; }
+    &__menu.active {
+      right: 0;
+    }
+
+    &__cta {
+      margin-top: 0.5rem;
+    }
   }
 }

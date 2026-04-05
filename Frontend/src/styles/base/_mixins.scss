@@ -52,8 +52,10 @@
 }
 
 @mixin gold-text {
-  color: $ink-700;
-  font-weight: 400;
+  background: linear-gradient(135deg, $gold-300 0%, $gold-500 50%, $gold-400 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 // ──────────────────────────────────────────────
@@ -68,14 +70,16 @@
 }
 
 @mixin card-premium {
-  background: $surface;
-  border: 1px solid $border-medium;
+  background: linear-gradient(180deg,
+      rgba(248, 245, 236, 0.98) 0%,
+      rgba(242, 238, 223, 0.96) 100%);
+  border: 1px solid $border;
   border-radius: $radius-lg;
   box-shadow: $shadow-medium;
 }
 
-@mixin glass($opacity: 0.65) {
-  background: rgba(255, 255, 255, $opacity);
+@mixin glass($opacity: 0.58) {
+  background: rgba(248, 245, 236, $opacity);
   backdrop-filter: blur($glass-blur);
   -webkit-backdrop-filter: blur($glass-blur);
   border: 1px solid $glass-border;
@@ -94,14 +98,14 @@
   &:hover {
     transform: translateY(-6px);
     box-shadow: $shadow-float;
-    border-color: $border-strong;
+    border-color: $border-gold;
   }
 }
 
-@mixin focus-ring($color: $ink-900) {
+@mixin focus-ring($color: $gold-500) {
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color, 0.15);
+    box-shadow: 0 0 0 3px rgba($color, 0.25);
   }
 }
 
@@ -113,7 +117,7 @@
   width: 100%;
   border: 1px solid $border-medium;
   border-radius: $radius-sm;
-  background: $surface;
+  background: rgba(248, 245, 236, 0.90);
   color: $text;
   font-family: $font-body;
   font-size: $fs-body;
@@ -129,8 +133,8 @@
   }
 
   &:focus {
-    border-color: $ink-700;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+    border-color: rgba($gold-500, 0.55);
+    box-shadow: 0 0 0 4px rgba($gold-500, 0.12);
     background: $surface;
     outline: none;
   }
@@ -145,7 +149,7 @@
   display: block;
   width: 48px;
   height: $height;
-  background: $ink-900;
+  background: linear-gradient(90deg, $gold-400, $gold-500);
   border-radius: $height;
 }
 
@@ -160,7 +164,7 @@
     transform: translateX(-50%);
     width: 40px;
     height: 3px;
-    background: $ink-900;
+    background: linear-gradient(90deg, $gold-300, $gold-500, $gold-300);
     border-radius: 3px;
     transition: width $duration-mid $ease-emphasis;
   }

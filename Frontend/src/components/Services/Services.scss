@@ -9,115 +9,6 @@
     line-height: 1.75;
   }
 
-  &__offer {
-    @include card-premium;
-    @include gold-top-border;
-    border-radius: $radius-lg;
-    padding: clamp(1.3rem, 1.05rem + 1.2vw, 2.1rem);
-    margin-bottom: 2rem;
-    box-shadow: $shadow-soft;
-
-    &-head {
-      margin-bottom: 1rem;
-    }
-
-    &-eyebrow {
-      margin: 0 0 0.35rem;
-      font-size: $fs-caption;
-      color: $muted;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    h3 {
-      font-family: $font-heading;
-      font-size: clamp(1.2rem, 1.05rem + 0.7vw, 1.5rem);
-      color: $ink-900;
-      margin: 0;
-      font-weight: 700;
-    }
-
-    &-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.1rem;
-      align-items: start;
-    }
-
-    &-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.55rem;
-    }
-
-    &-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-      color: $text-secondary;
-      line-height: 1.5;
-      font-size: $fs-small;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px dashed rgba($ink-900, 0.12);
-    }
-
-    &-list li:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    &-list svg {
-      margin-top: 0.18rem;
-      flex-shrink: 0;
-      color: $ink-700;
-      font-size: 0.8rem;
-    }
-
-    &-copy {
-      margin: 0;
-      color: $text-secondary;
-      line-height: 1.75;
-      font-size: $fs-small;
-      background: $surface-2;
-      border: 1px solid $border;
-      border-radius: $radius-md;
-      padding: 0.9rem 1rem;
-    }
-
-    &-cta {
-      display: inline-flex;
-      align-items: center;
-      margin-top: 1rem;
-      padding: 0.7rem 1.6rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      font-family: $font-body;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #FFFFFF;
-      background: $ink-900;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: none;
-
-      &:hover {
-        background: $ink-950;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-      }
-    }
-
-    &-copy-wrap {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
   &__grid-wrapper {
     margin-top: 0;
   }
@@ -154,6 +45,7 @@
   overflow: hidden;
   cursor: pointer;
 
+  // Subtle shimmer on hover
   &::after {
     content: "";
     position: absolute;
@@ -177,11 +69,11 @@
     width: 2.8rem;
     height: 2.8rem;
     border-radius: 50%;
-    background: $surface-2;
-    color: $ink-800;
+    background: $gold-50;
+    color: $gold-500;
     font-size: 1.15rem;
     margin-bottom: 1rem;
-    border: 1px solid $border;
+    border: 1px solid rgba($gold-500, 0.12);
     transition:
       transform $duration-mid $ease-emphasis,
       background $duration-fast $ease-standard;
@@ -189,8 +81,7 @@
 
   &:hover .icon {
     transform: translateY(-2px) rotate(-4deg);
-    background: $ink-900;
-    color: #FFFFFF;
+    background: $gold-100;
   }
 
   h3 {
@@ -207,49 +98,18 @@
     line-height: 1.7;
   }
 
-  &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.8rem;
-  }
-
   &__more {
     display: inline-block;
+    margin-top: 0.8rem;
     font-size: $fs-caption;
     font-weight: 600;
-    color: $ink-800;
+    color: $gold-500;
     letter-spacing: 0.04em;
     transition: color $duration-fast $ease-standard;
   }
 
   &:hover &__more {
-    color: $ink-950;
-  }
-
-  &__book {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    background: $surface-2;
-    border: 1px solid $border;
-    color: $muted;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: none;
-    padding: 0;
-
-    &:hover {
-      background: $ink-900;
-      color: #FFFFFF;
-      border-color: $ink-900;
-      transform: none;
-      box-shadow: none;
-    }
+    color: $gold-600;
   }
 }
 
@@ -259,7 +119,6 @@
 
 .service-detail {
   margin-bottom: 1rem;
-  scroll-margin-top: 6rem;
   animation: fadeInUp 500ms $ease-emphasis both;
 
   &__back {
@@ -269,7 +128,7 @@
     margin-bottom: 1.5rem;
     font-size: $fs-small;
     font-weight: 600;
-    color: $ink-800;
+    color: $gold-500;
     background: none;
     border: none;
     padding: 0.4rem 0;
@@ -278,7 +137,7 @@
     letter-spacing: 0.03em;
 
     &:hover {
-      color: $ink-950;
+      color: $gold-600;
       transform: none;
       box-shadow: none;
     }
@@ -302,11 +161,11 @@
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
-    background: $surface-2;
-    color: $ink-800;
+    background: $gold-50;
+    color: $gold-500;
     font-size: 1.6rem;
     flex-shrink: 0;
-    border: 1px solid $border;
+    border: 1px solid rgba($gold-500, 0.15);
   }
 
   &__header h3 {
@@ -363,7 +222,7 @@
   &__check {
     flex-shrink: 0;
     font-size: 0.85rem;
-    color: $ink-700;
+    color: $gold-400;
   }
 
   &__cta-area {
@@ -385,89 +244,8 @@
     button {
       padding: 0.8rem 2rem;
       font-size: $fs-small;
-      font-weight: 700;
-      font-family: $font-body;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #FFFFFF;
-      background: $ink-900;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      box-shadow: none;
-      transition: all 0.25s;
-
-      &:hover {
-        background: $ink-950;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-      }
-    }
-  }
-}
-
-// ──────────────────────────────────────────────
-// Service Card Colors
-// ──────────────────────────────────────────────
-
-.service-color-purple {
-  .icon {
-    background: #6366F1;
-    color: #fff;
-    border-color: #6366F1;
-
-    &::before {
-      background: #6366F1;
-    }
-  }
-}
-
-.service-color-violet {
-  .icon {
-    background: #8B5CF6;
-    color: #fff;
-    border-color: #8B5CF6;
-
-    &::before {
-      background: #8B5CF6;
-    }
-  }
-}
-
-.service-color-sky {
-  .icon {
-    background: #0EA5E9;
-    color: #fff;
-    border-color: #0EA5E9;
-
-    &::before {
-      background: #0EA5E9;
-    }
-  }
-}
-
-.service-color-emerald {
-  .icon {
-    background: #10B981;
-    color: #fff;
-    border-color: #10B981;
-
-    &::before {
-      background: #10B981;
-    }
-  }
-}
-
-.service-color-amber {
-  .icon {
-    background: #F59E0B;
-    color: #fff;
-    border-color: #F59E0B;
-
-    &::before {
-      background: #F59E0B;
     }
   }
 }
@@ -486,11 +264,6 @@
 }
 
 @include tablet {
-  .services__offer-layout {
-    grid-template-columns: 1.25fr 1fr;
-    gap: 1.3rem;
-  }
-
   .services__grid {
     grid-template-columns: 1fr 1fr;
   }
