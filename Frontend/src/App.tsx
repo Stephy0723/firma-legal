@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { syncAdminWorkspaceSettingsFromAPI } from "./utils/adminWorkspace";
-=======
-﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
->>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import HomePage from "./pages/HomePage";
@@ -16,7 +12,6 @@ import ContactoPage from "./pages/ContactoPage";
 import PoliticaPrivacidadPage from "./pages/PoliticaPrivacidadPage";
 import TerminosUsoPage from "./pages/TerminosUsoPage";
 import ScrollToTop from "./components/ScrollToTop";
-<<<<<<< HEAD
 import { Outlet } from "react-router-dom";
 import LoginPage from "./admin/pages/login/LoginPage";
 import RegisterPage from "./admin/pages/register/RegisterPage";
@@ -45,7 +40,7 @@ const PublicLayout = () => (
   </>
 );
 
-const PrivateAdminRoute = ({ children }: { children: JSX.Element }) => {
+const PrivateAdminRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = localStorage.getItem("admin_auth") === "true";
   return isAuthenticated ? children : <Navigate to="/admin/login" replace />;
 };
@@ -94,27 +89,6 @@ function App() {
           </Route>
         </Routes>
       </AdminThemeProvider>
-=======
-
-function App() {
-  return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <ScrollToTop />
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/nosotros" element={<NosotrosPage />} />
-          <Route path="/servicios" element={<ServiciosPage />} />
-          <Route path="/equipo" element={<EquipoPage />} />
-          <Route path="/testimonios" element={<TestimoniosPage />} />
-          <Route path="/contacto" element={<ContactoPage />} />
-          <Route path="/politica-privacidad" element={<PoliticaPrivacidadPage />} />
-          <Route path="/terminos-uso" element={<TerminosUsoPage />} />
-        </Routes>
-      </main>
-      <Footer />
->>>>>>> c64edc70b3dd160f2bebcaaf32b56c64a73125db
     </BrowserRouter>
   );
 }
