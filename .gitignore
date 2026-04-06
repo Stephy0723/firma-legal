@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.env
 
 node_modules
 dist
@@ -22,3 +23,36 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# === Firma Legal Custom Ignores ===
+# Archivos de entorno y variables sensibles
+.env
+.env.local
+backend/.env
+backend/.env.local
+*.md
+*.err
+
+# Permitir ejemplos de entorno
+!.env.example
+!backend/.env.example
+
+# Dependencias backend
+backend/node_modules
+
+# Archivos de subida y temporales
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# Salidas de build y temporales Vite
+dist/
+dist-ssr/
+public/FTS-JRLinversiones/
+src/assets/FTS-JRLinversiones/
+src/assets/Fachada.png
+src/assets/logo.jpeg
+src/assets/react.svg
+
+# Logs backend
+backend-server.log
+backend-server.err

@@ -1,0 +1,93 @@
+// ──────────────────────────────────────────────
+// DARK THEME — Complete coverage for all pages
+// ──────────────────────────────────────────────
+
+// ── GLOBAL ──
+[data-theme="dark"] body,
+[data-theme="dark"] main,
+[data-theme="dark"] #root {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
+[data-theme="dark"] section { background-color: transparent !important; }
+
+// ── NAVBAR (on hero only) ──
+[data-theme="dark"] .navbar::before { background: linear-gradient(180deg, rgba(9,9,11,0.95) 0%, rgba(9,9,11,0.6) 55%, transparent 100%); }
+[data-theme="dark"] .navbar--scrolled { background: rgba(9,9,11,0.85) !important; }
+
+// ── HERO ──
+[data-theme="dark"] .hero { background-color: #09090B !important; }
+[data-theme="dark"] .hero::after { background: linear-gradient(to top, #09090B 0%, transparent 100%) !important; }
+
+// ── HEADINGS ──
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
+[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 { color: var(--theme-text) !important; }
+
+// ── BODY TEXT ──
+[data-theme="dark"] p,
+[data-theme="dark"] li,
+[data-theme="dark"] label,
+[data-theme="dark"] span { color: inherit; }
+
+// ── FORMS ──
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select {
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border-strong) !important;
+  color: var(--theme-text) !important;
+}
+[data-theme="dark"] input:focus, [data-theme="dark"] textarea:focus, [data-theme="dark"] select:focus {
+  border-color: var(--theme-text-faint) !important;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.05) !important;
+}
+
+// ── PUBLIC SITE COMPONENTS ──
+[data-theme="dark"] .service-card,
+[data-theme="dark"] .team-card,
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .contact__info,
+[data-theme="dark"] .contact__form,
+[data-theme="dark"] .floating-card,
+[data-theme="dark"] .about-card,
+[data-theme="dark"] .about__value,
+[data-theme="dark"] .about__stats div,
+[data-theme="dark"] .services__offer,
+[data-theme="dark"] .services__offer-copy,
+[data-theme="dark"] .service-detail__content,
+[data-theme="dark"] .testimonial-card {
+  background-color: #18181B !important;
+  border-color: #27272A !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .about__value-icon { background: #27272A !important; color: #A1A1AA !important; }
+
+[data-theme="dark"] .page-header { background-color: #09090B !important; }
+[data-theme="dark"] footer, [data-theme="dark"] .footer { background-color: #09090B !important; }
+
+[data-theme="dark"] .contact::before { background: none !important; }
+[data-theme="dark"] .contact__map { border-color: #27272A !important; }
+[data-theme="dark"] .contact__info-icon { color: #A1A1AA !important; }
+
+[data-theme="dark"] .service-card .icon { background: #27272A !important; border-color: #3F3F46 !important; color: #A1A1AA !important; }
+[data-theme="dark"] .service-card__more { color: #A1A1AA !important; }
+[data-theme="dark"] .service-detail__back { color: #A1A1AA !important; }
+[data-theme="dark"] .service-detail__icon { background: #27272A !important; border-color: #3F3F46 !important; color: #A1A1AA !important; }
+[data-theme="dark"] .service-detail__check { color: #A1A1AA !important; }
+[data-theme="dark"] .services__offer-list svg { color: #A1A1AA !important; }
+[data-theme="dark"] .services__offer-list li { border-bottom-color: #27272A !important; }
+
+// Eyebrow
+[data-theme="dark"] .eyebrow { color: #71717A !important; }
+[data-theme="dark"] .eyebrow::before { background: #71717A !important; }
+
+// Buttons on public site
+[data-theme="dark"] .hero__actions .btn { background: #FAFAFA !important; color: #09090B !important; }
+[data-theme="dark"] .hero__actions .btn:hover { background: #FFFFFF !important; }
+[data-theme="dark"] .navbar__cta { background: #FAFAFA !important; color: #09090B !important; }
+
+// Team
+[data-theme="dark"] .team-card__role { color: #71717A !important; }
+[data-theme="dark"] .team-member-card { background-color: #18181B !important; border-color: #27272A !important; }
+[data-theme="dark"] .member-detail__header,
+[data-theme="dark"] .member-detail__body { background-color: #18181B !important; border-color: #27272A !important; }

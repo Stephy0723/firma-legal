@@ -1,0 +1,431 @@
+@use "../../styles/base/variables" as *;
+@use "../../styles/base/mixins" as *;
+
+.team {
+  &__intro {
+    color: $text-secondary;
+    max-width: 62ch;
+    margin-bottom: 2.5rem;
+    line-height: 1.75;
+  }
+
+  &__grid-wrapper {
+    margin-top: 0;
+  }
+
+  &__other-title {
+    font-family: $font-heading;
+    font-size: $fs-h3;
+    color: $ink-900;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    padding-top: 2rem;
+    border-top: 1px solid $border;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+// ──────────────────────────────────────────────
+// NEW: Horizontal Team Member Card
+// ──────────────────────────────────────────────
+
+.team-member-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  background: $surface;
+  border: 1px solid $border-medium;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+
+  &:hover {
+    border-color: $border-strong;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+  }
+
+  &__photo {
+    position: relative;
+    background: $surface-2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform 0.5s ease;
+    }
+  }
+
+  &:hover &__photo img {
+    transform: scale(1.05);
+  }
+
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h3 {
+      font-family: $font-heading;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: $ink-900;
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
+    }
+  }
+
+  &__role {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $ink-600;
+    margin-bottom: 0.2rem;
+  }
+
+  &__specialty {
+    display: block;
+    font-size: 0.82rem;
+    color: $muted;
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+  }
+
+  &__bio {
+    font-size: 0.85rem;
+    color: $text-secondary;
+    line-height: 1.6;
+    margin: 0 0 0.8rem 0;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.7rem;
+    border-top: 1px solid $border;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $ink-900;
+    letter-spacing: 0.02em;
+    transition: gap 0.2s;
+
+    svg { font-size: 0.65rem; transition: transform 0.2s; }
+  }
+
+  &:hover &__cta svg { transform: translateX(3px); }
+
+  &__actions {
+    display: flex;
+    gap: 0.4rem;
+
+    button, a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: $surface-2;
+      border: 1px solid $border;
+      color: $muted;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: none;
+
+      &:hover {
+        background: $ink-900;
+        color: #FFFFFF;
+        border-color: $ink-900;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    .team-member-card__book {
+      color: $ink-700;
+    }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Member Detail (Inline)
+// ──────────────────────────────────────────────
+
+.member-detail {
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 500ms $ease-emphasis both;
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: $fs-small;
+    font-weight: 600;
+    color: $ink-700;
+    background: none;
+    border: none;
+    padding: 0.4rem 0;
+    box-shadow: none;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+
+    &:hover { color: $ink-900; transform: none; box-shadow: none; }
+    svg { font-size: 0.75rem; }
+  }
+
+  &__header {
+    background: $surface;
+    border: 1px solid $border-medium;
+    border-radius: 12px;
+    padding: clamp(1.3rem, 1rem + 1vw, 2rem);
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1.2rem;
+  }
+
+  &__photo {
+    width: 130px;
+    height: 160px;
+    border-radius: 10px;
+    object-fit: cover;
+    object-position: center top;
+    background: $surface-2;
+    flex-shrink: 0;
+    border: 2px solid $surface-3;
+  }
+
+  &__header-text {
+    h3 {
+      font-family: $font-heading;
+      font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.6rem);
+      color: $ink-900;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  &__role {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $ink-600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+  }
+
+  &__specialty {
+    display: block;
+    font-size: $fs-small;
+    color: $muted;
+    margin-bottom: 0.7rem;
+  }
+
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: $fs-caption;
+      color: $text-secondary;
+      transition: color $duration-fast $ease-standard;
+      &:hover { color: $ink-900; }
+      svg { font-size: 0.8rem; }
+    }
+  }
+
+  &__body {
+    background: $surface;
+    border: 1px solid $border-medium;
+    border-radius: 12px;
+    padding: clamp(1.3rem, 1rem + 1vw, 2rem);
+  }
+
+  &__bio {
+    font-size: $fs-body;
+    color: $text-secondary;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    max-width: 70ch;
+  }
+
+  &__sections {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__section {
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: $font-heading;
+      font-size: 1rem;
+      color: $ink-900;
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+    }
+
+    &-icon { color: $ink-600; font-size: 0.9rem; }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        position: relative;
+        padding: 0.4rem 0 0.4rem 1.3rem;
+        font-size: $fs-small;
+        color: $text-secondary;
+        line-height: 1.6;
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0; top: 50%; transform: translateY(-50%);
+          width: 5px; height: 5px;
+          border-radius: 50%;
+          background: $ink-700;
+        }
+      }
+    }
+  }
+
+  &__cta-area {
+    padding-top: 1.2rem;
+    border-top: 1px solid $border;
+
+    button {
+      padding: 0.8rem 2rem;
+      font-size: $fs-small;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Team Member Card Colors
+// ──────────────────────────────────────────────
+
+.team-color-purple {
+  &__role {
+    background: #6366F1;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-violet {
+  &__role {
+    background: #8B5CF6;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-sky {
+  &__role {
+    background: #0EA5E9;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-emerald {
+  &__role {
+    background: #10B981;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+.team-color-amber {
+  &__role {
+    background: #F59E0B;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+}
+
+// ──────────────────────────────────────────────
+// Mobile
+// ──────────────────────────────────────────────
+
+@include mobile-only {
+  .team-member-card {
+    grid-template-columns: 1fr;
+    &__photo { min-height: 220px; }
+  }
+
+  .member-detail {
+    &__header { flex-direction: column; align-items: center; text-align: center; }
+    &__photo { width: 110px; height: 140px; }
+    &__links { justify-content: center; }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Responsive
+// ──────────────────────────────────────────────
+
+@include tablet {
+  .team__grid { grid-template-columns: 1fr 1fr; }
+  .member-detail__sections { grid-template-columns: 1fr 1fr; }
+
+  .team-member-card {
+    grid-template-columns: 160px 1fr;
+    &__photo { min-height: 180px; }
+  }
+}
+
+@include desktop {
+  .team__grid { grid-template-columns: 1fr 1fr; }
+
+  .team-member-card {
+    grid-template-columns: 200px 1fr;
+    &__photo { min-height: 220px; }
+  }
+}
