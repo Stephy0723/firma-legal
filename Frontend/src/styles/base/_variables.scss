@@ -93,10 +93,12 @@ $shadow-float: 0 32px 64px rgba(26, 46, 36, 0.15),
   0 14px 28px rgba(26, 46, 36, 0.10),
   inset 0 1px 0 rgba(255, 255, 255, 0.60);
 
-$shadow-gold-glow: 0 14px 32px rgba(181, 148, 77, 0.22),
+$shadow-gold-glow: 0 4px 12px rgba(26, 46, 36, 0.06),
+  0 1px 3px rgba(26, 46, 36, 0.04),
   inset 0 1px 0 rgba(255, 255, 255, 0.50);
 
-$shadow-gold-glow-hover: 0 20px 44px rgba(181, 148, 77, 0.30),
+$shadow-gold-glow-hover: 0 10px 28px rgba(26, 46, 36, 0.09),
+  0 4px 12px rgba(26, 46, 36, 0.06),
   inset 0 1px 0 rgba(255, 255, 255, 0.65);
 
 // ──────────────────────────────────────────────

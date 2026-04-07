@@ -247,6 +247,19 @@ const normalizeAppointmentConfirmation = (
   return 'whatsapp';
 };
 
+const normalizeDocumentFolderId = (folderId: unknown): string | undefined => {
+  if (typeof folderId !== 'string') {
+    return undefined;
+  }
+
+  const normalized = folderId.trim();
+  if (!normalized || normalized === '__general__') {
+    return undefined;
+  }
+
+  return normalized;
+};
+
 const normalizeAppointment = (appointment: Partial<Appointment> & Record<string, unknown>): Appointment => ({
   id: String(appointment.id || Date.now().toString()),
   clientName: String(appointment.clientName || appointment.nombre || ''),
@@ -289,6 +302,7 @@ const normalizeAppointment = (appointment: Partial<Appointment> & Record<string,
 
 const normalizeDocument = (doc: DocumentInfo): DocumentInfo => ({
   ...doc,
+  folder_id: normalizeDocumentFolderId(doc.folder_id),
   updatedAt: doc.updatedAt || doc.uploadDate,
   note: doc.note || '',
   tags: parseStoredArray<string>(doc.tags),
@@ -545,13 +559,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const addDocument = async (doc: Omit<DocumentInfo, 'id' | 'uploadDate' | 'updatedAt'>) => {
     const timestamp = new Date().toISOString();
+    const folderId = normalizeDocumentFolderId(doc.folder_id);
     const folderName =
-      doc.folder_id && documentFolders.find((folder) => folder.id === doc.folder_id)?.name
-        ? (documentFolders.find((folder) => folder.id === doc.folder_id)?.name as string)
+      folderId && documentFolders.find((folder) => folder.id === folderId)?.name
+        ? (documentFolders.find((folder) => folder.id === folderId)?.name as string)
         : 'archivo central';
 
     const newDoc = normalizeDocument({
       ...doc,
+      folder_id: folderId,
       id: Date.now().toString(),
       uploadDate: timestamp,
       updatedAt: timestamp,
@@ -583,17 +599,21 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     const timestamp = new Date().toISOString();
     const currentDocument = documents.find((doc) => doc.id === id);
+    const normalizedUpdated: Partial<DocumentInfo> = {
+      ...updated,
+      ...(updated.folder_id !== undefined ? { folder_id: normalizeDocumentFolderId(updated.folder_id) } : {}),
+    };
     const nextHistoryEntry =
       currentDocument
         ? createDocumentHistoryEntry(
             meta?.action || 'Actualizado',
             meta?.details ||
               [
-                updated.title && updated.title !== currentDocument.title ? `renombrado a ${updated.title}` : null,
-                updated.note !== undefined && updated.note !== currentDocument.note ? 'nota actualizada' : null,
-                updated.tags ? 'tags actualizados' : null,
-                updated.assets ? 'imagenes ajustadas' : null,
-                updated.folder_id !== undefined && updated.folder_id !== currentDocument.folder_id
+                normalizedUpdated.title && normalizedUpdated.title !== currentDocument.title ? `renombrado a ${normalizedUpdated.title}` : null,
+                normalizedUpdated.note !== undefined && normalizedUpdated.note !== currentDocument.note ? 'nota actualizada' : null,
+                normalizedUpdated.tags ? 'tags actualizados' : null,
+                normalizedUpdated.assets ? 'imagenes ajustadas' : null,
+                normalizedUpdated.folder_id !== undefined && normalizedUpdated.folder_id !== currentDocument.folder_id
                   ? 'folder actualizado'
                   : null,
               ]
@@ -612,18 +632,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         const nextDoc = normalizeDocument({
           ...doc,
-          ...updated,
+          ...normalizedUpdated,
           updatedAt: timestamp,
         });
 
         const details =
           meta?.details ||
           [
-            updated.title && updated.title !== doc.title ? `renombrado a ${updated.title}` : null,
-            updated.note !== undefined && updated.note !== doc.note ? 'nota actualizada' : null,
-            updated.tags ? 'tags actualizados' : null,
-            updated.assets ? 'imagenes ajustadas' : null,
-            updated.folder_id !== undefined && updated.folder_id !== doc.folder_id
+            normalizedUpdated.title && normalizedUpdated.title !== doc.title ? `renombrado a ${normalizedUpdated.title}` : null,
+            normalizedUpdated.note !== undefined && normalizedUpdated.note !== doc.note ? 'nota actualizada' : null,
+            normalizedUpdated.tags ? 'tags actualizados' : null,
+            normalizedUpdated.assets ? 'imagenes ajustadas' : null,
+            normalizedUpdated.folder_id !== undefined && normalizedUpdated.folder_id !== doc.folder_id
               ? 'folder actualizado'
               : null,
           ]
@@ -646,7 +666,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...updated,
+          ...normalizedUpdated,
           updatedAt: timestamp,
           history: currentDocument
             ? [nextHistoryEntry, ...(currentDocument.history || [])].filter(Boolean)

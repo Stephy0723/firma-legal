@@ -65,12 +65,13 @@
    SHELL / LAYOUT
    ════════════════════════════════════════════ */
 .admin-shell {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-columns: 260px 1fr;
   background: var(--ab);
   color: var(--tx);
   transition: grid-template-columns 0.2s ease;
+  overflow: hidden;
 
   &--collapsed { grid-template-columns: 68px 1fr; }
 }
@@ -411,7 +412,6 @@
   font-size: 0.82rem;
   font-family: inherit;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   transition: all 0.15s;
 
   &::placeholder { color: var(--tx3); }
@@ -870,7 +870,6 @@
   &:focus {
     border-color: var(--ac);
     background: var(--sb);
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
   }
 }
 
@@ -1026,7 +1025,6 @@
 
   &:focus-within {
     border-color: var(--ac);
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
   }
 }
 
@@ -1591,7 +1589,6 @@
 
   &:hover {
     border-color: var(--ac);
-    box-shadow: 0 0 0 2px var(--ac-bg);
     background: var(--sb2);
   }
 }
@@ -1807,7 +1804,6 @@
 
 .a-card--active {
   border-color: var(--ac);
-  box-shadow: 0 0 0 2px var(--ac-bg);
 }
 
 .a-table tr.is-active {
@@ -2468,7 +2464,6 @@
 
   &:focus-within {
     border-color: var(--ac);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
     background: var(--sb);
   }
 

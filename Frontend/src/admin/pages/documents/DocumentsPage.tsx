@@ -25,6 +25,8 @@ type ModalType = 'add-folder' | 'edit-folder' | 'delete-folder' | 'add-doc' | 'e
 
 const EMPTY_FOLDER_FORM = { name: '', description: '', color: '#6366F1', lawyer_id: '', client_id: '' };
 const EMPTY_DOC_FORM = { title: '', type: 'General', description: '', note: '', folder_id: '', lawyer_id: '', client_id: '', clientName: '', url: '' };
+const GENERAL_FOLDER_ID = '__general__';
+const isGeneralDocumentFolder = (folderId?: string) => !folderId || folderId === GENERAL_FOLDER_ID;
 
 const DocumentsPage = () => {
   const { documents, documentFolders, team, clients, addDocument, updateDocument, deleteDocument, addFolder, updateFolder, deleteFolder } = useData();
@@ -46,15 +48,16 @@ const DocumentsPage = () => {
   const lawyers = team;
 
   const generalDocCount = useMemo(
-    () => documents.filter(d => !d.folder_id).length,
+    () => documents.filter(d => isGeneralDocumentFolder(d.folder_id)).length,
     [documents],
   );
 
-  const activeFolder = activeFolderId ? documentFolders.find(f => f.id === activeFolderId) : null;
+  const isGeneralView = activeFolderId === GENERAL_FOLDER_ID;
+  const activeFolder = activeFolderId && !isGeneralView ? documentFolders.find(f => f.id === activeFolderId) : null;
 
   const folderDocs = useMemo(() => {
-    let list = activeFolderId === '__general__'
-      ? documents.filter(d => !d.folder_id)
+    let list = isGeneralView
+      ? documents.filter(d => isGeneralDocumentFolder(d.folder_id))
       : activeFolderId
         ? documents.filter(d => d.folder_id === activeFolderId)
         : documents;
@@ -65,7 +68,7 @@ const DocumentsPage = () => {
       );
     }
     return list;
-  }, [documents, activeFolderId, search]);
+  }, [documents, activeFolderId, isGeneralView, search]);
 
   const filteredFolders = useMemo(() => {
     if (!search.trim()) return documentFolders;
@@ -97,7 +100,7 @@ const DocumentsPage = () => {
 
   // Document actions
   const openAddDoc = () => {
-    setDocForm({ ...EMPTY_DOC_FORM, folder_id: activeFolderId || '' });
+    setDocForm({ ...EMPTY_DOC_FORM, folder_id: isGeneralView ? '' : activeFolderId || '' });
     setModal('add-doc');
   };
   const openEditDoc = (id: string) => {
@@ -105,7 +108,7 @@ const DocumentsPage = () => {
     if (!d) return;
     setDocForm({
       title: d.title, type: d.type, description: d.description || '', note: d.note || '',
-      folder_id: d.folder_id || '', lawyer_id: d.lawyer_id || '', client_id: d.client_id || '',
+      folder_id: isGeneralDocumentFolder(d.folder_id) ? '' : d.folder_id || '', lawyer_id: d.lawyer_id || '', client_id: d.client_id || '',
       clientName: d.clientName || '', url: d.url || '',
     });
     setSelectedId(id);
@@ -159,10 +162,10 @@ const DocumentsPage = () => {
                 <FaChevronLeft />
               </button>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div className="doc-folder-dot" style={{ background: activeFolder?.color || '#6366F1' }} />
+                <div className="doc-folder-dot" style={{ background: isGeneralView ? '#64748B' : activeFolder?.color || '#6366F1' }} />
                 <div>
-                  <h2>{activeFolder?.name || 'Carpeta'}</h2>
-                  <p>{folderDocs.length} documentos{activeFolder?.description ? ` — ${activeFolder.description}` : ''}</p>
+                  <h2>{isGeneralView ? 'General' : activeFolder?.name || 'Carpeta'}</h2>
+                  <p>{folderDocs.length} documentos{!isGeneralView && activeFolder?.description ? ` — ${activeFolder.description}` : ''}</p>
                 </div>
               </div>
             </div>
@@ -200,7 +203,7 @@ const DocumentsPage = () => {
           <button
             type="button"
             className="doc-folder-card doc-folder-card--general"
-            onClick={() => setActiveFolderId('__general__')}
+            onClick={() => setActiveFolderId(GENERAL_FOLDER_ID)}
           >
             <div className="doc-folder-card__icon" style={{ background: '#64748B20', color: '#64748B' }}>
               <FaFolderOpen />
@@ -336,7 +339,7 @@ const DocumentsPage = () => {
                       </td>
                       <td><span className="a-badge a-badge--default">{d.type}</span></td>
                       <td>
-                        {d.folder_id ? (
+                        {!isGeneralDocumentFolder(d.folder_id) ? (
                           <button type="button" className="doc-folder-link" onClick={() => { setActiveFolderId(d.folder_id!); setSearch(''); }}>
                             <FaFolderOpen /> {documentFolders.find(f => f.id === d.folder_id)?.name || '—'}
                           </button>

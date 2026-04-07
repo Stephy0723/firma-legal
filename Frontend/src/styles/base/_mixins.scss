@@ -102,10 +102,10 @@
   }
 }
 
-@mixin focus-ring($color: $gold-500) {
+@mixin focus-ring($color: $ink-700) {
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($color, 0.25);
+    box-shadow: 0 0 0 3px rgba($color, 0.14);
   }
 }
 
@@ -134,7 +134,6 @@
 
   &:focus {
     border-color: rgba($gold-500, 0.55);
-    box-shadow: 0 0 0 4px rgba($gold-500, 0.12);
     background: $surface;
     outline: none;
   }
@@ -153,23 +152,8 @@
   border-radius: $height;
 }
 
-@mixin gold-top-border {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 3px;
-    background: linear-gradient(90deg, $gold-300, $gold-500, $gold-300);
-    border-radius: 3px;
-    transition: width $duration-mid $ease-emphasis;
-  }
-
-  &:hover::before {
-    width: 60px;
-  }
+@mixin gold-top-border($height: 3px) {
+  border-top: $height solid transparent;
+  border-image: linear-gradient(90deg, $gold-400, $gold-500) 1;
 }
+

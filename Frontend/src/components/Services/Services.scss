@@ -38,7 +38,6 @@
 .service-card {
   @include card-premium;
   @include elevated-hover;
-  @include gold-top-border;
   border-radius: $radius-lg;
   padding: 1.8rem 1.4rem;
   position: relative;

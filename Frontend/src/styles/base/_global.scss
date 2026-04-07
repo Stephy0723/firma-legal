@@ -116,7 +116,7 @@ button,
   background:
     linear-gradient(145deg, $gold-300 0%, $gold-400 40%, $gold-500 100%);
   color: $ink-950;
-  box-shadow: $shadow-gold-glow;
+  box-shadow: $shadow-soft;
   transition:
     transform $duration-mid $ease-emphasis,
     box-shadow $duration-mid $ease-standard,
@@ -124,13 +124,13 @@ button,
 
   &:hover {
     transform: translateY(-2px) scale(1.015);
-    box-shadow: $shadow-gold-glow-hover;
+    box-shadow: $shadow-medium;
     filter: brightness(1.03);
   }
 
   &:active {
     transform: translateY(0) scale(0.99);
-    box-shadow: $shadow-gold-glow;
+    box-shadow: $shadow-soft;
   }
 }
 
