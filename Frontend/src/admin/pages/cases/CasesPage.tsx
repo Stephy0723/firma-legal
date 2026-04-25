@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   FaSuitcase, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash,
   FaUser, FaUserTie, FaTimes, FaCloudUploadAlt, FaCheckCircle,
-  FaFileAlt, FaGavel, FaBalanceScale, FaFolderOpen,
+  FaFileAlt, FaGavel, FaFolderOpen,
   FaChevronLeft, FaChevronRight,
 } from 'react-icons/fa';
 import type { LegalCase, CaseWitness, DocumentAsset } from '../../../context/DataContext';
@@ -51,7 +51,7 @@ const PRIORITY_BADGE: Record<string, string> = {
 
 const CasesPage = () => {
   const navigate = useNavigate();
-  const { cases, clients, team, documents, addCase, updateCase, deleteCase } = useData();
+  const { cases, clients, team, addCase, updateCase, deleteCase } = useData();
   const [view, setView] = useState<View>('card');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');

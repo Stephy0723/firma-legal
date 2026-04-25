@@ -12,7 +12,7 @@ import AppointmentModal from "../AppointmentModal/AppointmentModal";
 import "./Team.scss";
 import { useData } from "../../context/DataContext";
 
-const LAWYER_COLORS = ['#6366F1', '#8B5CF6', '#0EA5E9', '#10B981', '#F59E0B'];
+
 
 const getLawyerColorClass = (index: number) => {
   const colors = ['purple', 'violet', 'sky', 'emerald', 'amber'];

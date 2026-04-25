@@ -1,4 +1,5 @@
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef } from 'react';
+import type { KeyboardEvent } from 'react';
 import { useData } from '../../../context/DataContext';
 import type { DocumentAsset } from '../../../context/DataContext';
 import AdminModal from '../../components/AdminModal';

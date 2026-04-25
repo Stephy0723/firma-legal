@@ -26,7 +26,7 @@ const iconMap: Record<string, React.ElementType> = {
   FaSearch,
 };
 
-const SERVICE_COLORS = ['#6366F1', '#8B5CF6', '#0EA5E9', '#10B981', '#F59E0B'];
+
 
 const getServiceColorClass = (index: number) => {
   const colors = ['purple', 'violet', 'sky', 'emerald', 'amber'];
