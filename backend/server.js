@@ -1078,7 +1078,7 @@ app.get('/api/search', async (req, res) => {
 // Servir frontend compilado
 const frontendPath = path.join(__dirname, '..', 'Frontend', 'dist');
 app.use(express.static(frontendPath));
-app.get('/*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
