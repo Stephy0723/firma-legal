@@ -1,0 +1,33 @@
+name: Deploy to VPS on Main Push
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          timeout: 300s
+          script: |
+            cd /var/www/firma-legal
+            git pull origin main
+            
+            cd Frontend
+            npm install
+            npm run build
+            
+            cd ..
+            cd backend
+            npm install
+            pm2 restart backend-test

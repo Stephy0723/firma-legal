@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminTheme } from '../../theme/AdminThemeContext';
 import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope, FaUser } from 'react-icons/fa';
-
-const TEMP_BYPASS_ADMIN_AUTH = true;
+import { createApiUrl } from '../../../utils/api';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -20,17 +19,8 @@ const RegisterPage = () => {
     setLoading(true);
     setError('');
 
-    if (TEMP_BYPASS_ADMIN_AUTH) {
-      localStorage.setItem('admin_auth', 'true');
-      localStorage.setItem('admin_name', name.trim());
-      localStorage.setItem('admin_email', email.trim());
-      navigate('/admin');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await fetch('http://localhost:3001/api/auth/register', {
+      const res = await fetch(createApiUrl('/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
@@ -76,17 +66,17 @@ const RegisterPage = () => {
             </div>
           </div>
           <div className="a-field">
-            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Correo electrónico</label>
+            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Correo electrÃ³nico</label>
             <div style={{ position: 'relative' }}>
               <FaEnvelope style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--tx3)', fontSize: '0.85rem' }} />
               <input className="a-input" type="email" placeholder="correo@despacho.com" value={email} onChange={(e) => { setEmail(e.target.value); setError(''); }} style={{ paddingLeft: '2.4rem' }} required />
             </div>
           </div>
           <div className="a-field">
-            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Contraseña</label>
+            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>ContraseÃ±a</label>
             <div style={{ position: 'relative' }}>
               <FaLock style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--tx3)', fontSize: '0.85rem' }} />
-              <input className="a-input" type="password" placeholder="••••••••" value={password} onChange={(e) => { setPassword(e.target.value); setError(''); }} style={{ paddingLeft: '2.4rem' }} required />
+              <input className="a-input" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" value={password} onChange={(e) => { setPassword(e.target.value); setError(''); }} style={{ paddingLeft: '2.4rem' }} required />
             </div>
           </div>
           <button type="submit" className="a-btn a-btn--primary a-btn--lg" style={{ width: '100%', marginTop: '0.25rem' }} disabled={loading}>
@@ -95,7 +85,7 @@ const RegisterPage = () => {
         </form>
 
         <p className="admin-auth__footer">
-          ¿Ya tienes cuenta? <Link to="/admin/login">Inicia sesión</Link>
+          Â¿Ya tienes cuenta? <Link to="/admin/login">Inicia sesiÃ³n</Link>
         </p>
       </div>
     </section>

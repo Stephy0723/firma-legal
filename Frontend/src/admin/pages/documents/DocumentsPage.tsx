@@ -6,6 +6,7 @@ import {
   FaFolderPlus, FaUpload, FaChevronLeft, FaEllipsisV, FaUserTie,
   FaUser, FaCalendarAlt, FaPalette, FaCloudUploadAlt, FaCheckCircle,
 } from 'react-icons/fa';
+import { createApiUrl } from '../../../utils/api';
 
 const FOLDER_COLORS = [
   { value: '#6366F1', label: 'Índigo' },
@@ -122,7 +123,7 @@ const DocumentsPage = () => {
       if (docFile) {
         const fd = new FormData();
         fd.append('file', docFile);
-        const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
+        const res = await fetch(createApiUrl('/api/documents/upload'), { method: 'POST', body: fd });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
         fileUrl = data.url;
