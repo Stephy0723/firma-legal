@@ -40,8 +40,8 @@ const Contact = () => {
         <div className="contact__layout">
           <div className="contact__left">
             {submitted ? (
-              <div className="contact__success-message" style={{ background: 'rgba(74, 114, 96, 0.1)', padding: '2rem', borderRadius: '12px', textAlign: 'center' }}>
-                <h3 style={{ color: '#3a5e4e', marginBottom: '1rem' }}>Mensaje Enviado</h3>
+              <div className="contact__success-message">
+                <h3>Mensaje Enviado</h3>
                 <p>Gracias por contactarnos. Un miembro de nuestro equipo se pondrá en contacto pronto.</p>
               </div>
             ) : (

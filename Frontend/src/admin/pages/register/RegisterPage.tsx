@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAdminTheme } from '../../theme/AdminThemeContext';
 import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope, FaUser } from 'react-icons/fa';
 
-const API = 'http://localhost:3001';
+const TEMP_BYPASS_ADMIN_AUTH = true;
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -19,8 +19,18 @@ const RegisterPage = () => {
     if (!name || !email || !password) { setError('Completa todos los campos.'); return; }
     setLoading(true);
     setError('');
+
+    if (TEMP_BYPASS_ADMIN_AUTH) {
+      localStorage.setItem('admin_auth', 'true');
+      localStorage.setItem('admin_name', name.trim());
+      localStorage.setItem('admin_email', email.trim());
+      navigate('/admin');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch(`${API}/api/auth/register`, {
+      const res = await fetch('http://localhost:3001/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

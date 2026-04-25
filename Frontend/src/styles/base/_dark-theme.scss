@@ -6,7 +6,10 @@
 [data-theme="dark"] body,
 [data-theme="dark"] main,
 [data-theme="dark"] #root {
-  background-color: var(--theme-bg) !important;
+  background:
+    radial-gradient(ellipse at 12% -8%, rgba(244, 244, 245, 0.05), transparent 34%),
+    radial-gradient(ellipse at 90% 6%, rgba(161, 161, 170, 0.08), transparent 26%),
+    linear-gradient(180deg, #09090b 0%, #111318 100%) !important;
   color: var(--theme-text) !important;
 }
 

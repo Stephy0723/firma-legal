@@ -1,6 +1,7 @@
 const mysql = require('mysql2/promise');
 const { Client } = require('ssh2');
 const path = require('path');
+
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const dbConfig = {
@@ -18,63 +19,189 @@ const sshConfig = {
   password: process.env.SSH_PASSWORD,
 };
 
-let db = null;
+const useSshTunnel = Boolean(sshConfig.host && sshConfig.username && sshConfig.password);
+const connectionLimit = parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10);
 
-const createConnection = () => {
-  return new Promise((resolve, reject) => {
-    if (!sshConfig.host || !sshConfig.password) {
-      console.log('⚡ Conectando a MySQL directamente (sin túnel SSH)...');
-      mysql.createConnection(dbConfig).then(conn => {
-        db = conn;
-        console.log('✅ Conexión directa a MySQL establecida.');
-        resolve(conn);
-      }).catch(reject);
-      return;
+const retryableErrorCodes = new Set([
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'EPIPE',
+  'ETIMEDOUT',
+  'PROTOCOL_CONNECTION_LOST',
+  'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR',
+  'PROTOCOL_ENQUEUE_AFTER_QUIT',
+]);
+
+let dbHandle = null;
+let dbInitPromise = null;
+let sshClient = null;
+
+const isRetryableDbError = (error) => {
+  const message = String(error?.message || '').toLowerCase();
+  return (
+    retryableErrorCodes.has(error?.code) ||
+    message.includes('closed state') ||
+    message.includes('connection is closed') ||
+    message.includes('pool is closed')
+  );
+};
+
+const invalidateHandle = () => {
+  dbHandle = null;
+  dbInitPromise = null;
+};
+
+const cleanupDbResources = async () => {
+  const currentHandle = dbHandle;
+  const currentSshClient = sshClient;
+
+  dbHandle = null;
+  dbInitPromise = null;
+  sshClient = null;
+
+  if (currentHandle) {
+    try {
+      await currentHandle.end();
+    } catch (_error) {
+      // Ignore cleanup errors during reconnection.
     }
+  }
 
-    console.log('🔐 Iniciando Túnel SSH hacia', sshConfig.host, '...');
-    const sshClient = new Client();
+  if (currentSshClient) {
+    try {
+      currentSshClient.end();
+    } catch (_error) {
+      // Ignore cleanup errors during reconnection.
+    }
+  }
+};
 
-    sshClient.on('ready', () => {
-      console.log('✅ Túnel SSH establecido. Conectando a MySQL...');
-      sshClient.forwardOut(
-        '127.0.0.1',
-        0,
-        dbConfig.host,
-        dbConfig.port,
-        (err, stream) => {
-          if (err) {
-            console.error('❌ Error en forwardOut:', err);
-            sshClient.end();
-            return reject(err);
+const createDirectPool = async () => {
+  console.log('[db] Connecting to MySQL directly...');
+
+  const pool = mysql.createPool({
+    ...dbConfig,
+    waitForConnections: true,
+    connectionLimit,
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+  });
+
+  await pool.query('SELECT 1');
+  console.log('[db] MySQL pool ready.');
+
+  return pool;
+};
+
+const createSshConnection = async () => {
+  console.log('[db] Starting SSH tunnel...');
+
+  return new Promise((resolve, reject) => {
+    const client = new Client();
+
+    client
+      .on('ready', () => {
+        console.log('[db] SSH tunnel ready. Connecting to MySQL...');
+
+        client.forwardOut('127.0.0.1', 0, dbConfig.host, dbConfig.port, async (error, stream) => {
+          if (error) {
+            client.end();
+            reject(error);
+            return;
           }
 
-          mysql.createConnection({
-            ...dbConfig,
-            stream,
-          }).then(conn => {
-            db = conn;
-            console.log('✅ Conexión MySQL sobre SSH establecida.');
-            resolve(conn);
-          }).catch(e => {
-            console.error('❌ Error MySQL sobre SSH:', e);
-            sshClient.end();
-            reject(e);
-          });
-        }
-      );
-    }).on('error', (err) => {
-      console.error('❌ Error SSH:', err.message);
-      reject(err);
-    }).connect(sshConfig);
+          try {
+            const connection = await mysql.createConnection({
+              ...dbConfig,
+              stream,
+              enableKeepAlive: true,
+              keepAliveInitialDelay: 0,
+            });
+
+            sshClient = client;
+
+            client.on('close', invalidateHandle);
+            client.on('error', (sshError) => {
+              console.error('[db] SSH error:', sshError.message);
+              invalidateHandle();
+            });
+
+            if (connection.connection?.stream) {
+              connection.connection.stream.on('close', invalidateHandle);
+              connection.connection.stream.on('error', invalidateHandle);
+            }
+
+            await connection.query('SELECT 1');
+            console.log('[db] MySQL connection over SSH ready.');
+            resolve(connection);
+          } catch (mysqlError) {
+            client.end();
+            reject(mysqlError);
+          }
+        });
+      })
+      .on('error', (error) => {
+        reject(error);
+      })
+      .connect(sshConfig);
   });
 };
 
-const getDB = async () => {
-  if (!db) {
-    await createConnection();
+const createDbHandle = async () => {
+  if (useSshTunnel) {
+    return createSshConnection();
   }
-  return db;
+
+  return createDirectPool();
+};
+
+const ensureDbHandle = async () => {
+  if (dbHandle) {
+    return dbHandle;
+  }
+
+  if (!dbInitPromise) {
+    dbInitPromise = createDbHandle()
+      .then((handle) => {
+        dbHandle = handle;
+        return handle;
+      })
+      .catch((error) => {
+        invalidateHandle();
+        throw error;
+      });
+  }
+
+  return dbInitPromise;
+};
+
+const runWithReconnect = async (method, args) => {
+  let handle = await ensureDbHandle();
+
+  try {
+    return await handle[method](...args);
+  } catch (error) {
+    if (!isRetryableDbError(error)) {
+      throw error;
+    }
+
+    console.warn(`[db] ${method} failed (${error.code || error.message}). Reconnecting and retrying once...`);
+
+    await cleanupDbResources();
+    handle = await ensureDbHandle();
+    return handle[method](...args);
+  }
+};
+
+const dbFacade = {
+  query: (...args) => runWithReconnect('query', args),
+  execute: (...args) => runWithReconnect('execute', args),
+};
+
+const getDB = async () => {
+  await ensureDbHandle();
+  return dbFacade;
 };
 
 module.exports = { getDB };

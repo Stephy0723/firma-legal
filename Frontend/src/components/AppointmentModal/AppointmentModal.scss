@@ -154,11 +154,11 @@
   // ── Error ──
   &__error {
     font-size: 0.82rem;
-    color: #EF4444;
-    background: rgba(239, 68, 68, 0.06);
+    color: $ink-900;
+    background: $surface-2;
     padding: 0.6rem 0.9rem;
     border-radius: 8px;
-    border: 1px solid rgba(239, 68, 68, 0.15);
+    border: 1px solid $border;
     margin: 0;
   }
 
@@ -203,7 +203,7 @@
 
     &-icon {
       font-size: 3rem;
-      color: #10B981;
+      color: $ink-900;
       margin-bottom: 1rem;
     }
 
