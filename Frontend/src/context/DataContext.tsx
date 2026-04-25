@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { createApiUrl } from '../utils/api';
 import type { ReactNode } from 'react';
 
 // Interfaces
@@ -341,14 +342,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const fetchDB = async () => {
       try {
         const [servicesRes, teamRes, messagesRes, appointmentsRes, clientsRes, casesRes, foldersRes, docsRes] = await Promise.all([
-          fetch('http://localhost:3001/api/services'),
-          fetch('http://localhost:3001/api/team'),
-          fetch('http://localhost:3001/api/messages'),
-          fetch('http://localhost:3001/api/appointments'),
-          fetch('http://localhost:3001/api/clients'),
-          fetch('http://localhost:3001/api/cases'),
-          fetch('http://localhost:3001/api/document_folders'),
-          fetch('http://localhost:3001/api/documents')
+          fetch(createApiUrl('/api/services')),
+          fetch(createApiUrl('/api/team')),
+          fetch(createApiUrl('/api/messages')),
+          fetch(createApiUrl('/api/appointments')),
+          fetch(createApiUrl('/api/clients')),
+          fetch(createApiUrl('/api/cases')),
+          fetch(createApiUrl('/api/document_folders')),
+          fetch(createApiUrl('/api/documents'))
         ]);
         if (servicesRes.ok) {
           const data = await servicesRes.json();
@@ -390,7 +391,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const newService = { ...service, id: Date.now().toString() };
     setServices([...services, newService]);
     try {
-      await fetch('http://localhost:3001/api/services', {
+      await fetch(createApiUrl('/api/services'), {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newService)
       });
     } catch {}
@@ -399,7 +400,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateService = async (id: string, updated: Partial<ServiceData>) => {
     setServices(services.map(s => s.id === id ? { ...s, ...updated } : s));
     try {
-      await fetch(`http://localhost:3001/api/services/${id}`, {
+      await fetch(createApiUrl(`/api/services/${id}`), {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated)
       });
     } catch {}
@@ -408,7 +409,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const deleteService = async (id: string) => {
     setServices(services.filter(s => s.id !== id));
     try {
-      await fetch(`http://localhost:3001/api/services/${id}`, { method: 'DELETE' });
+      await fetch(createApiUrl(`/api/services/${id}`), { method: 'DELETE' });
     } catch {}
   };
 
@@ -416,7 +417,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const newMember = { ...member, id: Date.now().toString() };
     setTeam([...team, newMember]);
     try {
-      await fetch('http://localhost:3001/api/team', {
+      await fetch(createApiUrl('/api/team'), {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newMember)
       });
     } catch {}
@@ -426,7 +427,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateTeamMember = async (id: string, updated: Partial<TeamMember>) => {
     setTeam(team.map(m => m.id === id ? { ...m, ...updated } : m));
     try {
-      await fetch(`http://localhost:3001/api/team/${id}`, {
+      await fetch(createApiUrl(`/api/team/${id}`), {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updated)
       });
     } catch {}
@@ -435,7 +436,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const deleteTeamMember = async (id: string) => {
     setTeam(team.filter(m => m.id !== id));
     try {
-      await fetch(`http://localhost:3001/api/team/${id}`, { method: 'DELETE' });
+      await fetch(createApiUrl(`/api/team/${id}`), { method: 'DELETE' });
     } catch {}
   };
 
@@ -448,7 +449,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
     setMessages([newMsg, ...messages]);
     try {
-      await fetch('http://localhost:3001/api/messages', {
+      await fetch(createApiUrl('/api/messages'), {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newMsg)
       });
     } catch {}
@@ -457,7 +458,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const markMessageRead = async (id: string) => {
     setMessages(messages.map(m => m.id === id ? { ...m, read: true } : m));
     try {
-      await fetch(`http://localhost:3001/api/messages/${id}/read`, {
+      await fetch(createApiUrl(`/api/messages/${id}/read`), {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }
       });
     } catch {}
@@ -466,7 +467,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const deleteMessage = async (id: string) => {
     setMessages((prev) => prev.filter((message) => message.id !== id));
     try {
-      await fetch(`http://localhost:3001/api/messages/${id}`, { method: 'DELETE' });
+      await fetch(createApiUrl(`/api/messages/${id}`), { method: 'DELETE' });
     } catch {}
   };
 
@@ -480,7 +481,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setMessages((prev) => prev.map((message) => (message.id === id ? next : message)));
 
     try {
-      await fetch(`http://localhost:3001/api/messages/${id}`, {
+      await fetch(createApiUrl(`/api/messages/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(next),
@@ -500,7 +501,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setAppointments((prev) => [newAppointment, ...prev]);
 
     try {
-      await fetch('http://localhost:3001/api/appointments', {
+      await fetch(createApiUrl('/api/appointments'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAppointment),
@@ -517,7 +518,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
 
     try {
-      await fetch(`http://localhost:3001/api/appointments/${id}/status`, {
+      await fetch(createApiUrl(`/api/appointments/${id}/status`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, updatedAt: timestamp }),
@@ -542,7 +543,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
 
     try {
-      await fetch(`http://localhost:3001/api/appointments/${id}`, {
+      await fetch(createApiUrl(`/api/appointments/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nextAppointment),
@@ -553,7 +554,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const deleteAppointment = async (id: string) => {
     setAppointments((prev) => prev.filter((appointment) => appointment.id !== id));
     try {
-      await fetch(`http://localhost:3001/api/appointments/${id}`, { method: 'DELETE' });
+      await fetch(createApiUrl(`/api/appointments/${id}`), { method: 'DELETE' });
     } catch {}
   };
 
@@ -582,7 +583,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
 
     try {
-      await fetch('http://localhost:3001/api/documents', {
+      await fetch(createApiUrl('/api/documents'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDoc),
@@ -662,7 +663,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
 
     try {
-      await fetch(`http://localhost:3001/api/documents/${id}`, {
+      await fetch(createApiUrl(`/api/documents/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -679,7 +680,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const deleteDocument = async (id: string) => {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
     try {
-      await fetch(`http://localhost:3001/api/documents/${id}`, { method: 'DELETE' });
+      await fetch(createApiUrl(`/api/documents/${id}`), { method: 'DELETE' });
     } catch {}
   };
 
@@ -692,7 +693,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       id: dbId,
     });
     try {
-      const res = await fetch('http://localhost:3001/api/clients', {
+      const res = await fetch(createApiUrl('/api/clients'), {
         method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newClient)
       });
       if(res.ok) setClients((prev) => [newClient, ...prev]);
@@ -705,7 +706,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       ...updated,
       updatedAt: new Date().toISOString(),
     };
-    try { await fetch(`http://localhost:3001/api/clients/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(nextClient) }); } catch {}
+    try { await fetch(createApiUrl(`/api/clients/${id}`), { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(nextClient) }); } catch {}
     setClients((prev) =>
       prev.map((client) => (client.id === id ? normalizeClient({ ...client, ...nextClient }) : client)),
     );
@@ -713,7 +714,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteClient = async (id: string) => {
     setClients((prev) => prev.filter(c => c.id !== id));
-    try { await fetch(`http://localhost:3001/api/clients/${id}`, { method: 'DELETE' }); } catch {}
+    try { await fetch(createApiUrl(`/api/clients/${id}`), { method: 'DELETE' }); } catch {}
   };
 
   const addCase = async (caseData: Omit<LegalCase, 'id'>) => {
@@ -726,7 +727,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       id: dbId,
     });
     try {
-      const res = await fetch('http://localhost:3001/api/cases', {
+      const res = await fetch(createApiUrl('/api/cases'), {
         method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newCase)
       });
       if(res.ok) setCases((prev) => [newCase, ...prev]);
@@ -747,7 +748,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
 
     try {
-      await fetch(`http://localhost:3001/api/cases/${id}`, {
+      await fetch(createApiUrl(`/api/cases/${id}`), {
         method: 'PUT',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(nextCase),
@@ -759,14 +760,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteCase = async (id: string) => {
     setCases((prev) => prev.filter(c => c.id !== id));
-    try { await fetch(`http://localhost:3001/api/cases/${id}`, { method: 'DELETE' }); } catch {}
+    try { await fetch(createApiUrl(`/api/cases/${id}`), { method: 'DELETE' }); } catch {}
   };
 
   const addFolder = async (folder: Omit<DocumentFolder, 'id'>) => {
     const dbId = Date.now().toString();
     const newFolder = { ...folder, id: dbId };
     try {
-      const res = await fetch('http://localhost:3001/api/document_folders', {
+      const res = await fetch(createApiUrl('/api/document_folders'), {
         method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(newFolder)
       });
       if(res.ok) setDocumentFolders([newFolder, ...documentFolders]);
@@ -777,7 +778,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const updateFolder = async (id: string, updated: Partial<DocumentFolder>) => {
     setDocumentFolders((prev) => prev.map((folder) => (folder.id === id ? { ...folder, ...updated } : folder)));
     try {
-      await fetch(`http://localhost:3001/api/document_folders/${id}`, {
+      await fetch(createApiUrl(`/api/document_folders/${id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated),
@@ -786,7 +787,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteFolder = async (id: string) => {
-    try { await fetch(`http://localhost:3001/api/document_folders/${id}`, { method: 'DELETE' }); } catch {}
+    try { await fetch(createApiUrl(`/api/document_folders/${id}`), { method: 'DELETE' }); } catch {}
     setDocumentFolders(documentFolders.filter(f => f.id !== id));
   };
 

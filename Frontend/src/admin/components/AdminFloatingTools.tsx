@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaInfoCircle, FaRobot, FaTimes } from 'react-icons/fa';
+import { createApiUrl } from '../../utils/api';
 
 interface PageHelpInfo {
   title: string;
@@ -137,7 +138,7 @@ const AdminFloatingTools = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/legal-assistant', {
+      const response = await fetch(createApiUrl('/api/legal-assistant'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: question, history: [] }),

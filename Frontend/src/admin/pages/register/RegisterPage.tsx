@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminTheme } from '../../theme/AdminThemeContext';
 import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope, FaUser } from 'react-icons/fa';
-
-const API = 'http://localhost:3001';
+import { createApiUrl } from '../../../utils/api';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const RegisterPage = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${API}/api/auth/register`, {
+      const res = await fetch(createApiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

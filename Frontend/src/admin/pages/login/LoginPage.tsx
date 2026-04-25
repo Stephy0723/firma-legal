@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminTheme } from '../../theme/AdminThemeContext';
 import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope } from 'react-icons/fa';
-
-const API = 'http://localhost:3001';
+import { createApiUrl } from '../../../utils/api';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${API}/api/auth/login`, {
+      const res = await fetch(createApiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

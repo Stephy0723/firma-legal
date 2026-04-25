@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useData } from '../../../context/DataContext';
 import AdminModal from '../../components/AdminModal';
 import { FaUserTie, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash, FaEnvelope, FaLinkedin, FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
+import { createApiUrl } from '../../../utils/api';
 
 type View = 'card' | 'list';
 
@@ -45,14 +46,14 @@ const TeamPage = () => {
         if (photoFile && memberId) {
           const fd = new FormData();
           fd.append('image', photoFile);
-          await fetch(`http://localhost:3001/api/team/${memberId}/upload`, { method: 'POST', body: fd });
+          await fetch(createApiUrl(`/api/team/${memberId}/upload`), { method: 'POST', body: fd });
         }
       } else if (modal === 'edit' && selected) {
         // Upload photo first if selected
         if (photoFile) {
           const fd = new FormData();
           fd.append('image', photoFile);
-          const res = await fetch(`http://localhost:3001/api/team/${selected}/upload`, { method: 'POST', body: fd });
+          const res = await fetch(createApiUrl(`/api/team/${selected}/upload`), { method: 'POST', body: fd });
           const data = await res.json();
           if (data.image) {
             updateTeamMember(selected, { name: form.name, role: form.role, specialty: form.specialty, bio: form.bio, email: form.email, linkedin: form.linkedin, image: data.image });

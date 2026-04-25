@@ -9,6 +9,7 @@ import {
   FaChevronLeft, FaChevronRight,
 } from 'react-icons/fa';
 import type { LegalCase, CaseWitness, DocumentAsset } from '../../../context/DataContext';
+import { createApiUrl } from '../../../utils/api';
 
 type View = 'card' | 'list';
 type StatusFilter = 'all' | LegalCase['status'];
@@ -149,7 +150,7 @@ const CasesPage = () => {
         try {
           const fd = new FormData();
           fd.append('file', file);
-          const res = await fetch('http://localhost:3001/api/documents/upload', { method: 'POST', body: fd });
+          const res = await fetch(createApiUrl('/api/documents/upload'), { method: 'POST', body: fd });
           const data = await res.json();
           if (res.ok) uploadedAssets.push({
             id: `asset-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
