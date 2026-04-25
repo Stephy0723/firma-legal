@@ -27,7 +27,7 @@ jobs:
             set -e
             
             PROJECT_DIR="/var/www/firma-legal"
-            LOG_FILE="/var/log/firma-legal-deploy.log"
+            LOG_FILE="$PROJECT_DIR/deploy.log"
             TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
             
             # Function to log
