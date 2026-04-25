@@ -116,22 +116,23 @@ export const LegalAssistantBot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const history: LegalAssistantHistoryMessage[] = messages
-        .slice(-12)
-        .map((message) => ({
-          role: message.role,
-          content: message.content,
-        }));
+      // Omitido: procesamiento de history y llamada a callOpenAIAPI por falta de definición
+      // const history: LegalAssistantHistoryMessage[] = messages
+      //   .slice(-12)
+      //   .map((message) => ({
+      //     role: message.role,
+      //     content: message.content,
+      //   }));
 
-      const response = await callOpenAIAPI(inputValue, history);
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response,
-        timestamp: new Date(),
-      };
+      // const response = await callOpenAIAPI(inputValue, history);
+      // const assistantMessage: Message = {
+      //   id: (Date.now() + 1).toString(),
+      //   role: 'assistant',
+      //   content: response,
+      //   timestamp: new Date(),
+      // };
 
-      setMessages((prev) => [...prev, assistantMessage]);
+      // setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
