@@ -1075,6 +1075,13 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// Servir frontend compilado
+const frontendPath = path.join(__dirname, '..', 'Frontend', 'dist');
+app.use(express.static(frontendPath));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
 app.listen(port, () => {
   console.log(`🚀 Servidor CRM Backend corriendo en http://localhost:${port}`);
   console.log('Esperando peticiones TLS/SSH según configuración en db.js...');
