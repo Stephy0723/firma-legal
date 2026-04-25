@@ -342,14 +342,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const fetchDB = async () => {
       try {
         const [servicesRes, teamRes, messagesRes, appointmentsRes, clientsRes, casesRes, foldersRes, docsRes] = await Promise.all([
-          fetch(createApiUrl('/api/services')),
-          fetch(createApiUrl('/api/team')),
-          fetch(createApiUrl('/api/messages')),
-          fetch(createApiUrl('/api/appointments')),
-          fetch(createApiUrl('/api/clients')),
-          fetch(createApiUrl('/api/cases')),
-          fetch(createApiUrl('/api/document_folders')),
-          fetch(createApiUrl('/api/documents'))
+          fetch(createApiUrl('/services')),
+          fetch(createApiUrl('/team')),
+          fetch(createApiUrl('/messages')),
+          fetch(createApiUrl('/appointments')),
+          fetch(createApiUrl('/clients')),
+          fetch(createApiUrl('/cases')),
+          fetch(createApiUrl('/document_folders')),
+          fetch(createApiUrl('/documents'))
         ]);
         if (servicesRes.ok) {
           const data = await servicesRes.json();

@@ -428,11 +428,9 @@ app.post('/api/team/:id/upload', teamUpload.single('image'), async (req, res) =>
       return res.status(400).json({ error: 'No se recibió ninguna imagen' });
     }
     const imagePath = `/uploads/team/${req.file.filename}`;
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const fullUrl = `${baseUrl}${imagePath}`;
+    const fullUrl = `${req.protocol}://${req.get('host')}${imagePath}`;
     const db = await getDB();
-    // Guardar solo la ruta relativa en la BD
-    await db.query('UPDATE team SET image=? WHERE id=?', [imagePath, req.params.id]);
+    await db.query('UPDATE team SET image=? WHERE id=?', [fullUrl, req.params.id]);
     res.json({ success: true, image: fullUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1080,7 +1078,7 @@ app.get('/api/search', async (req, res) => {
 // Servir frontend compilado
 const frontendPath = path.join(__dirname, '..', 'Frontend', 'dist');
 app.use(express.static(frontendPath));
-app.use((req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
