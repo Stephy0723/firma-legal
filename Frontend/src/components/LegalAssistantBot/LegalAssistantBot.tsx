@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FaMinus, FaRobot, FaTimes, FaTrash } from 'react-icons/fa';
-import {
-  callOpenAIAPI,
-  type LegalAssistantHistoryMessage,
-} from '../../services/claudeLegalAssistant';
+// import {
+//   callOpenAIAPI,
+//   type LegalAssistantHistoryMessage,
+// } from '../../services/claudeLegalAssistant';
 import './LegalAssistantBot.scss';
 
 interface Message {
