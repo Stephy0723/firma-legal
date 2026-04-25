@@ -11,7 +11,26 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middlewares
-app.use(cors());
+// CORS Configuration
+const allowedOrigins = [
+  'http://localhost:3000',      // Development frontend
+  'http://localhost:5173',       // Vite dev server
+  'https://test.inversionesjrl.com', // Production frontend
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 
 // Servir archivos estáticos de uploads
