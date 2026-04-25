@@ -9,12 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
     
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
@@ -24,93 +20,13 @@ jobs:
           port: 22
           timeout: 300s
           script: |
-            set -e
+            cd /var/www/firma-legal
+            git pull origin main
             
-            PROJECT_DIR="/var/www/firma-legal"
-            LOG_FILE="$PROJECT_DIR/deploy.log"
-            TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+            cd Frontend
+            npm install
+            npm run build
             
-            # Function to log
-            log() {
-              echo "[${TIMESTAMP}] $1" | tee -a "$LOG_FILE"
-            }
-            
-            log "=================================================="
-            log "🚀 Iniciando Deploy Automático - $TIMESTAMP"
-            log "=================================================="
-            
-            # 1. Ir al directorio del proyecto
-            log "→ Entrando a directorio: $PROJECT_DIR"
-            cd "$PROJECT_DIR"
-            
-            # 2. Actualizar repositorio
-            log "→ Actualizando repositorio (git pull)..."
-            git pull origin main 2>&1 | tee -a "$LOG_FILE"
-            log "✓ Repositorio actualizado"
-            
-            # 3. Deploy Frontend
-            log "→ FRONTEND: Instalando dependencias..."
-            cd "$PROJECT_DIR/Frontend"
-            npm ci --prefer-offline --no-audit 2>&1 | tee -a "$LOG_FILE"
-            log "✓ Dependencias del Frontend instaladas"
-            
-            log "→ FRONTEND: Compilando (npm run build)..."
-            npm run build 2>&1 | tee -a "$LOG_FILE"
-            log "✓ Frontend compilado exitosamente"
-            
-            # 4. Deploy Backend
-            log "→ BACKEND: Instalando dependencias..."
-            cd "$PROJECT_DIR/backend"
-            npm ci --prefer-offline --no-audit 2>&1 | tee -a "$LOG_FILE"
-            log "✓ Dependencias del Backend instaladas"
-            
-            # 5. Reiniciar Backend con PM2
-            log "→ BACKEND: Reiniciando con PM2..."
-            
-            # Verificar si PM2 está instalado
-            if ! command -v pm2 &> /dev/null; then
-              log "⚠ PM2 no encontrado, instalando globalmente..."
-              npm install -g pm2 2>&1 | tee -a "$LOG_FILE"
-            fi
-            
-            # Reiniciar el proceso backend-test
-            if pm2 describe backend-test > /dev/null 2>&1; then
-              log "  → Reiniciando proceso 'backend-test'..."
-              pm2 restart backend-test 2>&1 | tee -a "$LOG_FILE"
-            else
-              log "  ⚠ Proceso 'backend-test' no encontrado"
-              log "  → Buscando procesos PM2 disponibles..."
-              pm2 list 2>&1 | tee -a "$LOG_FILE"
-            fi
-            
-            log "✓ Backend reiniciado"
-            
-            # 6. Verificar estado
-            log "→ Verificando estado de servicios..."
-            pm2 status 2>&1 | tee -a "$LOG_FILE"
-            
-            # 7. Guardar configuración de PM2
-            pm2 save 2>&1 | tee -a "$LOG_FILE"
-            
-            log "=================================================="
-            log "✅ DEPLOY COMPLETADO EXITOSAMENTE"
-            log "=================================================="
-            log "Timestamp: $TIMESTAMP"
-            log "Logs guardados en: $LOG_FILE"
-            log "==================================================\n"
-
-      - name: Verify Deployment
-        uses: appleboy/ssh-action@master
-        if: always()
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          script: |
-            echo "📊 Estado Final del Servidor:"
-            echo "================================"
-            pm2 status
-            echo ""
-            echo "📝 Últimas líneas del log:"
-            tail -20 /var/log/firma-legal-deploy.log 2>/dev/null || echo "Sin logs aún"
+            cd ../backend
+            npm install
+            pm2 restart backend-test
