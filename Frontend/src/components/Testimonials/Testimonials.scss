@@ -5,7 +5,7 @@
     position: relative;
 
     &__intro {
-        color: $text-secondary;
+        color: var(--theme-text-muted);
         max-width: 58ch;
         margin-bottom: 2.5rem;
         line-height: 1.75;
@@ -47,7 +47,7 @@
     // Quote icon
     &__quote-icon {
         font-size: 1.3rem;
-        color: $gold-200;
+        color: var(--theme-accent);
         margin-bottom: 0.6rem;
     }
 
@@ -59,13 +59,13 @@
 
         svg {
             font-size: 0.85rem;
-            color: $gold-400;
+            color: var(--theme-accent);
         }
     }
 
     // Quote text
     &__text {
-        color: $text-secondary;
+        color: var(--theme-text-muted);
         font-size: $fs-body;
         line-height: 1.75;
         font-style: italic;
@@ -83,20 +83,20 @@
             height: 48px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid $gold-100;
+            border: 2px solid var(--theme-surface-2);
         }
 
         strong {
             display: block;
             font-family: $font-heading;
             font-size: 0.95rem;
-            color: $ink-900;
+            color: var(--theme-heading);
             font-weight: 600;
         }
 
         span {
             font-size: $fs-caption;
-            color: $muted;
+            color: var(--theme-text-faint);
             letter-spacing: 0.02em;
         }
     }

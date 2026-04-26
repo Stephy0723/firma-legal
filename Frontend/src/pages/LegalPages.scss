@@ -9,18 +9,14 @@
     margin-inline: auto;
     padding: clamp(1.25rem, 2vw, 2rem);
     border-radius: $radius-lg;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.94) 0%,
-      rgba(252, 249, 242, 0.96) 100%
-    );
-    border: 1px solid rgba($gold-400, 0.2);
-    box-shadow: $shadow-soft;
+    background: var(--theme-legal-card-bg);
+    border: 1px solid var(--theme-legal-card-border);
+    box-shadow: var(--theme-legal-card-shadow);
   }
 
   &__updated {
     margin-bottom: 1.5rem;
-    color: rgba($ink-800, 0.78);
+    color: var(--theme-text-muted);
     font-size: $fs-small;
     font-weight: 600;
   }
@@ -29,20 +25,20 @@
     margin-top: 1.4rem;
     margin-bottom: 0.45rem;
     font-size: clamp(1.1rem, 1.7vw, 1.35rem);
-    color: $ink-900;
+    color: var(--theme-heading);
   }
 
   p {
-    color: rgba($ink-900, 0.86);
+    color: var(--theme-text);
   }
 
   a {
-    color: $ink-900;
+    color: var(--theme-heading);
     text-decoration: underline;
     text-underline-offset: 2px;
 
     &:hover {
-      color: $gold-600;
+      color: var(--theme-accent);
     }
   }
 }

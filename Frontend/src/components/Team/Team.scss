@@ -3,7 +3,7 @@
 
 .team {
   &__intro {
-    color: $text-secondary;
+    color: var(--theme-text-muted);
     max-width: 62ch;
     margin-bottom: 2.5rem;
     line-height: 1.75;
@@ -16,12 +16,12 @@
   &__other-title {
     font-family: $font-heading;
     font-size: $fs-h3;
-    color: $ink-900;
+    color: var(--theme-heading);
     font-weight: 600;
     margin-top: 2.5rem;
     margin-bottom: 1.2rem;
     padding-top: 2rem;
-    border-top: 1px solid $border;
+    border-top: 1px solid var(--theme-border);
   }
 
   &__grid {
@@ -38,22 +38,22 @@
 .team-member-card {
   display: grid;
   grid-template-columns: 180px 1fr;
-  background: $surface;
-  border: 1px solid $border-medium;
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border-strong);
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 
   &:hover {
-    border-color: $border-strong;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border-color: var(--theme-accent-border-strong);
+    box-shadow: var(--theme-shadow-md);
     transform: translateY(-3px);
   }
 
   &__photo {
     position: relative;
-    background: $surface-2;
+    background: var(--theme-surface-2);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -83,7 +83,7 @@
       font-family: $font-heading;
       font-size: 1.15rem;
       font-weight: 600;
-      color: $ink-900;
+      color: var(--theme-heading);
       margin-bottom: 0.2rem;
       line-height: 1.2;
     }
@@ -95,21 +95,21 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: $ink-600;
+    color: var(--theme-text-faint);
     margin-bottom: 0.2rem;
   }
 
   &__specialty {
     display: block;
     font-size: 0.82rem;
-    color: $muted;
+    color: var(--theme-text-faint);
     margin-bottom: 0.6rem;
     line-height: 1.4;
   }
 
   &__bio {
     font-size: 0.85rem;
-    color: $text-secondary;
+    color: var(--theme-text-muted);
     line-height: 1.6;
     margin: 0 0 0.8rem 0;
   }
@@ -119,7 +119,7 @@
     align-items: center;
     justify-content: space-between;
     padding-top: 0.7rem;
-    border-top: 1px solid $border;
+    border-top: 1px solid var(--theme-border);
   }
 
   &__cta {
@@ -128,7 +128,7 @@
     gap: 0.35rem;
     font-size: 0.8rem;
     font-weight: 600;
-    color: $ink-900;
+    color: var(--theme-heading);
     letter-spacing: 0.02em;
     transition: gap 0.2s;
 
@@ -148,9 +148,9 @@
       width: 30px;
       height: 30px;
       border-radius: 6px;
-      background: $surface-2;
-      border: 1px solid $border;
-      color: $muted;
+      background: var(--theme-surface-2);
+      border: 1px solid var(--theme-border);
+      color: var(--theme-text-faint);
       font-size: 0.8rem;
       transition: all 0.2s;
       cursor: pointer;
@@ -158,16 +158,16 @@
       box-shadow: none;
 
       &:hover {
-        background: $ink-900;
-        color: #FFFFFF;
-        border-color: $ink-900;
+        background: var(--theme-accent-strong);
+        color: var(--theme-accent-contrast);
+        border-color: var(--theme-accent-strong);
         transform: none;
         box-shadow: none;
       }
     }
 
     .team-member-card__book {
-      color: $ink-700;
+      color: var(--theme-text-muted);
     }
   }
 }
@@ -187,7 +187,7 @@
     margin-bottom: 1.5rem;
     font-size: $fs-small;
     font-weight: 600;
-    color: $ink-700;
+    color: var(--theme-text-muted);
     background: none;
     border: none;
     padding: 0.4rem 0;
@@ -195,13 +195,13 @@
     cursor: pointer;
     letter-spacing: 0.03em;
 
-    &:hover { color: $ink-900; transform: none; box-shadow: none; }
+    &:hover { color: var(--theme-heading); transform: none; box-shadow: none; }
     svg { font-size: 0.75rem; }
   }
 
   &__header {
-    background: $surface;
-    border: 1px solid $border-medium;
+    background: var(--theme-surface);
+    border: 1px solid var(--theme-border-strong);
     border-radius: 12px;
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
     display: flex;
@@ -216,16 +216,16 @@
     border-radius: 10px;
     object-fit: cover;
     object-position: center top;
-    background: $surface-2;
+    background: var(--theme-surface-2);
     flex-shrink: 0;
-    border: 2px solid $surface-3;
+    border: 2px solid var(--theme-surface-3);
   }
 
   &__header-text {
     h3 {
       font-family: $font-heading;
       font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.6rem);
-      color: $ink-900;
+      color: var(--theme-heading);
       margin-bottom: 0.25rem;
     }
   }
@@ -234,7 +234,7 @@
     display: block;
     font-size: 0.7rem;
     font-weight: 700;
-    color: $ink-600;
+    color: var(--theme-text-faint);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 0.15rem;
@@ -243,7 +243,7 @@
   &__specialty {
     display: block;
     font-size: $fs-small;
-    color: $muted;
+    color: var(--theme-text-faint);
     margin-bottom: 0.7rem;
   }
 
@@ -257,23 +257,23 @@
       align-items: center;
       gap: 0.35rem;
       font-size: $fs-caption;
-      color: $text-secondary;
+      color: var(--theme-text-muted);
       transition: color $duration-fast $ease-standard;
-      &:hover { color: $ink-900; }
+      &:hover { color: var(--theme-heading); }
       svg { font-size: 0.8rem; }
     }
   }
 
   &__body {
-    background: $surface;
-    border: 1px solid $border-medium;
+    background: var(--theme-surface);
+    border: 1px solid var(--theme-border-strong);
     border-radius: 12px;
     padding: clamp(1.3rem, 1rem + 1vw, 2rem);
   }
 
   &__bio {
     font-size: $fs-body;
-    color: $text-secondary;
+    color: var(--theme-text-muted);
     line-height: 1.75;
     margin-bottom: 1.5rem;
     max-width: 70ch;
@@ -293,12 +293,12 @@
       gap: 0.5rem;
       font-family: $font-heading;
       font-size: 1rem;
-      color: $ink-900;
+      color: var(--theme-heading);
       margin-bottom: 0.7rem;
       font-weight: 600;
     }
 
-    &-icon { color: $ink-600; font-size: 0.9rem; }
+    &-icon { color: var(--theme-accent); font-size: 0.9rem; }
 
     ul {
       list-style: none;
@@ -308,7 +308,7 @@
         position: relative;
         padding: 0.4rem 0 0.4rem 1.3rem;
         font-size: $fs-small;
-        color: $text-secondary;
+        color: var(--theme-text-muted);
         line-height: 1.6;
 
         &::before {
@@ -317,7 +317,7 @@
           left: 0; top: 50%; transform: translateY(-50%);
           width: 5px; height: 5px;
           border-radius: 50%;
-          background: $ink-700;
+          background: var(--theme-text-muted);
         }
       }
     }
@@ -325,7 +325,7 @@
 
   &__cta-area {
     padding-top: 1.2rem;
-    border-top: 1px solid $border;
+    border-top: 1px solid var(--theme-border);
 
     button {
       padding: 0.8rem 2rem;

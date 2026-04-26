@@ -10,7 +10,7 @@
     padding-top: clamp(8rem, 14vh, 11rem);
     padding-bottom: clamp(3.5rem, 6vh, 5rem);
     overflow: hidden;
-    color: #fff;
+    color: var(--theme-page-header-text);
 
     // Background image
     &__bg {
@@ -87,7 +87,7 @@
         font-weight: 700;
         letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: $gold-300;
+        color: var(--theme-page-header-eyebrow);
         margin-bottom: 0.8rem;
 
         &::before {
@@ -95,7 +95,7 @@
             display: inline-block;
             width: 28px;
             height: 2px;
-            background: linear-gradient(90deg, $gold-300, $gold-500);
+            background: var(--theme-page-header-eyebrow-line);
             border-radius: 2px;
         }
     }
@@ -107,7 +107,7 @@
         font-weight: 600;
         line-height: 1.1;
         letter-spacing: -0.01em;
-        color: #fff;
+        color: var(--theme-page-header-text);
         text-wrap: balance;
         margin-bottom: 0.7rem;
     }
@@ -115,7 +115,7 @@
     // Subtitle
     &__subtitle {
         font-size: $fs-body;
-        color: rgba(255, 255, 255, 0.72);
+        color: var(--theme-page-header-muted);
         line-height: 1.7;
         max-width: 55ch;
     }
@@ -290,7 +290,7 @@
     left: 0;
     right: 0;
     height: 80px;
-    background: linear-gradient(to top, $surface-warm 0%, transparent 100%);
+    background: var(--theme-page-header-bottom-fade);
     z-index: 3;
     pointer-events: none;
 }
