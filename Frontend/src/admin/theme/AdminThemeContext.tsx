@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react';
 import type { PropsWithChildren } from 'react';
-import { useLocation } from 'react-router-dom';
 
 type AdminTheme = 'light' | 'dark';
 
@@ -18,30 +17,21 @@ const applyThemeToDocument = (theme: AdminTheme) => {
   document.documentElement.setAttribute('data-admin-theme', theme);
 };
 
-const isAdminAuthRoute = (pathname: string) => pathname === '/admin/login' || pathname === '/admin/register';
-
 const getInitialTheme = (): AdminTheme => {
-  if (typeof window !== 'undefined' && isAdminAuthRoute(window.location.pathname)) {
+  if (typeof window === 'undefined') {
     return 'light';
   }
 
-  const savedTheme = localStorage.getItem(STORAGE_KEY);
+  const savedTheme = window.localStorage.getItem(STORAGE_KEY);
   return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
 };
 
 export const AdminThemeProvider = ({ children }: PropsWithChildren) => {
-  const location = useLocation();
   const [theme, setThemeState] = useState<AdminTheme>(() => getInitialTheme());
 
-  useEffect(() => {
-    if (isAdminAuthRoute(location.pathname) && theme !== 'light') {
-      setThemeState('light');
-    }
-  }, [location.pathname, theme]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     applyThemeToDocument(theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    window.localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
   const setTheme = (nextTheme: AdminTheme) => {
