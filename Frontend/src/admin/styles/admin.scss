@@ -3,60 +3,72 @@
    ───────────────────────────────────────────── */
 
 /* ── Tokens ── */
+
+/* ADMIN THEME VARIABLES - LIGHT */
 [data-admin-theme='light'] {
-  --ab:       #F1F5F9;
+  --ab:       #F3F4F6;
   --sb:       #FFFFFF;
-  --sb2:      #F8FAFC;
-  --sb3:      #EEF2FF;
-  --tx:       #0F172A;
-  --tx2:      #475569;
-  --tx3:      #94A3B8;
-  --bd:       #E2E8F0;
-  --bd2:      #CBD5E1;
-  --ac:       #6366F1;
-  --ac2:      #4F46E5;
-  --ac-bg:    #EEF2FF;
-  --ac-tx:    #4338CA;
+  --sb2:      #F5F5F5;
+  --sb3:      #EBEBEB;
+  --tx:       #0A0A0A;
+  --tx2:      #3F3F46;
+  --tx3:      #71717A;
+  --bd:       #E4E4E7;
+  --bd2:      #D4D4D8;
+  --ac:       #111111;
+  --ac2:      #000000;
+  --ac-bg:    #F1F1F1;
+  --ac-tx:    #111111;
+  --on-ac:    #FFFFFF;
   --danger:   #EF4444;
   --danger-bg:#FEF2F2;
-  --success:  #10B981;
-  --success-bg:#ECFDF5;
-  --warning:  #F59E0B;
-  --warning-bg:#FFFBEB;
+  --success:  #111111;
+  --success-bg:#F3F4F6;
+  --warning:  #27272A;
+  --warning-bg:#F5F5F5;
   --sh:       0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
   --sh2:      0 4px 16px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.05);
   --sh3:      0 20px 60px rgba(0,0,0,0.15);
   --radius:   12px;
   --radius-sm:8px;
   --radius-lg:16px;
+  /* ADMIN CUSTOM COLORS */
+  --admin-primary: #7c3aed; /* Morado principal */
+  --admin-on-primary: #fff; /* Texto sobre morado */
 }
 
+
+/* ADMIN THEME VARIABLES - DARK */
 [data-admin-theme='dark'] {
-  --ab:       #080C14;
-  --sb:       #0F172A;
-  --sb2:      #172033;
-  --sb3:      #1E1B4B;
-  --tx:       #F1F5F9;
-  --tx2:      #94A3B8;
-  --tx3:      #475569;
-  --bd:       #1E293B;
-  --bd2:      #334155;
-  --ac:       #818CF8;
-  --ac2:      #6366F1;
-  --ac-bg:    #1E1B4B;
-  --ac-tx:    #A5B4FC;
+  --ab:       #141418;
+  --sb:       #1B1B21;
+  --sb2:      #23232A;
+  --sb3:      #303039;
+  --tx:       #FAFAFA;
+  --tx2:      #D4D4D8;
+  --tx3:      #A1A1AA;
+  --bd:       #34343D;
+  --bd2:      #4A4A55;
+  --ac:       #F5F5F5;
+  --ac2:      #D4D4D8;
+  --ac-bg:    #25252D;
+  --ac-tx:    #F5F5F5;
+  --on-ac:    #09090B;
   --danger:   #F87171;
   --danger-bg:#2D1B1B;
-  --success:  #34D399;
-  --success-bg:#0D2B22;
-  --warning:  #FBBF24;
-  --warning-bg:#2D2006;
+  --success:  #E4E4E7;
+  --success-bg:#25252D;
+  --warning:  #E4E4E7;
+  --warning-bg:#25252D;
   --sh:       0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
   --sh2:      0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
   --sh3:      0 20px 60px rgba(0,0,0,0.6);
   --radius:   12px;
   --radius-sm:8px;
   --radius-lg:16px;
+  /* ADMIN CUSTOM COLORS */
+  --admin-primary: #7c3aed; /* Morado principal */
+  --admin-on-primary: #fff; /* Texto sobre morado */
 }
 
 [data-admin-theme] * { box-sizing: border-box; }
@@ -68,7 +80,7 @@
   height: 100vh;
   display: grid;
   grid-template-columns: 260px 1fr;
-  background: var(--ab);
+  background: var(--sb);
   color: var(--tx);
   transition: grid-template-columns 0.2s ease;
   overflow: hidden;
@@ -86,7 +98,8 @@
 .admin-shell__content {
   flex: 1;
   padding: 1.5rem;
-  background: var(--ab);
+  background: var(--sb);
+  color: var(--tx);
   overflow-y: auto;
 }
 
@@ -125,7 +138,7 @@
     border-radius: var(--radius-sm);
     display: grid;
     place-items: center;
-    color: #fff;
+    color: var(--on-ac);
     font-size: 1.1rem;
     flex-shrink: 0;
   }
@@ -205,7 +218,7 @@
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
   background: var(--ac);
-  color: #fff;
+  color: var(--on-ac);
   line-height: 1.4;
 }
 
@@ -235,7 +248,7 @@
   background: var(--ac);
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--on-ac);
   font-size: 0.8rem;
   font-weight: 700;
   flex-shrink: 0;
@@ -690,7 +703,7 @@
   width: 32px;
   height: 32px;
   background: linear-gradient(135deg, var(--ac), var(--ac2));
-  color: #fff;
+  color: var(--on-ac);
   font-size: 0.72rem;
   font-weight: 700;
   border-radius: 50%;
@@ -777,8 +790,8 @@
   &--primary {
     background: var(--ac);
     border-color: var(--ac);
-    color: #fff;
-    &:hover { background: var(--ac2); border-color: var(--ac2); color: #fff; }
+    color: var(--on-ac);
+    &:hover { background: var(--ac2); border-color: var(--ac2); color: var(--on-ac); }
   }
 
   &--danger {
@@ -1336,7 +1349,7 @@
   display: grid;
   place-items: center;
   padding: 1.5rem;
-  background: var(--ab);
+  background: linear-gradient(180deg, var(--ab) 0%, var(--sb2) 100%);
 }
 
 .admin-auth__card {
@@ -1356,7 +1369,7 @@
   border-radius: var(--radius);
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--on-ac);
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
 }
@@ -1602,13 +1615,19 @@
   font-size: 1rem;
   flex-shrink: 0;
 
-  &--email { background: #eef1ff; color: #4a6cf7; }
-  &--whatsapp { background: #e8f8ee; color: #25d366; }
+  &--email,
+  &--whatsapp {
+    background: var(--sb2);
+    color: var(--ac);
+    border: 1px solid var(--bd);
+  }
 }
 
 [data-admin-theme='dark'] {
-  .inbox-contact-card__icon--email { background: rgba(74, 108, 247, 0.15); }
-  .inbox-contact-card__icon--whatsapp { background: rgba(37, 211, 102, 0.15); }
+  .inbox-contact-card__icon--email,
+  .inbox-contact-card__icon--whatsapp {
+    background: var(--sb2);
+  }
 }
 
 .inbox-contact-card__info { display: flex; flex-direction: column; min-width: 0; }
@@ -1691,7 +1710,7 @@
   height: 52px;
   border-radius: 50%;
   background: var(--ac);
-  color: #fff;
+  color: var(--on-ac);
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -1784,14 +1803,14 @@
   background: var(--ac-bg);
   transition: background 0.15s, border-color 0.15s;
 
-  &:hover { background: var(--ac); color: #fff; border-color: var(--ac); }
+  &:hover { background: var(--ac); color: var(--on-ac); border-color: var(--ac); }
 
   &--whatsapp {
-    color: #25d366;
-    background: rgba(37, 211, 102, 0.08);
-    border-color: rgba(37, 211, 102, 0.3);
+    color: var(--ac);
+    background: var(--sb2);
+    border-color: var(--bd);
 
-    &:hover { background: #25d366; color: #fff; border-color: #25d366; }
+    &:hover { background: var(--ac); color: var(--on-ac); border-color: var(--ac); }
   }
 }
 
@@ -2163,7 +2182,7 @@
   transition: all 0.12s;
   font-size: 1rem;
 
-  &:hover { background: var(--ac); color: #fff; border-color: var(--ac); }
+  &:hover { background: var(--ac); color: var(--on-ac); border-color: var(--ac); }
 }
 
 .admin-ai-panel {

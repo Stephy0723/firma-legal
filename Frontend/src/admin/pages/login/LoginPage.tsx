@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAdminTheme } from '../../theme/AdminThemeContext';
-import { FaMoon, FaSun, FaGavel, FaLock, FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaGavel, FaLock, FaMoon, FaSun } from 'react-icons/fa';
 import { createApiUrl } from '../../../utils/api';
+import { useAdminTheme } from '../../theme/AdminThemeContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,7 +14,12 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (!email || !password) { setError('Completa todos los campos.'); return; }
+
+    if (!email || !password) {
+      setError('Completa todos los campos.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -25,10 +30,19 @@ const LoginPage = () => {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || 'Error al iniciar sesiÃ³n.'); return; }
+
+      if (!res.ok) {
+        setError(data.error || 'Error al iniciar sesion.');
+        return;
+      }
+
       localStorage.setItem('admin_auth', 'true');
       localStorage.setItem('admin_email', data.email);
-      if (data.name) localStorage.setItem('admin_name', data.name);
+
+      if (data.name) {
+        localStorage.setItem('admin_name', data.name);
+      }
+
       navigate('/admin');
     } catch {
       setError('No se pudo conectar con el servidor.');
@@ -48,17 +62,27 @@ const LoginPage = () => {
         </div>
 
         <h1 className="admin-auth__title">Bienvenido</h1>
-        <p className="admin-auth__subtitle">Accede al panel de administraciÃ³n del despacho.</p>
+        <p className="admin-auth__subtitle">Accede al panel de administracion del despacho.</p>
 
         {error && (
-          <div style={{ background: 'var(--danger-bg)', border: '1px solid var(--danger)', borderRadius: 'var(--radius-sm)', padding: '0.65rem 0.85rem', color: 'var(--danger)', fontSize: '0.82rem', marginBottom: '0.75rem' }}>
+          <div
+            style={{
+              background: 'var(--danger-bg)',
+              border: '1px solid var(--danger)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '0.65rem 0.85rem',
+              color: 'var(--danger)',
+              fontSize: '0.82rem',
+              marginBottom: '0.75rem',
+            }}
+          >
             {error}
           </div>
         )}
 
         <form className="admin-auth__form" onSubmit={handleSubmit}>
           <div className="a-field">
-            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Correo electrÃ³nico</label>
+            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Correo electronico</label>
             <div style={{ position: 'relative' }}>
               <FaEnvelope style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--tx3)', fontSize: '0.85rem' }} />
               <input
@@ -66,34 +90,42 @@ const LoginPage = () => {
                 type="email"
                 placeholder="admin@despacho.com"
                 value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError('');
+                }}
                 style={{ paddingLeft: '2.4rem' }}
                 required
               />
             </div>
           </div>
+
           <div className="a-field">
-            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>ContraseÃ±a</label>
+            <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--tx2)' }}>Contrasena</label>
             <div style={{ position: 'relative' }}>
               <FaLock style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--tx3)', fontSize: '0.85rem' }} />
               <input
                 className="a-input"
                 type="password"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="********"
                 value={password}
-                onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
                 style={{ paddingLeft: '2.4rem' }}
                 required
               />
             </div>
           </div>
+
           <button type="submit" className="a-btn a-btn--primary a-btn--lg" style={{ width: '100%', marginTop: '0.25rem' }} disabled={loading}>
-            {loading ? 'Verificando...' : 'Iniciar sesiÃ³n'}
+            {loading ? 'Verificando...' : 'Iniciar sesion'}
           </button>
         </form>
 
         <p className="admin-auth__footer">
-          Â¿No tienes cuenta? <Link to="/admin/register">RegÃ­strate</Link>
+          No tienes cuenta? <Link to="/admin/register">Registrate</Link>
         </p>
       </div>
     </section>

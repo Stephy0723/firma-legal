@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { PropsWithChildren } from 'react';
+import { useLocation } from 'react-router-dom';
 
 type AdminTheme = 'light' | 'dark';
 
@@ -17,13 +18,26 @@ const applyThemeToDocument = (theme: AdminTheme) => {
   document.documentElement.setAttribute('data-admin-theme', theme);
 };
 
+const isAdminAuthRoute = (pathname: string) => pathname === '/admin/login' || pathname === '/admin/register';
+
 const getInitialTheme = (): AdminTheme => {
+  if (typeof window !== 'undefined' && isAdminAuthRoute(window.location.pathname)) {
+    return 'light';
+  }
+
   const savedTheme = localStorage.getItem(STORAGE_KEY);
   return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
 };
 
 export const AdminThemeProvider = ({ children }: PropsWithChildren) => {
+  const location = useLocation();
   const [theme, setThemeState] = useState<AdminTheme>(() => getInitialTheme());
+
+  useEffect(() => {
+    if (isAdminAuthRoute(location.pathname) && theme !== 'light') {
+      setThemeState('light');
+    }
+  }, [location.pathname, theme]);
 
   useEffect(() => {
     applyThemeToDocument(theme);

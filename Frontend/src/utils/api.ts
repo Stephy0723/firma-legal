@@ -10,6 +10,11 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export const createApiUrl = (endpoint: string): string => {
-  const baseUrl = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
-  return `${baseUrl}${endpoint}`;
+  const trimmedBaseUrl = API_URL.replace(/\/+$/, '');
+  const baseUrl = trimmedBaseUrl.endsWith('/api') ? trimmedBaseUrl : `${trimmedBaseUrl}/api`;
+  const normalizedEndpoint = `/${endpoint}`
+    .replace(/^\/+/, '/')
+    .replace(/^\/api(?=\/|$)/, '');
+
+  return normalizedEndpoint === '' ? baseUrl : `${baseUrl}${normalizedEndpoint}`;
 };

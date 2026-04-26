@@ -37,7 +37,7 @@ export const saveAdminWorkspaceSettings = async (settings: Partial<AdminWorkspac
   const merged = { ...loadAdminWorkspaceSettings(), ...settings };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   try {
-    await fetch(createApiUrl('/api/settings'), {
+    await fetch(createApiUrl('/settings'), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(merged),
@@ -50,7 +50,7 @@ export const saveAdminWorkspaceSettings = async (settings: Partial<AdminWorkspac
 
 export const syncAdminWorkspaceSettingsFromAPI = async (): Promise<void> => {
   try {
-    const res = await fetch(createApiUrl('/api/settings'));
+    const res = await fetch(createApiUrl('/settings'));
     if (!res.ok) return;
     const data = await res.json() as Partial<AdminWorkspaceSettings>;
     const merged = { ...DEFAULT_SETTINGS, ...data };
