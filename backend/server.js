@@ -17,6 +17,7 @@ const allowedOrigins = [
   'http://localhost:5173',       // Vite dev server
   'https://test.inversionesjrl.com', // Production frontend
   'https://inversionesjrl.com',
+  'https://www.inversionesjrl.com',
 ];
 
 app.use(cors({
