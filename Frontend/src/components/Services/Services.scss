@@ -29,6 +29,100 @@
     grid-template-columns: 1fr;
     gap: 1.1rem;
   }
+
+  // ──────────────────────────────────────────────
+  // Services Offer Section (Checkmarks)
+  // ──────────────────────────────────────────────
+
+  &__offer {
+    margin: 3rem 0 0 0;
+  }
+
+  &__offer-head {
+    margin-bottom: 2rem;
+  }
+
+  &__offer-eyebrow {
+    font-size: $fs-caption;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--theme-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  &__offer-head h3 {
+    font-family: $font-heading;
+    font-size: $fs-h2;
+    color: var(--theme-heading);
+    margin: 0;
+    font-weight: 700;
+  }
+
+  &__offer-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+
+  &__offer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    @include card-premium;
+    border-radius: $radius-lg;
+    padding: 2rem;
+    background: var(--theme-bg-secondary);
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+      font-size: $fs-body;
+      color: var(--theme-text-muted);
+      line-height: 1.6;
+      border-bottom: 1px solid var(--theme-border-light);
+      transition: color $duration-fast $ease-standard;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        color: var(--theme-text);
+      }
+
+      svg {
+        flex-shrink: 0;
+        color: var(--theme-accent);
+        font-size: 1rem;
+        margin-top: 0.15rem;
+      }
+    }
+  }
+
+  &__offer-copy-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__offer-copy {
+    font-size: $fs-body;
+    color: var(--theme-text-muted);
+    line-height: 1.8;
+    max-width: 70ch;
+    margin: 0;
+  }
+
+  &__offer-cta {
+    align-self: flex-start;
+  }
 }
 
 // ──────────────────────────────────────────────
