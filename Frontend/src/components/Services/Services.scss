@@ -9,6 +9,73 @@
     line-height: 1.75;
   }
 
+  &__offer {
+    @include card-premium;
+    border-radius: $radius-lg;
+    padding: clamp(1.3rem, 1.05rem + 1.2vw, 2.1rem);
+    margin-bottom: 2rem;
+    box-shadow: var(--theme-shadow-sm);
+
+    &-head {
+      margin-bottom: 1rem;
+    }
+
+    &-eyebrow {
+      margin: 0 0 0.35rem;
+      font-size: $fs-caption;
+      color: var(--theme-text-faint);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h3 {
+      font-family: $font-heading;
+      font-size: clamp(1.2rem, 1.05rem + 0.7vw, 1.5rem);
+      color: var(--theme-heading);
+      margin: 0;
+      font-weight: 700;
+    }
+
+    &-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+      align-items: start;
+    }
+
+    &-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    &-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      color: var(--theme-text-muted);
+      line-height: 1.5;
+      font-size: $fs-small;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--theme-border);
+    }
+
+    &-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &-list svg {
+      margin-top: 0.18rem;
+      flex-shrink: 0;
+      color: var(--theme-accent);
+      font-size: 0.8rem;
+    }
+  }
+
   &__grid-wrapper {
     margin-top: 0;
   }
@@ -353,6 +420,11 @@
 @include tablet {
   .services__grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .services__offer-layout {
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.3rem;
   }
 
   .service-detail__list {
