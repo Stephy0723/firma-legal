@@ -1,13 +1,25 @@
 import { useState, useRef } from 'react';
 import { useData } from '../../../context/DataContext';
 import AdminModal from '../../components/AdminModal';
-import { FaUserTie, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash, FaEnvelope, FaLinkedin, FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
+import { FaUserTie, FaSearch, FaTh, FaList, FaPlus, FaEdit, FaTrash, FaEnvelope, FaLinkedin, FaCloudUploadAlt, FaCheckCircle, FaTimes } from 'react-icons/fa';
 import { createApiUrl } from '../../../utils/api';
 
 type View = 'card' | 'list';
 
-const EMPTY_FORM = {
-  name: '', role: '', specialty: '', bio: '', email: '', linkedin: '', image: '',
+type FormType = {
+  name: string;
+  role: string;
+  specialty: string;
+  bio: string;
+  email: string;
+  linkedin: string;
+  image: string;
+  education: string[];
+  achievements: string[];
+};
+
+const EMPTY_FORM: FormType = {
+  name: '', role: '', specialty: '', bio: '', email: '', linkedin: '', image: '', education: [], achievements: [],
 };
 
 const TeamPage = () => {
@@ -30,7 +42,7 @@ const TeamPage = () => {
   const openEdit = (id: string) => {
     const m = team.find((x) => x.id === id);
     if (!m) return;
-    setForm({ name: m.name, role: m.role, specialty: m.specialty, bio: m.bio, email: m.email, linkedin: m.linkedin, image: m.image });
+    setForm({ name: m.name, role: m.role, specialty: m.specialty, bio: m.bio, email: m.email, linkedin: m.linkedin, image: m.image, education: m.education || [], achievements: m.achievements || [] });
     setSelected(id);
     setModal('edit');
   };
@@ -41,7 +53,7 @@ const TeamPage = () => {
     if (!form.name.trim()) return;
     try {
       if (modal === 'add') {
-        const memberId = await addTeamMember({ ...form, education: [], achievements: [] });
+        const memberId = await addTeamMember({ ...form });
         // Upload photo if selected
         if (photoFile && memberId) {
           const fd = new FormData();
@@ -56,17 +68,45 @@ const TeamPage = () => {
           const res = await fetch(createApiUrl(`/api/team/${selected}/upload`), { method: 'POST', body: fd });
           const data = await res.json();
           if (data.image) {
-            updateTeamMember(selected, { name: form.name, role: form.role, specialty: form.specialty, bio: form.bio, email: form.email, linkedin: form.linkedin, image: data.image });
+            updateTeamMember(selected, { ...form, image: data.image });
             closeModal();
             return;
           }
         }
-        updateTeamMember(selected, { name: form.name, role: form.role, specialty: form.specialty, bio: form.bio, email: form.email, linkedin: form.linkedin, image: form.image });
+        updateTeamMember(selected, form);
       }
       closeModal();
     } catch (err) {
       console.error('Error subiendo foto:', err);
     }
+  };
+
+  const addEducation = () => {
+    setForm({ ...form, education: [...form.education, ''] });
+  };
+
+  const removeEducation = (idx: number) => {
+    setForm({ ...form, education: form.education.filter((_, i) => i !== idx) });
+  };
+
+  const updateEducation = (idx: number, value: string) => {
+    const updated = [...form.education];
+    updated[idx] = value;
+    setForm({ ...form, education: updated });
+  };
+
+  const addAchievement = () => {
+    setForm({ ...form, achievements: [...form.achievements, ''] });
+  };
+
+  const removeAchievement = (idx: number) => {
+    setForm({ ...form, achievements: form.achievements.filter((_, i) => i !== idx) });
+  };
+
+  const updateAchievement = (idx: number, value: string) => {
+    const updated = [...form.achievements];
+    updated[idx] = value;
+    setForm({ ...form, achievements: updated });
   };
 
   const initials = (name: string) => name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
@@ -264,6 +304,72 @@ const TeamPage = () => {
           <div className="a-field a-field--full">
             <label>Biografía</label>
             <textarea className="a-textarea" placeholder="Descripción profesional del miembro..." value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
+          </div>
+          
+          <div className="a-field a-field--full">
+            <label>Educación</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {form.education.map((edu, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                  <input
+                    className="a-input"
+                    placeholder="Ej. Licenciatura en Derecho - Universidad Nacional"
+                    value={edu}
+                    onChange={(e) => updateEducation(idx, e.target.value)}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    className="a-btn a-btn--danger a-btn--icon"
+                    onClick={() => removeEducation(idx)}
+                    style={{ marginTop: '0.25rem' }}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="a-btn a-btn--ghost"
+                onClick={addEducation}
+                style={{ justifyContent: 'flex-start' }}
+              >
+                <FaPlus /> Agregar educación
+              </button>
+            </div>
+          </div>
+
+          <div className="a-field a-field--full">
+            <label>Logros / Reconocimientos</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {form.achievements.map((ach, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                  <input
+                    className="a-input"
+                    placeholder="Ej. Certificado en Mediación - Colegio de Abogados"
+                    value={ach}
+                    onChange={(e) => updateAchievement(idx, e.target.value)}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    className="a-btn a-btn--danger a-btn--icon"
+                    onClick={() => removeAchievement(idx)}
+                    style={{ marginTop: '0.25rem' }}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="a-btn a-btn--ghost"
+                onClick={addAchievement}
+                style={{ justifyContent: 'flex-start' }}
+              >
+                <FaPlus /> Agregar logro
+              </button>
+            </div>
           </div>
         </div>
       </AdminModal>
