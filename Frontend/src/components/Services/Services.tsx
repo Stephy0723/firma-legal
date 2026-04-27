@@ -111,7 +111,7 @@ const Services = () => {
                 los intereses y valores de nuestros clientes.
               </p>
               <button className="services__offer-cta" onClick={() => setShowBooking(true)}>
-                <FaCalendarAlt style={{ marginRight: '0.4rem' }} />
+                <FaCalendarAlt />
                 Agendar Consulta
               </button>
             </div>
@@ -157,7 +157,7 @@ const Services = () => {
                 <button
                   onClick={() => handleBookForArea(services[activeService].title)}
                 >
-                  <FaCalendarAlt style={{ marginRight: '0.4rem' }} />
+                  <FaCalendarAlt />
                   Solicitar Consulta Gratuita
                 </button>
               </div>

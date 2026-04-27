@@ -29,6 +29,34 @@
     grid-template-columns: 1fr;
     gap: 1.1rem;
   }
+
+  &__offer-copy-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  &__offer-copy {
+    margin: 0;
+  }
+
+  &__offer-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 2.9rem;
+    padding: 0.8rem 1.2rem;
+    line-height: 1;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+
+    svg {
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+  }
 }
 
 // ──────────────────────────────────────────────
@@ -38,6 +66,9 @@
 .service-card {
   @include card-premium;
   @include elevated-hover;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   border-radius: $radius-lg;
   padding: 1.8rem 1.4rem;
   position: relative;
@@ -95,16 +126,63 @@
     color: var(--theme-text-faint);
     font-size: $fs-small;
     line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    position: relative;
+    z-index: 1;
   }
 
   &__more {
-    display: inline-block;
-    margin-top: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: $fs-caption;
     font-weight: 600;
     color: var(--theme-accent);
     letter-spacing: 0.04em;
     transition: color $duration-fast $ease-standard;
+  }
+
+  &__book {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: var(--theme-accent);
+    color: var(--theme-accent-contrast);
+    box-shadow: var(--theme-shadow-sm);
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      background: var(--theme-accent-strong);
+      border-color: var(--theme-accent-border-strong);
+      box-shadow: var(--theme-shadow-md);
+      filter: none;
+    }
+
+    &:active {
+      box-shadow: var(--theme-shadow-sm);
+    }
+
+    svg {
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
   }
 
   &:hover &__more {
@@ -241,10 +319,20 @@
     }
 
     button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
       padding: 0.8rem 2rem;
+      min-height: 2.9rem;
       font-size: $fs-small;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+
+      svg {
+        flex-shrink: 0;
+        font-size: 0.95rem;
+      }
     }
   }
 }
