@@ -16,7 +16,7 @@ const About = () => {
           <p className="eyebrow">Sobre Nosotros</p>
           <h2>Tradición jurídica con visión moderna</h2>
           <p>
-            Fundada en 2004, JR&L Asuntos Jurídicos nació con la misión de brindar asesoría
+            Fundada en 2004, Steliant Firma nació con la misión de brindar asesoría
             legal integral de primer nivel. Nuestro equipo combina la rigurosidad
             académica con un profundo conocimiento práctico del derecho nacional e
             internacional.
@@ -74,3 +74,4 @@ const About = () => {
 };
 
 export default About;
+

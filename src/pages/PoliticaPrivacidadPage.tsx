@@ -84,7 +84,7 @@ const PoliticaPrivacidadPage = () => {
           <h2>7. Contacto</h2>
           <p>
             Para consultas relacionadas con privacidad, puede escribirnos a
-            <a href="mailto:contacto@jrlasociados.com"> contacto@jrlasociados.com</a>.
+            <a href="mailto:demo@steliant.example"> contacto@jrlasociados.com</a>.
           </p>
         </div>
       </section>
@@ -93,3 +93,4 @@ const PoliticaPrivacidadPage = () => {
 };
 
 export default PoliticaPrivacidadPage;
+

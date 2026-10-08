@@ -4,7 +4,7 @@ import "./Testimonials.scss";
 const testimonials = [
     {
         quote:
-            "JR&L manejó nuestro caso corporativo con una precisión y profesionalismo excepcionales. Su equipo nos guió en cada paso del proceso, logrando un resultado que superó nuestras expectativas.",
+            "Steliant Firma manejó nuestro caso corporativo con una precisión y profesionalismo excepcionales. Su equipo nos guió en cada paso del proceso, logrando un resultado que superó nuestras expectativas.",
         author: "María Elena Rodríguez",
         role: "CEO, Grupo Inversiones del Caribe",
         image:
@@ -66,3 +66,4 @@ const Testimonials = () => {
 };
 
 export default Testimonials;
+

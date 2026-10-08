@@ -147,7 +147,7 @@ const Team = () => {
                 >
                   <FaLinkedinIn /> LinkedIn
                 </a>
-                <a href={`mailto:${teamMembers[activeMember].email}`}>
+                <a href="mailto:demo@steliant.example">
                   <FaEnvelope /> {teamMembers[activeMember].email}
                 </a>
               </div>
@@ -237,3 +237,4 @@ const Team = () => {
 };
 
 export default Team;
+

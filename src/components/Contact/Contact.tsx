@@ -84,7 +84,7 @@ const Contact = () => {
         {/* Google Maps — full width, compact */}
         <div className="contact__map">
           <iframe
-            title="Ubicación de JR&L Asuntos Jurídicos"
+            title="Ubicación de Steliant Firma"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.3762844559936!2d-69.95243568509423!3d18.473199787432784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf89f1107ea5ab%3A0xd6c587b667e136c3!2sAv.%20Winston%20Churchill%2C%20Santo%20Domingo!5e0!3m2!1ses!2sdo!4v1709000000000!5m2!1ses!2sdo"
             width="100%"
             height="180"
@@ -100,3 +100,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

@@ -80,7 +80,7 @@ const TerminosUsoPage = () => {
           <h2>7. Contacto</h2>
           <p>
             Para preguntas sobre estos términos, contáctenos en
-            <a href="mailto:contacto@jrlasociados.com"> contacto@jrlasociados.com</a>.
+            <a href="mailto:demo@steliant.example"> contacto@jrlasociados.com</a>.
           </p>
         </div>
       </section>
@@ -89,3 +89,4 @@ const TerminosUsoPage = () => {
 };
 
 export default TerminosUsoPage;
+

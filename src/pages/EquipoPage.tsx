@@ -36,3 +36,4 @@ const EquipoPage = () => {
 };
 
 export default EquipoPage;
+

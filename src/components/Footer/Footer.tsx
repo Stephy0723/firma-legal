@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="footer__main">
         <div className="footer__col">
           <Link to="/" className="footer__brand">
-            JR&L<span> Asuntos Jurídicos</span>
+            Steliant Firma<span> Asuntos Jurídicos</span>
           </Link>
           <p className="footer__tagline">
             Excelencia jurídica estratégica al servicio de su patrimonio y sus
@@ -62,7 +62,7 @@ const Footer = () => {
       </div>
 
       <div className="footer__bottom">
-        <p>&copy; 2026 JR&L Asuntos Jurídicos y Servicios Financieros. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Steliant Firma y Servicios Financieros. Todos los derechos reservados.</p>
         <div className="footer__legal">
           <Link to="/politica-privacidad">Política de Privacidad</Link>
           <Link to="/terminos-uso">Términos de Uso</Link>
@@ -73,3 +73,4 @@ const Footer = () => {
 };
 
 export default Footer;
+
