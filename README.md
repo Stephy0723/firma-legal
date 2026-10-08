@@ -8,10 +8,16 @@ Rediseño de exhibición (rama `steliant-exhibicion-completa`). React 19 + Vite 
 - **Responsive** mobile-first, tipografía fluida con `clamp()`.
 - **Movimiento**: GSAP + ScrollTrigger, scroll suave con Lenis, balanza 3D con Three.js (carga diferida), cursor y botones magnéticos, revelado de imágenes con parallax. Respeta `prefers-reduced-motion`.
 
+## Páginas
+- `#/` Inicio · `#/firma` La Firma · `#/practica` Práctica · `#/practica/:area` detalle de cada área · `#/equipo` Equipo · `#/contacto` Contacto
+- Transición de cortina entre páginas (`src/components/transition.tsx`).
+
 ## Estructura
-- `src/App.tsx` — marcado de la página.
+- `src/App.tsx` — rutas.
+- `src/pages/` — cada vista. `src/components/` — navegación, pie, cabeceras, testimonios.
+- `src/i18n.tsx` — contexto de idioma.
+- `src/motion.ts` — scroll suave, cursor y animaciones compartidas.
 - `src/content.ts` — textos, imágenes y datos.
-- `src/experience.ts` — idioma, tema, animaciones e interacciones.
 - `src/scene.ts` — escena 3D.
 - `src/styles/main.scss` — tokens de color y estilos.
 

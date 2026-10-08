@@ -5,6 +5,7 @@ export interface SceneApi {
   enter(): void;
   theme(dark: boolean): void;
   setScroll(p: number): void;
+  destroy(): void;
 }
 
 /** Brass scale of justice, rendered behind the hero copy. */
@@ -116,11 +117,18 @@ export function createScene(canvas: HTMLCanvasElement, opts: { reduce: boolean; 
       renderer.toneMappingExposure = d ? 1.05 : 1.2;
     },
     setScroll(p) { scrollP = p; },
+    destroy() {
+      cancelAnimationFrame(raf); removeEventListener("resize", size); removeEventListener("pointermove", onMove);
+      ro.disconnect(); io.disconnect();
+      scene.traverse((o) => { const m = o as THREE.Mesh; m.geometry?.dispose(); });
+      renderer.dispose();
+    },
   };
   api.theme(opts.dark);
 
   let mx = 0, my = 0, tx = 0, ty = 0;
-  addEventListener("pointermove", (e) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; }, { passive: true });
+  const onMove = (e: PointerEvent) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; };
+  addEventListener("pointermove", onMove, { passive: true });
 
   const size = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
@@ -128,13 +136,14 @@ export function createScene(canvas: HTMLCanvasElement, opts: { reduce: boolean; 
   };
   size();
   addEventListener("resize", size);
-  new ResizeObserver(size).observe(canvas);
+  const ro = new ResizeObserver(size); ro.observe(canvas);
   let visible = true;
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
+  const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }); io.observe(canvas);
 
   const clock = new THREE.Clock();
+  let raf = 0;
   const tick = () => {
-    requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
     if (!visible) return;
     const t = clock.getElapsedTime();
     mx += (tx - mx) * 0.04; my += (ty - my) * 0.04;
